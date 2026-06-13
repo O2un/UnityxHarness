@@ -1,11 +1,16 @@
+using O2un.Input;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 
-public class ProjectLifetimeScope : LifetimeScope
+namespace O2un.DI 
 {
-    protected override void Configure(IContainerBuilder builder)
+    public class ProjectLifetimeScope : LifetimeScope
     {
+        protected override void Configure(IContainerBuilder builder)
+        {
+            builder.RegisterEntryPoint<InputManager>();
+        }
     }
 }
