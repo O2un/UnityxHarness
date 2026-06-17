@@ -24,7 +24,7 @@ namespace O2un.DataStore
     {
         private readonly Dictionary<UIType, ReactiveProperty<bool>> _uiStore = new()
         {
-            {UIType.HUD, new()},
+            {UIType.HUD, new(true)},
         };
 
         public ReadOnlyReactiveProperty<bool> GetVisible(UIType type) => _uiStore[type];
