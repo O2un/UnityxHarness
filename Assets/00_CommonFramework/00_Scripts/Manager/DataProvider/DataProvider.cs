@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using O2un.DI;
 using UnityEngine;
 
 namespace O2un.Data 
 {
-    public sealed class DataProvider
+    public sealed class DataProvider : IRootTask
     {
         private readonly Dictionary<Type, object> _cache = new();
         private readonly HashSet<Type> _dirty = new();
@@ -58,6 +59,11 @@ namespace O2un.Data
                 }
             }
             _dirty.Clear();
+        }
+
+        public async UniTask WaitUntilReadyAsync()
+        {
+            await UniTask.CompletedTask;
         }
     }
 }
