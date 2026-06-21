@@ -1,11 +1,12 @@
 using O2un.Camera;
 using O2un.DataStore;
+using O2un.Manager;
 using Unity.Cinemachine;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace O2un.DI 
+namespace O2un.DI
 {
     public class GameSceneScope : LifetimeScope
     {
@@ -19,6 +20,7 @@ namespace O2un.DI
 
             builder.Register<UIStore>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }
