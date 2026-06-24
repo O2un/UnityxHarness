@@ -21,6 +21,9 @@ namespace O2un.DI
             builder.Register<UIStore>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            builder.Register<DefaultScoreCalculator>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }

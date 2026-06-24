@@ -17,7 +17,7 @@ namespace O2un.Actors
             _actor.Init();
         }
 
-        private void Oestroy()
+        private void OnDestroy()
         {
             _actor?.Dispose();
         }

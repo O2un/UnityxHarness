@@ -31,8 +31,7 @@ namespace O2un.DataStore
 
         public void VaryHP(int hp)
         {
-            _hp.Value += hp;
-            _hp.Value = Math.Clamp(CurrentHP.CurrentValue, 0, MaxHP.CurrentValue);
+            _hp.Value = Math.Clamp(_hp.Value + hp, 0, MaxHP.CurrentValue);
         }
 
         public void Dispose()
