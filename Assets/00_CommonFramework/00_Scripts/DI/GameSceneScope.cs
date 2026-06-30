@@ -24,6 +24,8 @@ namespace O2un.DI
 
             builder.Register<DefaultScoreCalculator>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }
 }
