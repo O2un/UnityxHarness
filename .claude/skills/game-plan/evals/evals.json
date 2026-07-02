@@ -1,0 +1,26 @@
+{
+  "skill_name": "game-plan",
+  "evals": [
+    {
+      "id": 0,
+      "name": "roguelike-deckbuilder-full-input",
+      "prompt": "로그라이크 덱빌더 하나 만들어보려고 하는데, 핵심 루프는 방 고르고 → 전투하고 → 카드 얻고 반복하는 거야. 주요 시스템은 카드덱, 전투, 유물, 상점 정도 생각 중이야. 게임 기획 문서 좀 잡아줘.",
+      "expected_output": "docs/design/game-plan.md 생성. 웹 검색으로 로그라이크 덱빌더 레퍼런스 후보 3~5개 제시하고 선정 질문. 6개 섹션(Game Concept/Reference Games/Core Loop/Key Systems/Feature Priority/Development Order) 모두 포함. Feature Priority가 MVP/나중 2분할. 한국어.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "tower-defense-sparse-input",
+      "prompt": "타워 디펜스 게임 기획서 작성해줘.",
+      "expected_output": "장르만 주어졌으므로 핵심 루프와 주요 시스템을 사용자에게 질문한다(추측으로 채우지 않음). 웹 검색으로 타워 디펜스 레퍼런스 후보 제시. 최종적으로 6개 섹션의 docs/design/game-plan.md 구조를 따른다.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "idle-rpg-casual-cue",
+      "prompt": "방치형 RPG 만들고 싶은데 뭐부터 만들어야 할지 모르겠어. 자동전투 돌리면서 골드 모으고 캐릭터 키우는 그런 거.",
+      "expected_output": "핵심 루프(자동전투→골드→성장)를 정리하고, 주요 시스템을 도출. 웹 검색으로 방치형 RPG 레퍼런스 후보 제시 및 선정 질문. Feature Priority(MVP/나중)와 Development Order를 명확히 제시. docs/design/game-plan.md 구조.",
+      "files": []
+    }
+  ]
+}
