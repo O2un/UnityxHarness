@@ -1,25 +1,29 @@
-# 개선 기록
+# 개선 기록 (improvement-log)
 
-## 2026-05-28 PlayerController 1차 작업
+이 파일은 **가장 최근 실행 1건**만 담는 단일 스냅샷이다. 다음 실행의 Phase 0-A가 그대로 읽어 연속 작업 기준으로 삼는다. 새 실행이 끝나면 통째로 덮어쓴다(이전 내용은 덮어쓰기 전에 chain-log.md로 축약 누적).
 
-### 무엇이 아쉬웠나
-1. 3단계 자동 검증에서 공중 무한 점프가 발견됨 (1차 시도 실패).
-2. 4단계 사용자 검증에서 착지 직후 점프 입력이 가끔 누락됨 (판정: 수정 필요).
+---
 
-### 원인
-1. PlayerController가 GroundChecker.IsGrounded를 참조하지 않고 점프 요청만으로 velocity를 적용함. 설계 문서에는 명시돼 있었으나 구현에서 누락.
-2. 점프 입력 감지가 `Update`에서 `Input.GetKeyDown` 1프레임이고, 직후 `FixedUpdate`에서 grounded가 아직 false인 순간이 있을 수 있음 (착지 판정과 입력 타이밍 차).
+## 2026-07-02 · 하네스 초기 구성
+
+### 무엇을 했나
+- `/unity-dev-harness`로 3D 뱀서 MVP용 개발 하네스를 신규 구성.
+- Agent 4종(unity-architect, gameplay-engineer, code-reviewer, unity-ai-operator), Skill 2종(unity-dev-orchestrator, csharp-convention-guide) 생성.
+- hooks 자산 복사(.claude/hooks), settings.local.json에 Stop hook 등록(unity-validate → gate3-test-runner → open-viewer), CLAUDE.md에 하네스 포인터 추가.
+
+### 아쉬웠던 점 / 원인
+- 아직 게임플레이 코드는 0줄. 하네스만 구성한 상태라 4단계 검증을 실제로 돌려본 적 없음.
 
 ### 반영
-1. (즉시) `PlayerController.FixedUpdate`에서 `groundChecker.IsGrounded` 조건 추가 완료.
-2. (다음 작업) 점프 입력 버퍼 도입 검토. 입력 후 일정 시간(예: 0.1s) 안에 grounded가 되면 점프 처리.
-   - 대상 파일: `Assets/Scripts/Player/PlayerController.cs`
-   - 관련 Skill: 새로 추가 검토 — `input-buffer-pattern` (점프·대시 등 공통 입력 버퍼 패턴)
+- 코드 배치 위치(공통/프로젝트)는 오픈 퀘스천으로 두고 orchestrator 게이트 A에서 매번 사용자 확인하도록 설계.
 
-### 다음 테스트
-- 입력 버퍼 도입 후 4단계 사용자 검증에서 누락이 사라지는지 확인.
-- 회귀: 공중 무한 점프가 다시 생기지 않는지 3단계 자동 검증으로 확인.
+### 다음 테스트 (다음 실행 입력)
+- **첫 orchestrator 실행: 플레이어 이동(Topdown3D)** 구현.
+  - game-plan 개발 순서 1번, 나머지의 기반.
+  - 기존 PlayerActor/PlayerMover/PlayerContext 재사용 여부를 unity-architect가 설계에서 판단.
+  - 이때 4단계 게이트(Stop hook 자동 ①~③ + 사용자 ④)와 배치 위치 게이트 A를 처음으로 실검증.
 
 ### 하네스 자체 개선 메모
-- 설계 문서(01-design.md)에 "grounded 조건 필수" 항목이 명시돼 있었으나 구현에서 빠졌다. code-reviewer가 게이트 통과 전에 설계 ↔ 구현 항목 매칭 체크를 한 번 더 도입하면 좋을 것.
-  - 반영 대상: `.claude/agents/code-reviewer.md` 작업 방식에 "설계 항목 체크리스트 매칭" 추가.
+- open-viewer.sh는 bash 전용(process substitution)이라 settings에서 `bash`로 호출. Unity 실행·뷰어 오픈 확인 완료.
+- `Gate3TestTool.cs`를 `Assets/00_CommonFramework/99_Dev/Editor/`로 이동 → 컴파일 성공, MCP에 `gate3_run_test` 툴 등록 확인. Gate 3 동작 가능. 남은 것은 `.cs` 작성 시 `.claude/hooks/.viewer-state/gate3-test.json` 갱신뿐.
+- `enabledMcpjsonServers`는 `unity-mcp`(소문자)지만 실제 MCP 서버는 `UnityMCP`로 정상 연결·동작 확인됨(도구 호출·컴파일 성공). 이름 표기 차이는 실사용에 문제 없음.

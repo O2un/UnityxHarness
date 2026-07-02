@@ -128,3 +128,31 @@ public class HealthLogic : MonoBehaviour { /* 순수 계산 로직 */ }
 
 # 6. Memory
 memory 파일을 작성할때 프로젝트 루트에 있는 Memory 폴더에도 똑같이 작성해서 git으로 파일을 관리 할 수 있어야 한다.
+
+---
+
+# 7. 개발 하네스
+
+이 프로젝트는 Unity 게임 개발 하네스를 사용합니다. (3D 탑다운 뱀서 MVP · 신규 설계 · MCP for Unity 연결)
+
+## 자연어 라우팅
+게임 기능 구현·시스템 설계·버그 수정·리팩토링 요청이 오면, 개별 Agent를 직접 부르기 전에 **`unity-dev-orchestrator` Skill을 먼저 사용**하세요.
+
+예: "플레이어 이동 만들어줘", "적 스폰 구현해줘", "이 버그 고쳐줘" → `unity-dev-orchestrator` 실행.
+
+단순한 C# 문법 질문이나 특정 파일 한 줄 수정 같은 단발성 편집은 그냥 처리합니다.
+
+## 흐름 요약
+설계(unity-architect) → **[승인: 배치 위치 공통/프로젝트]** → 구현(gameplay-engineer) → 씬·검증(unity-ai-operator, **[승인: 씬·에셋]**) → 리뷰(code-reviewer). 검증은 4단계 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인)로, ①~③은 Stop hook이 자동 수행합니다.
+
+- **MVP 코드 배치 위치는 오픈 퀘스천**입니다. 각 시스템을 `00_CommonFramework`(공통)로 둘지 `10_ProjectA`(프로젝트 전용)로 둘지 구현 직전 사용자에게 확인하고, 임의로 정하지 않습니다.
+
+## 주요 위치
+- Agent: `.claude/agents/` (unity-architect, gameplay-engineer, code-reviewer, unity-ai-operator)
+- Skill: `.claude/skills/` (unity-dev-orchestrator, csharp-convention-guide, add-global-manager, add-module, prd, game-plan)
+- 결과 확인 뷰어 hooks: `.claude/hooks/` (Stop hook, Node.js 필요)
+- 설계·검토·기록: `artifacts/`
+- 참조 문서: `docs/conventions/convention.md`, `docs/design/game-plan.md`
+
+## 변경 이력
+- 2026-07-02 초기 하네스 구성 (Agent Team · Pipeline)
