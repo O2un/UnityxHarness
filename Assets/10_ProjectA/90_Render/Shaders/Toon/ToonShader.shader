@@ -24,9 +24,9 @@ Shader "ProjectA/ToonShader"
 
         [Header(Outline)]
         _Outline_Color ("Outline Color", Color) = (0, 0, 0, 1)
-        _Outline_Width ("Outline Width", Float) = 1.0
-        _Nearest_Distance ("Nearest Distance", Float) = 1.0
-        _Farthest_Distance ("Farthest Distance", Float) = 20.0
+        _Outline_Width ("Outline Width", Range(0, 10)) = 2.0
+        _Nearest_Distance ("Nearest Distance", Range(0, 50)) = 5.0
+        _Farthest_Distance ("Farthest Distance", Range(0, 100)) = 40.0
     }
 
     SubShader
@@ -75,6 +75,47 @@ Shader "ProjectA/ToonShader"
 
             #include "ToonInput.hlsl"
             #include "ToonForward.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "ShadowCaster"
+            Tags { "LightMode" = "ShadowCaster" }
+
+            ZWrite On
+            ZTest LEqual
+            ColorMask 0
+            Cull Back
+
+            HLSLPROGRAM
+            #pragma vertex ShadowVert
+            #pragma fragment ShadowFrag
+            #pragma target 3.0
+
+            #pragma multi_compile_vertex _ _CASTING_PUNCTUAL_LIGHT_SHADOW
+
+            #include "ToonInput.hlsl"
+            #include "ShadowCaster.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthOnly"
+            Tags { "LightMode" = "DepthOnly" }
+
+            ZWrite On
+            ColorMask R
+            Cull Back
+
+            HLSLPROGRAM
+            #pragma vertex DepthVert
+            #pragma fragment DepthFrag
+            #pragma target 3.0
+
+            #include "ToonInput.hlsl"
+            #include "DepthOnly.hlsl"
             ENDHLSL
         }
     }
