@@ -1,38 +1,49 @@
 using System;
-using Cysharp.Threading.Tasks;
 using O2un.DataStore;
-using O2un.Input;
 using R3;
 using UnityEngine;
 
-namespace O2un.Actors 
+namespace O2un.Actors
 {
     public sealed class PlayerActor : IDisposable
     {
-        private readonly PlayerMover _mover;
-        private readonly PlayerView _view;
+        private readonly CharacterMover _mover;
+        private readonly ActorView _view;
+        private readonly IMoveDirectionProvider _provider;
         private readonly IPlayerDataWriter _playerData;
-        private readonly CompositeDisposable _disposables = new();
 
-        public PlayerActor(IInputReader input, PlayerView view, IPlayerDataWriter playerData)
+        public PlayerActor(IMoveDirectionProvider provider, ActorView view, IPlayerDataWriter playerData, MoveStats stats)
         {
+            _provider = provider;
             _view = view;
-            _mover = new(input);
+            _mover = new(stats);
             _playerData = playerData;
             _playerData.SetCurrentHP(100);
         }
 
+        private readonly CompositeDisposable _disposables = new();
+
         public void Init()
         {
-            _mover.Velocity.Subscribe(v=> _view.SetVelocity(v)).AddTo(_disposables);
-            //_mover.JumpImpulse.Subscribe(v=> _view.SetVelocity(v)).AddTo(_disposables);
-
             Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(_ =>
             {
                 _playerData.VaryHP(-1);
             }).AddTo(_disposables);
         }
-        
+
+        public void Tick()
+        {
+            Vector3 dir = _provider.GetDirection();
+            _mover.SetDirection(dir);
+
+            Vector3 velocity = _mover.Velocity.CurrentValue;
+            _view.Move(velocity);
+
+            if (velocity.sqrMagnitude > 0f)
+            {
+                _view.RotateTo(_mover.TargetRotation, _mover.RotationSpeed);
+            }
+        }
 
         public void Dispose()
         {

@@ -1,20 +1,25 @@
 using O2un.DataStore;
-using O2un.Input;
 using UnityEngine;
 using VContainer;
 
-namespace O2un.Actors 
+namespace O2un.Actors
 {
     public sealed class PlayerContext : MonoBehaviour
     {
-        [SerializeField] private PlayerView _view;
+        [SerializeField] private MoveStats _stats;
+        [SerializeField] private ActorView _view;
         private PlayerActor _actor;
 
         [Inject]
-        public void Init(IInputReader input, IPlayerDataWriter playerData)
+        public void Init(IMoveDirectionProvider provider, IPlayerDataWriter playerData)
         {
-            _actor = new(input, _view, playerData);
+            _actor = new(provider, _view, playerData, _stats);
             _actor.Init();
+        }
+
+        private void Update()
+        {
+            _actor?.Tick();
         }
 
         private void OnDestroy()

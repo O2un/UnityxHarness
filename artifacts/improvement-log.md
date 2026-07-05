@@ -4,26 +4,30 @@
 
 ---
 
-## 2026-07-02 · 하네스 초기 구성
+## 2026-07-05 · 캐릭터 이동(CharacterMover) 구현
 
 ### 무엇을 했나
-- `/unity-dev-harness`로 3D 뱀서 MVP용 개발 하네스를 신규 구성.
-- Agent 4종(unity-architect, gameplay-engineer, code-reviewer, unity-ai-operator), Skill 2종(unity-dev-orchestrator, csharp-convention-guide) 생성.
-- hooks 자산 복사(.claude/hooks), settings.local.json에 Stop hook 등록(unity-validate → gate3-test-runner → open-viewer), CLAUDE.md에 하네스 포인터 추가.
+- `docs/requirements/character-movement.md` 구현. 설계(unity-architect) → 게이트 A(배치) → 구현(gameplay-engineer) → 리뷰(code-reviewer) → 게이트 B(씬/프리팹) → 4단계 검증까지 완주.
+- 신규(모두 `00_CommonFramework/00_Scripts/`): `Actor/{MoveStats, IMoveDirectionProvider, CharacterMover, CameraRelativeMoveModule, ActorView}.cs`, `Manager/Camera/ICameraBasisProvider.cs`. 수정: `CameraManager`(ICameraBasisProvider 구현), `PlayerActor`, `PlayerContext`, `GameSceneScope`(DI 등록). 삭제: `PlayerMover.cs`, `PlayerView.cs`(+meta).
+- 게이트 A: **전부 00_CommonFramework**(사용자 확정). 게이트 B: PlayerActor.prefab에 ActorView+CharacterController(r0.3/h2/center y1), _stats=속도5/회전720, autoInject에 PlayerContext 보정.
+- 4단계: ①컴파일 ✅ ②Play 콘솔 ✅ ③기능(라이브 execute_code + gate3 스모크) ✅ / ④사용자 육안 대기.
 
 ### 아쉬웠던 점 / 원인
-- 아직 게임플레이 코드는 0줄. 하네스만 구성한 상태라 4단계 검증을 실제로 돌려본 적 없음.
+- **MCP 도구가 세션에 안 떴다**: `.mcp.json` 서버키 `UnityMCP` ↔ `settings.local.json`의 `enabledMcpjsonServers` `unity-mcp` 불일치. 서버는 떠 있어도 CC 세션 도구목록에 미등록. 초기에 unity-ai-operator가 MCP 도구 접근 실패로 두 번 헛돌았다.
+- **프리팹 저장 거부**: PlayerView.cs 삭제로 프리팹 루트에 missing script가 남아 "Prefab with a missing script" 에러로 저장 실패. 사용자가 원인을 먼저 지적.
+- **주입 누락 위험**: autoInjectGameObjects가 [NULL, NULL, HUD]로 PlayerContext가 빠져 있었다(그대로면 이동 안 됨).
 
 ### 반영
-- 코드 배치 위치(공통/프로젝트)는 오픈 퀘스천으로 두고 orchestrator 게이트 A에서 매번 사용자 확인하도록 설계.
+- `enabledMcpjsonServers`를 `UnityMCP`로 수정(세션 재시작 후 도구 로드됨).
+- 스크립트 삭제→프리팹 참조가 남는 경우 `GameObjectUtility.RemoveMonoBehavioursWithMissingScript`를 프리팹 스테이지에서 선행 실행 후 저장.
+- autoInjectGameObjects의 NULL 제거 + 대상 Context 추가를 게이트 B 체크리스트에 포함.
 
 ### 다음 테스트 (다음 실행 입력)
-- **첫 orchestrator 실행: 플레이어 이동(Topdown3D)** 구현.
-  - game-plan 개발 순서 1번, 나머지의 기반.
-  - 기존 PlayerActor/PlayerMover/PlayerContext 재사용 여부를 unity-architect가 설계에서 판단.
-  - 이때 4단계 게이트(Stop hook 자동 ①~③ + 사용자 ④)와 배치 위치 게이트 A를 처음으로 실검증.
+- **game-plan 개발 순서 2번: 적 스폰 + 추격 AI**.
+  - 이동 재사용 검증 포인트: `IMoveDirectionProvider`를 `ChaseDirectionProvider`(자기→타깃 방향)로 교체, `CharacterMover`/`ActorView`는 무수정 재사용, 적 `MoveStats`만 다르게 주입.
+  - 몬스터 스탯 스키마 설계 시 `MoveStats`를 값으로 임베드(설계 §5 결정 반영).
 
 ### 하네스 자체 개선 메모
-- open-viewer.sh는 bash 전용(process substitution)이라 settings에서 `bash`로 호출. Unity 실행·뷰어 오픈 확인 완료.
-- `Gate3TestTool.cs`를 `Assets/00_CommonFramework/99_Dev/Editor/`로 이동 → 컴파일 성공, MCP에 `gate3_run_test` 툴 등록 확인. Gate 3 동작 가능. 남은 것은 `.cs` 작성 시 `.claude/hooks/.viewer-state/gate3-test.json` 갱신뿐.
-- `enabledMcpjsonServers`는 `unity-mcp`(소문자)지만 실제 MCP 서버는 `UnityMCP`로 정상 연결·동작 확인됨(도구 호출·컴파일 성공). 이름 표기 차이는 실사용에 문제 없음.
+- MCP 서버명 표기 일치는 필수(이전 로그의 "표기 차이 문제없음"은 틀렸음 — 도구 미로딩 원인이었다).
+- Unity 에디터가 포커스를 잃으면 MCP ping 무응답으로 멈출 수 있다(메인 스레드 틱 정지). 배선 중 무응답 시 에디터 창 포커스 요청.
+- `gate3-test.json`은 `O2un.Actors.ActorView` 인스턴스화 스모크로 설정(주입/필드체크 없음 — Bind가 런타임이라 필드 non-null 체크는 false-fail).

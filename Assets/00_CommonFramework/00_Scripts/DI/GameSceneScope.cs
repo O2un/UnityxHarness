@@ -1,3 +1,4 @@
+using O2un.Actors;
 using O2un.Camera;
 using O2un.DataStore;
 using O2un.Manager;
@@ -16,7 +17,10 @@ namespace O2un.DI
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<CameraManager>(Lifetime.Singleton)
-                    .WithParameter("gamePlay", _gamePlay).WithParameter("cinematic", _cinematicCamera);
+                    .WithParameter("gamePlay", _gamePlay).WithParameter("cinematic", _cinematicCamera)
+                    .AsSelf().AsImplementedInterfaces();
+
+            builder.Register<CameraRelativeMoveModule>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<UIStore>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
