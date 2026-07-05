@@ -30,6 +30,8 @@ namespace O2un.DI
             builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
         }
     }
 }
