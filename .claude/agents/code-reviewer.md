@@ -2,6 +2,7 @@
 name: code-reviewer
 description: 구현된 게임플레이 코드를 컨벤션·의존 방향·성능·책임 분리 기준으로 점진 검토할 때 사용한다. 전체 완료 후 1회가 아니라 시스템·모듈 단위로 검토한다. 새 코드를 작성하지는 않고 지적과 개선 제안을 남긴다.
 tools: Read, Grep, Glob
+effort: medium
 skills:
   - csharp-convention-guide
 ---

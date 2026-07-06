@@ -6,6 +6,8 @@ description: Unity 게임 기능 하나에 대한 요구사항 문서(PRD)를 do
 
 argument-hint: "[기능명] (예: inventory-system, 없으면 한 줄 질문)"
 
+context: fork
+
 ---
 
 **$ARGUMENTS 기능**의 요구사항 문서(PRD)를 작성해 `docs/requirements/<기능명>.md`에 저장한다.

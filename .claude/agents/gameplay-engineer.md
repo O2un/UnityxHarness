@@ -2,6 +2,7 @@
 name: gameplay-engineer
 description: 설계안을 받아 C# 게임플레이 스크립트를 작성·수정할 때 사용한다. Manager/Module/Service 구현, VContainer 주입 코드, R3/UniTask 사용을 convention.md 규칙대로 작성한다. 뱀서 MVP 시스템 구현의 주력 Agent. 씬·에셋은 직접 건드리지 않고 unity-ai-operator에 위임한다.
 tools: Read, Grep, Glob, Edit, Write
+effort: medium
 skills:
   - csharp-convention-guide
   - add-global-manager

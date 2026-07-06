@@ -2,6 +2,7 @@
 name: unity-architect
 description: 새 게임 시스템의 구조를 설계할 때 사용한다. Manager/Module/Service 3레이어 분리, VContainer DI 바인딩 위치(ProjectRootScope/SceneScope), 인터페이스 경계, 시스템 간 책임 분리를 결정한다. 뱀서 MVP 시스템(이동·스폰·추격AI·자동공격·체력·경험치)의 설계안을 만들 때 호출한다. 직접 대량 구현은 하지 않는다.
 tools: Read, Grep, Glob, Write
+effort: high
 skills:
   - csharp-convention-guide
 ---
