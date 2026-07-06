@@ -18,12 +18,12 @@ namespace O2un.Dev
 
         [Inject] private IPoolService _poolService;
 
-        [SerializeField] private SlimeContext _prefab;
+        [SerializeField] private EnemyContext _prefab;
         [SerializeField] private float _interval = 1f;
         [SerializeField] private int _row = 3;
         [SerializeField] private float _gap = 0.5f;
 
-        private IPoolHandle<SlimeContext> _pool;
+        private IPoolHandle<EnemyContext> _pool;
         private int _col = 0;
         private float _elapsed = 0f;
         private CancellationTokenSource _cts;
@@ -37,7 +37,7 @@ namespace O2un.Dev
                 _poolService.Register(POOL_KEY, _prefab);
             }
 
-            _pool = _poolService.GetHandle<SlimeContext>(POOL_KEY);
+            _pool = _poolService.GetHandle<EnemyContext>(POOL_KEY);
         }
 
         private void Update()
@@ -64,13 +64,13 @@ namespace O2un.Dev
         {
             for (int i = 0; i < _row; ++i)
             {
-                SlimeContext actor = _pool.Get();
+                EnemyContext actor = _pool.Get();
                 actor.transform.position = new Vector3(i * _gap, 0f, _col * _gap);
                 ReleaseAfterDelay(actor, _cts.Token).Forget();
             }
         }
 
-        private async UniTask ReleaseAfterDelay(SlimeContext actor, CancellationToken token)
+        private async UniTask ReleaseAfterDelay(EnemyContext actor, CancellationToken token)
         {
             bool canceled = await UniTask.Delay(RELEASE_DELAY_MS, cancellationToken: token)
                 .SuppressCancellationThrow();
