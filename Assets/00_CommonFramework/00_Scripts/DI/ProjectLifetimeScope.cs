@@ -16,6 +16,7 @@ namespace O2un.DI
             builder.Register<DataProvider>(Lifetime.Singleton).AsImplementedInterfaces().AsSelf();
             builder.Register<OptionManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AssetManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterEntryPoint<ProjectBootStrap>();
         }
