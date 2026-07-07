@@ -13,6 +13,7 @@ namespace O2un.DI
     {
         [SerializeField] private CinemachineCamera _gamePlay;
         [SerializeField] private CinemachineCamera _cinematicCamera;
+        [SerializeField] private WaveDataSO _waveData;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -32,6 +33,9 @@ namespace O2un.DI
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
+
+            builder.RegisterInstance(_waveData);
+            builder.RegisterEntryPoint<EnemySpawnManager>();
         }
     }
 }

@@ -402,6 +402,7 @@ MonoBehaviour:
   - {fileID: 1452660682}
   _gamePlay: {fileID: 1119576508}
   _cinematicCamera: {fileID: 1878799329}
+  _waveData: {fileID: 11400000, guid: 6c9762e9af92b447f87f9e5c176a16f3, type: 2}
 --- !u!4 &409293184
 Transform:
   m_ObjectHideFlags: 0
