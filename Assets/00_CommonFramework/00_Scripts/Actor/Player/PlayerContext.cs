@@ -1,43 +1,30 @@
-using System;
 using O2un.DataStore;
-using O2un.Manager;
 using UnityEngine;
 using VContainer;
 
 namespace O2un.Actors
 {
-    public sealed class PlayerContext : MonoBehaviour, IPoolable
+    public sealed class PlayerContext : MonoBehaviour
     {
         [SerializeField] private MoveStats _stats;
         [SerializeField] private ActorView _view;
         private PlayerActor _actor;
 
         [Inject]
-        public void Init(IMoveDirectionProvider provider, IPlayerDataWriter playerData)
+        public void Init(IMoveDirectionProvider provider, IPlayerDataWriter playerData, IActorRegistry registry)
         {
-            _actor = new(provider, _view, playerData, _stats);
+            _actor = new(provider, _view, playerData, _stats, registry);
             _actor.Init();
         }
 
         private void Update()
         {
-            _actor?.Tick();
+            _actor?.Tick(Time.deltaTime);
         }
 
         private void OnDestroy()
         {
             _actor?.Dispose();
-        }
-
-        private Action _release;
-        public void SetReleaseCallback(Action release)
-        {
-            _release = release;
-        }
-
-        public void Release()
-        {
-            _release?.Invoke();
         }
     }
 }

@@ -54,10 +54,20 @@ namespace O2un.Manager
             t.localRotation = Quaternion.identity;
             t.localScale = Vector3.one;
             obj.gameObject.SetActive(true);
+
+            if (obj is IPoolable poolable)
+            {
+                poolable.OnSpawned();
+            }
         }
 
         private void OnRelease(T obj)
         {
+            if (obj is IPoolable poolable)
+            {
+                poolable.OnDespawned();
+            }
+
             obj.gameObject.SetActive(false);
         }
 

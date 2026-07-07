@@ -10,9 +10,40 @@ namespace O2un.Actors
         [SerializeField] private Animator _animator;
 
         private CharacterController _controller;
+        private Actor _actor;
 
         private CharacterController Controller => _controller ??= GetComponent<CharacterController>();
         private Animator Animator => _animator ??= GetComponentInChildren<Animator>();
+
+        public void Bind(Actor actor)
+        {
+            _actor = actor;
+
+            if (true == isActiveAndEnabled)
+            {
+                _actor.Register();
+            }
+        }
+
+        public void Unbind(Actor actor)
+        {
+            if (false == ReferenceEquals(_actor, actor))
+            {
+                return;
+            }
+
+            _actor = null;
+        }
+
+        private void OnEnable()
+        {
+            _actor?.Register();
+        }
+
+        private void OnDisable()
+        {
+            _actor?.Unregister();
+        }
 
         public void Move(Vector3 velocity)
         {

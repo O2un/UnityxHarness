@@ -5,23 +5,23 @@ using UnityEngine;
 
 namespace O2un.Actors
 {
-    public sealed class PlayerActor : IDisposable
+    public sealed class PlayerActor : Actor
     {
         private readonly CharacterMover _mover;
-        private readonly ActorView _view;
         private readonly IMoveDirectionProvider _provider;
         private readonly IPlayerDataWriter _playerData;
+        private readonly CompositeDisposable _disposables = new();
 
-        public PlayerActor(IMoveDirectionProvider provider, ActorView view, IPlayerDataWriter playerData, MoveStats stats)
+        public override ActorType Type => ActorType.Player;
+
+        public PlayerActor(IMoveDirectionProvider provider, ActorView view, IPlayerDataWriter playerData, MoveStats stats, IActorRegistry registry)
+            : base(view, registry)
         {
             _provider = provider;
-            _view = view;
             _mover = new(stats);
             _playerData = playerData;
             _playerData.SetCurrentHP(100);
         }
-
-        private readonly CompositeDisposable _disposables = new();
 
         public void Init()
         {
@@ -31,24 +31,25 @@ namespace O2un.Actors
             }).AddTo(_disposables);
         }
 
-        public void Tick()
+        public override void Tick(float dt)
         {
             Vector3 dir = _provider.GetDirection();
             _mover.SetDirection(dir);
 
             Vector3 velocity = _mover.Velocity.CurrentValue;
-            _view.Move(velocity);
+            View.Move(velocity);
 
             if (velocity.sqrMagnitude > 0f)
             {
-                _view.RotateTo(_mover.TargetRotation, _mover.RotationSpeed);
+                View.RotateTo(_mover.TargetRotation, _mover.RotationSpeed);
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _disposables.Dispose();
             _mover.Dispose();
+            base.Dispose();
         }
     }
 }

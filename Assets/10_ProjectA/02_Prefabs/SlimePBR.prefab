@@ -432,6 +432,9 @@ GameObject:
   - component: {fileID: 4047972025199878}
   - component: {fileID: 95457531584545886}
   - component: {fileID: 704236157239624715}
+  - component: {fileID: 1234685781895653426}
+  - component: {fileID: 6988593899151641125}
+  - component: {fileID: 7787701572749896016}
   m_Layer: 0
   m_Name: SlimePBR
   m_TagString: Untagged
@@ -490,3 +493,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 909fdd96e63098b4cac55070b819286c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlimeContext
+--- !u!143 &1234685781895653426
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931298151966786}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6988593899151641125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931298151966786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5deb64ad99d05448a9eaeda570093ded, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.ActorView
+  _animator: {fileID: 0}
+--- !u!114 &7787701572749896016
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931298151966786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceebe47f25b0d42cda14df529f21c204, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.NpcContext
+  _stats:
+    _moveSpeed: 3
+    _rotationSpeed: 720
+  _view: {fileID: 6988593899151641125}
+  _profile: {fileID: 11400000, guid: 9a735bcfe4588408ca2cd82655075bc4, type: 2}

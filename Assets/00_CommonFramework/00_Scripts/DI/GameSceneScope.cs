@@ -32,6 +32,8 @@ namespace O2un.DI
 
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
+            builder.Register<ActorManager>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
 
             builder.RegisterInstance(_waveData);
