@@ -25,10 +25,6 @@ namespace O2un.Actors
 
         public void Init()
         {
-            Observable.Interval(TimeSpan.FromSeconds(1)).Subscribe(_ =>
-            {
-                _playerData.VaryHP(-1);
-            }).AddTo(_disposables);
         }
 
         public override void Tick(float dt)
