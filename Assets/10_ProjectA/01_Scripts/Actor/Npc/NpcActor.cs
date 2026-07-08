@@ -1,4 +1,5 @@
 using O2un.AI;
+using O2un.Combat;
 using UnityEngine;
 
 namespace O2un.Actors
@@ -9,8 +10,10 @@ namespace O2un.Actors
         private readonly EnemyBlackboard _blackboard;
         private readonly CharacterMover _mover;
         private readonly IActorQuery _query;
+        private readonly EnemyHealth _health;
 
         public override ActorType Type => ActorType.Enemy;
+        public EnemyHealth Health => _health;
 
         public NpcActor(
             BaseEnemyAI ai,
@@ -18,13 +21,15 @@ namespace O2un.Actors
             CharacterMover mover,
             ActorView view,
             IActorRegistry registry,
-            IActorQuery query)
+            IActorQuery query,
+            EnemyHealth health)
             : base(view, registry)
         {
             _ai = ai;
             _blackboard = blackboard;
             _mover = mover;
             _query = query;
+            _health = health;
         }
 
         public override void Tick(float dt)
@@ -69,6 +74,7 @@ namespace O2un.Actors
         {
             base.Dispose();
             _mover.Dispose();
+            _health.Dispose();
         }
     }
 }

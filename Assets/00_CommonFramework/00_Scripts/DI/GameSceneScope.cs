@@ -1,5 +1,6 @@
 using O2un.Actors;
 using O2un.Camera;
+using O2un.Combat;
 using O2un.DataStore;
 using O2un.Manager;
 using Unity.Cinemachine;
@@ -35,6 +36,8 @@ namespace O2un.DI
             builder.Register<ActorManager>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
+
+            builder.Register<AttackSpawner>(Lifetime.Singleton).As<IAttackSpawner>();
 
             builder.RegisterInstance(_waveData);
             builder.RegisterEntryPoint<EnemySpawnManager>();
