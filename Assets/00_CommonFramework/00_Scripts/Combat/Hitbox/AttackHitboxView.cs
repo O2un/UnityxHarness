@@ -23,7 +23,10 @@ namespace O2un.Combat
         private HitboxModule _hitbox;
         private HitboxMotion _motion;
         private Action _release;
+        private Collider _collider;
         private bool _active;
+
+        private Collider Collider => _collider ??= GetComponent<Collider>();
 
         public void SetReleaseCallback(Action release)
         {
@@ -40,6 +43,7 @@ namespace O2un.Combat
             self.rotation = motion.Rotation;
 
             _hitbox.OnHit.Subscribe(OnHit).AddTo(_despawnBag);
+            Collider.enabled = true;
             _active = true;
         }
 
@@ -51,6 +55,7 @@ namespace O2un.Combat
         public void OnDespawned()
         {
             _active = false;
+            Collider.enabled = false;
             _despawnBag.Clear();
             _hitbox = null;
         }
@@ -92,7 +97,7 @@ namespace O2un.Combat
 
         private void TryHit(Collider other)
         {
-            if (false == _active)
+            if (false == _active || null == _hitbox)
             {
                 return;
             }

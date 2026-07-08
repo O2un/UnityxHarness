@@ -1,17 +1,17 @@
-# 02. 검증 (4단계 게이트) · AttackSystem
+# 02. 검증 (4단계 게이트)
 
-작성: orchestrator + unity-ai-operator
-일시: 2026-07-08
+작성: unity-validate hook (CoplayDev MCP for Unity 자동 검증)
+일시: 2026-07-08 22:01
 
 ## 게이트 진행 요약
-| 단계 | 결과 | 비고 |
+| 단계 | 결과 | 시간 |
 | --- | --- | --- |
-| 1. 컴파일 | ✅ 통과 | refresh_unity(scope=all,force) 후 read_console error 0건. CS 진단 0. |
-| 2. 런타임 에러 (Play 콘솔) | ⏳ 대기 | 게이트 B(씬·에셋) 완료 후 수행 |
-| 3. 기능 점검 (자동/라이브) | ⏳ 대기 | 게이트 B 후 |
-| 4. 기능 점검 (사용자) | ⏳ 대기 | viewer 제출 |
+| 1. 컴파일 | ✅ 통과 | 22:01 |
+| 2. 런타임 에러 | ✅ 통과 | 22:01 |
+| 3. 기능 점검 (자동) | ✅ 통과 | 22:01 |
+| 4. 기능 점검 (사용자) | ⏳ 대기 (hooks 뷰어에서 제출 예정) | - |
 
-## 게이트 1 상세
-- 신규 `.cs`: `00_CommonFramework/00_Scripts/Combat/**`, `10_ProjectA/01_Scripts/Combat/**`, `MonsterDataSO.cs`.
-- 수정 `.cs`: PlayerActor, PlayerContext, NpcActor, NpcContext, GameSceneScope.
-- 컴파일 에러 0건 → 게이트 1 통과. 씬·에셋 무변경 확인.
+## 자동 검증 결과
+- 1단계 컴파일: refresh_unity(force/compile) + editor/state 대기 통과. 컴파일 에러 0.
+- 2단계 런타임 에러: Play 모드 진입 후 콘솔 에러·예외 없음.
+- 3단계 상세: PASS: O2un.Actors.ActorView OK

@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 1234685781895653426}
   - component: {fileID: 6988593899151641125}
   - component: {fileID: 7787701572749896016}
+  - component: {fileID: 2639609634784757700}
   m_Layer: 10
   m_Name: SlimePBR
   m_TagString: Untagged
@@ -548,3 +549,17 @@ MonoBehaviour:
     _rotationSpeed: 720
   _view: {fileID: 6988593899151641125}
   _profile: {fileID: 11400000, guid: 9a735bcfe4588408ca2cd82655075bc4, type: 2}
+  _monsterData: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f805, type: 2}
+  _damageable: {fileID: 2639609634784757700}
+--- !u!114 &2639609634784757700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1931298151966786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe10966aa1cab4a71afc3ffcd5846250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Combat.DamageableView

@@ -73,7 +73,10 @@ namespace O2un.Manager
 
         private void OnDestroy(T obj)
         {
-            UnityEngine.Object.Destroy(obj.gameObject);
+            if (null != obj)
+            {
+                UnityEngine.Object.Destroy(obj.gameObject);
+            }
         }
     }
 }

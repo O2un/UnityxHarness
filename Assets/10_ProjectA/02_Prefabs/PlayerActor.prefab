@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 6961783049848797672}
   - component: {fileID: 1363373643694413860}
   - component: {fileID: 2608388491528743836}
+  - component: {fileID: 7864686089067475899}
+  - component: {fileID: 7977455459149895446}
   m_Layer: 0
   m_Name: PlayerActor
   m_TagString: Untagged
@@ -51,6 +53,11 @@ MonoBehaviour:
     _moveSpeed: 5
     _rotationSpeed: 720
   _view: {fileID: 2608388491528743836}
+  _skills:
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f801, type: 2}
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f802, type: 2}
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f803, type: 2}
+  _damageable: {fileID: 7977455459149895446}
 --- !u!143 &1363373643694413860
 CharacterController:
   m_ObjectHideFlags: 0
@@ -89,6 +96,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.ActorView
   _animator: {fileID: 6075249611339073948}
+--- !u!54 &7864686089067475899
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5826348516620630956}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &7977455459149895446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5826348516620630956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe10966aa1cab4a71afc3ffcd5846250, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Combat.DamageableView
 --- !u!1001 &6075249611329699068
 PrefabInstance:
   m_ObjectHideFlags: 0
