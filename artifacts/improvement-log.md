@@ -4,53 +4,57 @@
 
 ---
 
-## 2026-07-09 · ExperienceSystem(PRD 2 · 경험치 누적·레벨업) 구현
+## 2026-07-09 · LevelUpSelection(PRD 3 · 경험치 루프 마지막) 구현
 
 ### 무엇을 했나
-- `docs/requirements/experience-system.md`(4 PRD 분해 중 2건째) 구현. 경험치 루프 가운데 — PRD 1(`ItemDrop`, 이미 커밋됨)의 `IExpGainedSource.OnGained` 계약을 입력으로 받아 누적·레벨판정하고, `LevelUpEvent`를 결과로 발행.
-- scope-gate 판정: 한 번에 진행(단일 Module 경계, 신규 파일 3~4개 수준).
-- 신규 파일 (전부 `Assets/10_ProjectA/01_Scripts/Progression/Experience/`, 네임스페이스 `O2un.Progression`):
-  - `ExperienceModule` — 순수 C#(`new` 가능), `IExperienceReader`+`IExperienceWriter`+`IDisposable`. 생성자로 `AnimationCurve`만 받아 `.Evaluate()`만 호출(SO 자체는 미보유). `Gain(amount)`이 while 루프로 초과분 이월하며 레벨마다 `LevelUpEvent` 1회씩 발행. `RequiredExp(level) = Math.Max(1, Mathf.RoundToInt(curve.Evaluate(level)))`로 무한루프 가드.
-  - `IExperienceReader`/`IExperienceWriter` — `PlayerDataStore` 선례를 따른 읽기/쓰기 분리.
-  - `LevelUpEvent` — readonly struct, `NewLevel` 필드만(YAGNI, PreviousLevel은 자명해서 제외).
-  - `ExperienceDataSO` — `AnimationCurve` 인스펙터 편집 지점(신규 SO, `ItemDropDataSO`/`WaveDataSO` 패턴).
-  - `ExperienceGainContext` — `IInitializable`, `IExpGainedSource.OnGained` 구독 → `IExperienceWriter.Gain` 호출. `ExperienceModule`이 아이템 도메인을 직접 참조하지 않도록 배선만 전담(PRD 본문엔 없는 신규 클래스, 게이트A에서 승인).
-- 수정: `GameSceneScope.cs`에 `_experienceData` 필드 + 3개 DI 등록 라인 추가.
+- `docs/requirements/level-up-selection.md`(4 PRD 분해 중 3건째, 마지막은 게임오버 등 별도) 구현. PRD 2(`ExperienceSystem`)의 `IExperienceReader.OnLevelUp`을 구독해 게임을 멈추고, 능력 후보 3개를 버튼으로 보여준 뒤 선택 시 적용하고 재개하는 View/VM/Context UI 계층.
+- scope-gate 판정: 한 번에 진행(걸린 기준 1개 — 레이어 다수 신설).
+- **공통 인프라(00_CommonFramework) 확장** — PRD 요구사항(레벨 덮어쓰기)을 만족할 근거 데이터가 전혀 없어 게이트A 승인 하에 신설:
+  - `ISkillDefinition`/`SkillDefinitionSO`에 `SkillId`(string)/`Level`(int) 필드 추가.
+  - `SkillModule` 내부 저장을 `List<SkillSlot>`(정의+타이머 nested class)로 교체, `bool AcquireOrUpgrade(ISkillDefinition)` 신설(미보유=신규 슬롯, 보유+상위레벨=교체·쿨다운 유지, 그 외=무시).
+  - 신규 `IPlayerSkillReceiver` 인터페이스, `PlayerActor`가 구현해 `SkillModule.AcquireOrUpgrade`에 위임.
+  - 기존 스킬 SO/구현 3쌍(Melee/Projectile/Aura)에 `skillId, level` 생성자 인자 추가.
+- 신규 파일(`Assets/10_ProjectA/01_Scripts/Progression/LevelUpSelection/`, 네임스페이스 `O2un.Progression`):
+  - `LevelUpSkillPoolSO` — 후보 풀 데이터(SkillDefinitionSO[]).
+  - `LevelUpSelectionViewModel` — 순수 C#, `IsVisible`/`CandidateLabels`(ReactiveProperty)·`OnCandidateChosen`(Subject) 노출.
+  - `LevelUpSelectionView` — `HudView` 패턴, 버튼 3개 배열 직접 바인딩(버튼뷰 별도 분리 안 함 — 구현 단순성 우선, 설계에서 재량으로 남긴 사항).
+  - `LevelUpSelectionContext` — `HudContext` 패턴(씬 MonoBehaviour, `[Inject] Init`), `OnLevelUp` 구독·`_pendingCount` 큐잉·`Time.timeScale` 정지재개·후보 무작위 추출(0개면 즉시 스킵)·`IActorQuery.Player as IPlayerSkillReceiver` 지연 캐스팅으로 적용.
+- 수정: `GameSceneScope.cs`에 `_levelUpSkillPool` 필드 + `RegisterInstance` 추가.
 
 ### 사용자 승인 (게이트 A)
-- 배치: `10_ProjectA` 전용, 신규 폴더 `Progression/Experience` 확정.
-- `ExperienceGainContext` 신설 승인(`ItemDropContext`와 유사한 배선 전용 엔트리포인트).
-- `ExperienceDataSO` 신설 승인(raw 필드 대신 SO 패턴 유지).
-- `IExperienceReader`/`IExperienceWriter` 분리 유지 승인.
+- 배치: `10_ProjectA` 확정, 신규 폴더 `Progression/LevelUpSelection`(`O2un.Progression`) 확정.
+- 공통 인프라(`ISkillDefinition`/`SkillDefinitionSO`/`SkillModule`/`PlayerActor` + 신규 `IPlayerSkillReceiver`, 스킬 3쌍) 수정 승인.
+- 열린 질문 확정: 후보 0개 시 즉시 스킵·재개, 레벨 교체 시 쿨다운 유지(리셋 안 함), SkillId는 인스펙터 수동 입력(자동보정 없음), 버튼뷰 분리는 gameplay-engineer 재량.
 
 ### 게이트 B (에셋·씬 배선, 승인 후 unity-ai-operator 수행)
-- `Assets/10_ProjectA/03_Data/ExperienceData.asset` 신규 생성(레벨1→10, 레벨5→50, 레벨10→150, ClampForever 우상향 커브 — 무한 레벨업 가정 보장).
-- `Assets/Scenes/GameScene.unity`의 `GameSceneScope._experienceData`에 할당, 씬 저장.
+- `Assets/10_ProjectA/03_Data/LevelUpSkillPool.asset` 신규 생성 — 기존 3개 SO에 `SkillId`/`Level` 값 채움 + "동일 스킬 상위 레벨" 테스트용 복제본 2개(`MeleeSwingSkill_Lv2`, `ProjectileSkill_Lv2`) 신설, 5종 등록.
+- `Assets/Scenes/GameScene.unity` — 기존 `Canvas` 하위 `LevelUpSelectionPanel`(+버튼 3개) 배치, `LevelUpSelectionContext` GameObject 배치, `GameSceneScope._levelUpSkillPool` 배선, 씬 저장.
 
 ### 4단계 게이트
-- ①컴파일 ✅ (초기 통과 + 리뷰 반영 후 재검증까지 2회 모두 에러 0).
-- ②런타임 ✅ Play 콘솔 에러 0, `_experienceData` null NRE 없음.
-- ③기능 ✅ **정량 실측**(unity-ai-operator, 임시 `IStartable` 러너로 실측 후 완전 제거·원복):
-  - `Gain(5)`: exp 0→5, 레벨업 없음(필요치 10 미만) — 정상.
-  - `Gain(200)`: exp 205 누적 → 레벨 1→6, 5단계 동시 상승, 초과분 55 이월, `OnLevelUp` 정확히 5회 발행 — 다중 레벨업 계약 충족.
-  - `IExpGainedPublisher.Publish(7)`: `ExpGainedChannel → ExperienceGainContext → ExperienceModule.Gain` 배선 통합 확인(exp 55→62, 필요치 60 초과로 재차 레벨업) — PRD1↔PRD2 하류 계약 연결 검증 완료.
-  - 임시 테스트 코드는 컴파일 클린 상태로 완전 원복 확인.
+- ①컴파일 ✅ (1차 CS0246 2건 — 신규 .cs 미임포트 상태에서 컴파일된 것, `refresh_unity(force)`로 해소. Minor 반영 후 재검증도 에러 0).
+- ②런타임 ✅ 이번 변경 관련 콘솔 에러 0. (이번 PRD와 무관한 기존 버그 1건 발견 — 하단 참고)
+- ③기능 ✅ **정량 실측**(orchestrator가 직접 `execute_code`로 DI 컨테이너 조작):
+  - 1차 실측에서 버그 발견: `LevelUpSelectionContext`가 `GameSceneScope.autoInjectGameObjects`(VContainer 씬 MonoBehaviour 자동주입 목록)에 등록되지 않아 `Init` 자체가 호출 안 됨(`_pool` null). unity-ai-operator가 게이트B 배선 시 GameObject/컴포넌트는 만들었지만 이 리스트 등록을 누락했던 것.
+  - `SerializedObject` API로 `autoInjectGameObjects`에 등록 후 `EditorSceneManager.SaveScene`으로 수정.
+  - 재실측: 단일 레벨업(`Gain(20)`) → 정지+패널 표시+후보3개 정상. 선택(`ChooseCandidate(0)`, 상위레벨 후보) → `melee_swing Lv1→Lv2` 정확히 덮어쓰기(스택 병합 아님), 재개. 다중 레벨업(`Gain(500)`→8레벨) → `_pendingCount` 8→...→0 정확히 소진, 매번 새 후보 갱신, 마지막에 정상 재개.
 - ④사용자 ⏳ (viewer).
 
 ### 리뷰 (code-reviewer)
-- blocker 0 / major 1(반영 완료) / minor 2(비차단, 기존 관례 그대로라 미반영).
-- **Major(반영 완료)**: `ExperienceModule.cs`가 Reactive 필드(`_currentExp`/`_currentLevel`/`_onLevelUp`)를 생성자 위에 선언 — convention §5(생성자 위=DI 받은 것만, 생성자 아래=Reactive) 위반. 필드 순서 재배치로 수정, 재컴파일 검증 통과.
-- **Minor(비차단, 보류)**: (1) `while` 조건과 루프 본문에서 `RequiredExp` 중복 호출(설계 의사코드와 동일 구조, 성능상 미미). (2) `GameSceneScope._experienceData` null 가드 없음(기존 `_itemDropData`/`_waveData`도 동일 패턴이라 이번 변경이 새로 만든 문제 아님).
-- 설계(`01-design.md`)-구현 매칭: 클래스 6개 전부 시그니처·책임 일치, DI 등록 코드도 설계 §4 초안과 완전 동일. 이탈 없음.
+- blocker 0 / major 0 / minor 2(둘 다 반영 완료).
+- M1: `LevelUpSkillPoolSO.Candidates`가 `_candidates` null일 때 방어 없음 → `?? Array.Empty<SkillDefinitionSO>()`로 수정.
+- M2: `LevelUpSelectionView`가 버튼·라벨 배열 길이 불일치 가드 없음 → `Mathf.Min(길이)` 루프 상한으로 수정.
+- 설계(`01-design.md` §0/§2/§7/§10) 전 항목이 구현과 1:1 일치, 컨벤션·의존 방향(Manager→Module, Context가 인터페이스만 경유) 위반 없음.
 
 ### 하네스 교훈
-- **AnimationCurve를 Module에 값으로만 주입하는 패턴**: `ScriptableObject` 자체가 아니라 `.RequiredExpCurve` 값만 생성자에 전달하면, Module이 Unity Object 수명(에셋 로드/언로드)에 결합되지 않고 `new`로 완전히 독립적인 유닛 테스트가 가능해진다. "Unity API 의존 금지"의 실질 기준은 "GameObject/Component/Collider/Time처럼 라이브 씬 상태에 결합됐는가"이지 "UnityEngine 네임스페이스를 한 글자도 안 쓰는가"가 아니다 — `AnimationCurve`/`Vector3`/`Mathf` 같은 값 타입은 예외.
-- **PRD가 명시하지 않은 배선 클래스(Context)가 필요할 수 있다**: PRD는 도메인 로직(`ExperienceModule`)만 명시했지만, 상류 계약(`IExpGainedSource`)과 연결하려면 별도 엔트리포인트가 필요했다. 설계 단계에서 이런 "PRD엔 없지만 배선을 위해 필요한 신규 클래스"를 명시적으로 게이트 A 승인 대상에 포함시켜야 사용자가 범위 확장을 인지할 수 있다.
+- **`autoInjectGameObjects` 등록은 씬 MonoBehaviour Context를 새로 배치할 때 매번 빠뜨리기 쉬운 단계다.** `HudContext`/`PlayerContext`처럼 `[Inject]`로 주입받는 씬 컴포넌트는 GameObject·컴포넌트 배치만으로는 부족하고, `LifetimeScope.autoInjectGameObjects` 배열(씬 yaml 기준 `GameSceneScope` 컴포넌트의 필드)에 반드시 등록해야 VContainer가 `Init`을 호출한다. 등록이 빠지면 컴파일·Play 콘솔 모두 에러 없이 "조용히" 아무 일도 안 일어나는 상태가 되어(예외도 로그도 없음) 발견이 어렵다 — 반드시 기능 실측(이벤트 강제 발생 후 상태 확인)으로 검증해야 잡힌다.
+- **씬 파일을 Unity 에디터가 Play 모드 등으로 열어둔 상태에서 직접 텍스트 편집하면 위험하다.** Unity는 disk 변경을 즉시 반영하지 않고, 나중에 자체적으로 씬을 저장하면 수동 편집이 덮어써질 수 있다. 대신 `execute_code`로 `SerializedObject`/`SerializedProperty` API를 통해 Editor 공식 경로로 수정하고 `EditorSceneManager.SaveScene`으로 저장하는 것이 안전하다.
+- **unity-ai-operator 세션에 `execute_code`가 노출되지 않는 경우가 있다** — 이번에도 씬 배선 담당 세션엔 없었다. orchestrator가 직접 `mcp__UnityMCP__execute_code`/`manage_editor`/`read_console`을 ToolSearch로 로드해 정량 실측을 대신 수행했다. 향후 세션에서도 이 패턴(에이전트가 못하면 orchestrator가 직접 MCP 툴로 보완)을 활용할 수 있다.
+- **Stop hook의 자동 검증이 orchestrator가 작성한 상세 `02-validation.md`를 덮어쓸 수 있다** — 마커 파일(`validate-requested`)이 남아 있으면 Stop 시점에 자동 검증이 실행되어 파일을 짧은 자동 요약으로 교체한다. 상세 수동 실측 기록은 자동 검증 이후 다시 append해야 유실되지 않는다.
 
 ### 남은 개선/후속 (비차단)
-- Minor 2건(위 참고)은 필요 시 후속 정리.
-- 유닛테스트: `ExperienceModule`은 완전한 순수 C#이라 EditMode 테스트로 다중 레벨업·이월·커브 엣지케이스(0/음수 반환) 자동화 가능 — 아직 미작성.
-- PRD 3(`LevelUpSelection`)이 아직 없어 `LevelUpEvent` 실사용 검증(레벨업 선택 UI, 일시정지)은 못함. `IExperienceReader.OnLevelUp`을 그대로 구독하면 된다.
+- `Assets/00_CommonFramework/00_Scripts/Combat/Hitbox/AttackHitboxView.cs:71` — Play 모드 종료 시 `NullReferenceException` 다발(풀 해제 타이밍 레이스, `OnDespawned()`에서 `_hitbox=null` 후 `Update()`의 `_active` 체크와 `_hitbox.Tick` 호출 사이 경합으로 추정). 이번 PRD와 무관한 기존 버그 — 별도 세션에서 debugger/gameplay-engineer 투입 필요.
+- 유닛테스트: `SkillModule.AcquireOrUpgrade`는 순수 C#이라 EditMode 테스트로 신규습득/상위레벨교체/동레벨무시/빈SkillId 케이스 자동화 가능 — 아직 미작성.
 
 ### 다음 테스트 (다음 실행 입력)
-- game-plan/PRD 순서상 다음은 **PRD 3 `LevelUpSelection`**(레벨업 시 선택지 UI + 게임 일시정지 + 능력 적용). `docs/spec/LevelUpSelection.md`가 이미 준비돼 있다. 입력은 이번 `IExperienceReader.OnLevelUp`.
+- game-plan 순서상 경험치 루프(처치→아이템드랍→누적→레벨업→선택→적용→재개)가 이번으로 완전히 닫혔다. 다음은 game-plan 문서의 남은 우선순위(게임오버·스코어 등) 확인 필요 — `docs/design/game-plan.md` 재확인 후 다음 PRD 결정.
+- 위 히트박스 NRE 버그는 우선순위 판단 후 별도 착수 권장.

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34ca3f8f4ebac474d9da3ddd4af33c7c, type: 3}
+  m_Name: MeleeSwingSkill_Lv2
+  m_EditorClassIdentifier:
+  _skillId: melee_swing
+  _level: 2
+  _cooldown: 0.85
+  _damage: 16
+  _lifetime: 0.2
+  _hitboxPrefab: {fileID: 6755275351473225416, guid: d8ebc4a23fc60459fb8e0c3107f3e063, type: 3}
+  _poolKey: Hitbox_Melee
+  _targetTeam: 1
+  _range: 2.5

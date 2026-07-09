@@ -9,13 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1553970d7c9ba4d6f86a7c0b64bf762b, type: 3}
-  m_Name: AuraFieldSkill
+  m_Script: {fileID: 11500000, guid: a9586bd6851ed4671b1401f18610e977, type: 3}
+  m_Name: ProjectileSkill_Lv2
   m_EditorClassIdentifier:
-  _cooldown: 3
-  _damage: 5
+  _skillId: projectile
+  _level: 2
+  _cooldown: 0.6
+  _damage: 13
   _lifetime: 2
-  _hitboxPrefab: {fileID: 2848507957428542437, guid: 868fbee55d49745c8babb4b488f88f6d, type: 3}
-  _poolKey: Hitbox_Aura
+  _hitboxPrefab: {fileID: 9029808509028132479, guid: a3c6542fb95c34ceb9584571da3b80bd, type: 3}
+  _poolKey: Hitbox_Projectile
   _targetTeam: 1
-  _reHitInterval: 0.5
+  _speed: 10

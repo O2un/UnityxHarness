@@ -18,6 +18,7 @@ namespace O2un.DI
         [SerializeField] private WaveDataSO _waveData;
         [SerializeField] private ItemDropDataSO _itemDropData;
         [SerializeField] private ExperienceDataSO _experienceData;
+        [SerializeField] private LevelUpSkillPoolSO _levelUpSkillPool;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -55,6 +56,8 @@ namespace O2un.DI
                     .WithParameter("requiredExpCurve", _experienceData.RequiredExpCurve)
                     .AsImplementedInterfaces();
             builder.RegisterEntryPoint<ExperienceGainContext>();
+
+            builder.RegisterInstance(_levelUpSkillPool);
         }
     }
 }

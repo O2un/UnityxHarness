@@ -10,13 +10,8 @@ namespace O2un.Combat
         public override ISkillDefinition Build()
         {
             return new MeleeSwingSkill(
-                _cooldown,
-                _range,
-                _lifetime,
-                _damage,
-                _targetTeam,
-                _hitboxPrefab,
-                PoolKey,
+                _skillId,
+                BuildStats(range: _range),
                 new NearestEnemyStrategy());
         }
     }

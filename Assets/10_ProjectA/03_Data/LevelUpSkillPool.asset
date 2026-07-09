@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f74c2d9814eab48788a736ef0e236eaa, type: 3}
+  m_Name: LevelUpSkillPool
+  m_EditorClassIdentifier: 
+  _learnCandidates:
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f801, type: 2}
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f802, type: 2}
+  - {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f803, type: 2}
+  _upgradeCandidates:
+  - {fileID: 11400000, guid: 213dd6910cda48829a758848b4d048fe, type: 2}
+  - {fileID: 11400000, guid: 038b837668af4a43b03f674b623748bb, type: 2}

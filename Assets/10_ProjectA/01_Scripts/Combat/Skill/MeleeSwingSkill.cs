@@ -5,36 +5,28 @@ namespace O2un.Combat
 {
     public sealed class MeleeSwingSkill : ISkillDefinition
     {
-        private readonly float _cooldown;
-        private readonly float _range;
-        private readonly float _lifetime;
-        private readonly int _damage;
-        private readonly ActorType _targetTeam;
-        private readonly AttackHitboxView _prefab;
-        private readonly string _poolKey;
+        private readonly string _skillId;
+        private readonly SkillStats _stats;
         private readonly ITargetStrategy _targeting;
 
         public MeleeSwingSkill(
-            float cooldown,
-            float range,
-            float lifetime,
-            int damage,
-            ActorType targetTeam,
-            AttackHitboxView prefab,
-            string poolKey,
+            string skillId,
+            SkillStats stats,
             ITargetStrategy targeting)
         {
-            _cooldown = cooldown;
-            _range = range;
-            _lifetime = lifetime;
-            _damage = damage;
-            _targetTeam = targetTeam;
-            _prefab = prefab;
-            _poolKey = poolKey;
+            _skillId = skillId;
+            _stats = stats;
             _targeting = targeting;
         }
 
-        public float Cooldown => _cooldown;
+        public string SkillId => _skillId;
+        public int Level => _stats.Level;
+        public float Cooldown => _stats.Cooldown;
+
+        public bool ApplyUpgrade(SkillUpgradeData upgrade)
+        {
+            return _stats.ApplyUpgrade(upgrade);
+        }
 
         public void Activate(ISkillContext ctx)
         {
@@ -54,19 +46,19 @@ namespace O2un.Combat
 
             AttackRequest request = new()
             {
-                Prefab = _prefab,
-                PoolKey = _poolKey,
-                Origin = origin + rotation * Vector3.forward * (_range * 0.5f),
+                Prefab = _stats.HitboxPrefab,
+                PoolKey = _stats.PoolKey,
+                Origin = origin + rotation * Vector3.forward * (_stats.Range * 0.5f),
                 Rotation = rotation,
                 MoveDirection = Vector3.zero,
                 Speed = 0f,
                 FollowOwner = null,
-                Lifetime = _lifetime,
+                Lifetime = _stats.Lifetime,
                 ReHitInterval = 0f,
                 ReleaseOnHit = false,
                 Policy = HitPolicy.OncePerTarget,
-                Damage = _damage,
-                TargetTeam = _targetTeam,
+                Damage = _stats.Damage,
+                TargetTeam = _stats.TargetTeam,
             };
 
             ctx.Spawner.Spawn(request);

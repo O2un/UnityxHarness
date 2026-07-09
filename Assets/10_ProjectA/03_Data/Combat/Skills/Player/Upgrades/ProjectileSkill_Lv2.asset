@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbdeb8e572cc4105986eb3a53d0b87ad, type: 3}
+  m_Name: ProjectileSkill_Lv2
+  m_EditorClassIdentifier: 
+  _skill: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f802, type: 2}
+  _level: 2
+  _displayName: Projectile Lv2
+  _cooldownDelta: -0.2
+  _damageDelta: 5
+  _lifetimeDelta: 0
+  _speedDelta: 2
+  _rangeDelta: 0
+  _reHitIntervalDelta: 0

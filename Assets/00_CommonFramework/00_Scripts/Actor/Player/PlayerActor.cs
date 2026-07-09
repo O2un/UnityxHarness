@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace O2un.Actors
 {
-    public sealed class PlayerActor : Actor
+    public sealed class PlayerActor : Actor, IPlayerSkillReceiver
     {
         private readonly CharacterMover _mover;
         private readonly IMoveDirectionProvider _provider;
@@ -28,6 +28,26 @@ namespace O2un.Actors
 
         public void Init()
         {
+        }
+
+        public bool AcquireOrUpgradeSkill(ISkillDefinition definition)
+        {
+            return _skills.AcquireOrUpgrade(definition);
+        }
+
+        public bool ApplySkillUpgrade(string skillId, SkillUpgradeData upgrade)
+        {
+            return _skills.ApplyUpgrade(skillId, upgrade);
+        }
+
+        public int GetSkillLevel(string skillId)
+        {
+            return _skills.GetSkillLevel(skillId);
+        }
+
+        public bool HasSkill(string skillId)
+        {
+            return _skills.HasSkill(skillId);
         }
 
         public override void Tick(float dt)

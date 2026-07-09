@@ -10,13 +10,8 @@ namespace O2un.Combat
         public override ISkillDefinition Build()
         {
             return new AuraFieldSkill(
-                _cooldown,
-                _lifetime,
-                _reHitInterval,
-                _damage,
-                _targetTeam,
-                _hitboxPrefab,
-                PoolKey,
+                _skillId,
+                BuildStats(reHitInterval: _reHitInterval),
                 new SelfTargetStrategy());
         }
     }

@@ -10,13 +10,8 @@ namespace O2un.Combat
         public override ISkillDefinition Build()
         {
             return new ProjectileSkill(
-                _cooldown,
-                _speed,
-                _lifetime,
-                _damage,
-                _targetTeam,
-                _hitboxPrefab,
-                PoolKey,
+                _skillId,
+                BuildStats(speed: _speed),
                 new NearestEnemyStrategy());
         }
     }
