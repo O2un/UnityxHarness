@@ -4,6 +4,18 @@ using UnityEngine;
 
 namespace O2un.Manager
 {
+    public enum SpawnPlacement
+    {
+        Fixed,
+        PlayerRadius,
+    }
+
+    public enum SpawnTiming
+    {
+        Burst,
+        NormalSpread,
+    }
+
     [Serializable]
     public struct WaveEntry
     {
@@ -11,6 +23,13 @@ namespace O2un.Manager
         public float SpawnTime;
         public int Count;
         public Vector3 Position;
+
+        public SpawnPlacement Placement;
+        public float MinRadius;
+        public float MaxRadius;
+
+        public SpawnTiming Timing;
+        public float EndTime;
     }
 
     [CreateAssetMenu(fileName = "WaveData", menuName = "O2un/Enemy/WaveData")]

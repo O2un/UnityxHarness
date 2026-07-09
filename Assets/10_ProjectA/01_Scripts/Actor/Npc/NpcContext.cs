@@ -51,10 +51,14 @@ namespace O2un.Actors
 
             _health.OnDeath.Subscribe(_ => OnDeath()).AddTo(_disposables);
 
-            _enemyContext = GetComponent<EnemyContext>();
+            _enemyContext = GetComponentInParent<EnemyContext>(true);
             if (null != _enemyContext)
             {
                 _enemyContext.SetLifecycleCallbacks(_health.ResetFull, null);
+            }
+            else
+            {
+                Debug.LogWarning($"[NpcContext] '{name}'에서 EnemyContext를 찾지 못해 풀 재사용 시 체력이 리셋되지 않습니다.");
             }
 
             _attackSkills = BuildAttackSkills();

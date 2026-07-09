@@ -15,9 +15,19 @@ MonoBehaviour:
   _waves:
   - AddressableKey: Enemy_Slime
     SpawnTime: 1
-    Count: 3
-    Position: {x: 0, y: 0, z: 5}
+    Count: 8
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 6
   - AddressableKey: Enemy_Slime
-    SpawnTime: 2
-    Count: 2
-    Position: {x: 3, y: 0, z: 0}
+    SpawnTime: 3
+    Count: 5
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 6
+    MaxRadius: 10
+    Timing: 0
+    EndTime: 0
