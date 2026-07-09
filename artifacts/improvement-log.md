@@ -4,47 +4,53 @@
 
 ---
 
-## 2026-07-08 · 스폰 시스템 확장(도넛 랜덤 + 정규분포 시간분산) + 풀 체력 리셋 버그
+## 2026-07-09 · ExperienceSystem(PRD 2 · 경험치 누적·레벨업) 구현
 
 ### 무엇을 했나
-- `artifacts/04-user-feedback.md` 피드백 3건 적용. 배치(게이트 A) = **00_CommonFramework**(스폰 시스템이 이미 공통), 정규분포 σ=(end-start)/6 자동(사용자 확정).
-- **R1 버그**: `NpcContext.Build()`의 `GetComponentInParent<EnemyContext>()` → `GetComponentInParent<EnemyContext>(true)`(includeInactive) + null 경고 로그.
-- **R2 도넛 스폰**(신규): `WaveEntry`에 `SpawnPlacement`(Fixed/PlayerRadius)+MinRadius/MaxRadius. 좌표는 런타임에 `IActorQuery.Player` 기준 해석. 순수 `AnnulusSampler`(면적균등 √lerp).
-- **R3 정규분포 시간분산**(신규): `WaveEntry`에 `SpawnTiming`(Burst/NormalSpread)+EndTime. `WaveModule`이 생성 시 타임라인 사전 전개(개체별 시각=clamp(Gaussian(μ,σ),start,end) 후 정렬), `GetSpawnsAt` 커서 전진. 순수 `GaussianSampler`(Box-Muller, seed 옵션).
-- 파일: (신규) `Manager/EnemySpawner/GaussianSampler.cs`·`AnnulusSampler.cs`. (수정) `WaveDataSO.cs`(enum 2종+WaveEntry 필드)·`SpawnRequest.cs`(배치 필드+FromEntry/Fixed 팩토리)·`WaveModule.cs`(타임라인 전개)·`EnemySpawnManager.cs`(IActorQuery 주입+ResolvePosition)·`NpcContext.cs`(R1).
+- `docs/requirements/experience-system.md`(4 PRD 분해 중 2건째) 구현. 경험치 루프 가운데 — PRD 1(`ItemDrop`, 이미 커밋됨)의 `IExpGainedSource.OnGained` 계약을 입력으로 받아 누적·레벨판정하고, `LevelUpEvent`를 결과로 발행.
+- scope-gate 판정: 한 번에 진행(단일 Module 경계, 신규 파일 3~4개 수준).
+- 신규 파일 (전부 `Assets/10_ProjectA/01_Scripts/Progression/Experience/`, 네임스페이스 `O2un.Progression`):
+  - `ExperienceModule` — 순수 C#(`new` 가능), `IExperienceReader`+`IExperienceWriter`+`IDisposable`. 생성자로 `AnimationCurve`만 받아 `.Evaluate()`만 호출(SO 자체는 미보유). `Gain(amount)`이 while 루프로 초과분 이월하며 레벨마다 `LevelUpEvent` 1회씩 발행. `RequiredExp(level) = Math.Max(1, Mathf.RoundToInt(curve.Evaluate(level)))`로 무한루프 가드.
+  - `IExperienceReader`/`IExperienceWriter` — `PlayerDataStore` 선례를 따른 읽기/쓰기 분리.
+  - `LevelUpEvent` — readonly struct, `NewLevel` 필드만(YAGNI, PreviousLevel은 자명해서 제외).
+  - `ExperienceDataSO` — `AnimationCurve` 인스펙터 편집 지점(신규 SO, `ItemDropDataSO`/`WaveDataSO` 패턴).
+  - `ExperienceGainContext` — `IInitializable`, `IExpGainedSource.OnGained` 구독 → `IExperienceWriter.Gain` 호출. `ExperienceModule`이 아이템 도메인을 직접 참조하지 않도록 배선만 전담(PRD 본문엔 없는 신규 클래스, 게이트A에서 승인).
+- 수정: `GameSceneScope.cs`에 `_experienceData` 필드 + 3개 DI 등록 라인 추가.
 
 ### 사용자 승인 (게이트 A)
-- 배치: 00_CommonFramework 확정. 정규분포 퍼짐: 자동 (end-start)/6.
+- 배치: `10_ProjectA` 전용, 신규 폴더 `Progression/Experience` 확정.
+- `ExperienceGainContext` 신설 승인(`ItemDropContext`와 유사한 배선 전용 엔트리포인트).
+- `ExperienceDataSO` 신설 승인(raw 필드 대신 SO 패턴 유지).
+- `IExperienceReader`/`IExperienceWriter` 분리 유지 승인.
+
+### 게이트 B (에셋·씬 배선, 승인 후 unity-ai-operator 수행)
+- `Assets/10_ProjectA/03_Data/ExperienceData.asset` 신규 생성(레벨1→10, 레벨5→50, 레벨10→150, ClampForever 우상향 커브 — 무한 레벨업 가정 보장).
+- `Assets/Scenes/GameScene.unity`의 `GameSceneScope._experienceData`에 할당, 씬 저장.
 
 ### 4단계 게이트
-- ①컴파일 ✅ (초기 CS0104 `Random` 모호성 1건 → `System.Random` 한정 수정 후 error 0).
-- ②런타임 ✅ Play 콘솔 error 0.
-- ③기능 ✅ **정량 실측**(execute_code):
-  - R1: 수정 후 5마리 enemyCtx=ok, 죽으면 active=False(반납 정상화), 재사용시 HP 0/30 dead=True → 30/30 dead=False.
-  - R2: 반경 3.009~6.997(3~7 링 내 전량)·y평면.
-  - R3: 500개 전량 [10,20]내·중앙 밀집·평균 대칭. 회귀 Burst t5→3 정상.
+- ①컴파일 ✅ (초기 통과 + 리뷰 반영 후 재검증까지 2회 모두 에러 0).
+- ②런타임 ✅ Play 콘솔 에러 0, `_experienceData` null NRE 없음.
+- ③기능 ✅ **정량 실측**(unity-ai-operator, 임시 `IStartable` 러너로 실측 후 완전 제거·원복):
+  - `Gain(5)`: exp 0→5, 레벨업 없음(필요치 10 미만) — 정상.
+  - `Gain(200)`: exp 205 누적 → 레벨 1→6, 5단계 동시 상승, 초과분 55 이월, `OnLevelUp` 정확히 5회 발행 — 다중 레벨업 계약 충족.
+  - `IExpGainedPublisher.Publish(7)`: `ExpGainedChannel → ExperienceGainContext → ExperienceModule.Gain` 배선 통합 확인(exp 55→62, 필요치 60 초과로 재차 레벨업) — PRD1↔PRD2 하류 계약 연결 검증 완료.
+  - 임시 테스트 코드는 컴파일 클린 상태로 완전 원복 확인.
 - ④사용자 ⏳ (viewer).
 
-### R1 근본 원인 (핵심 교훈)
-- 증상 "재사용 시 체력 안 참"의 실제 = **죽은 적이 풀 반납조차 못 하고 active=True/HP0으로 방치**.
-- 원인: `GetComponentInParent<T>()`/`GetComponentInChildren<T>()`는 **기본적으로 비활성 오브젝트를 건너뜀**. 풀 생성/주입 시점 오브젝트가 비활성이라 EnemyContext 미검출 → `_enemyContext=null` → ResetFull 미배선 + Release() no-op.
-  - (원래 `GetComponent<T>()`는 비활성 미스킵이라 self는 찾았을 것이나 계층은 못 봄. 견고성 위해 `GetComponentInParent<T>(true)`로 둘 다 커버.)
-- **하네스 교훈: 풀링 대상에서 컴포넌트 조회는 반드시 includeInactive 오버로드**(`GetComponentInParent/Children(true)`). 오브젝트가 비활성 상태로 생성·주입될 수 있음.
+### 리뷰 (code-reviewer)
+- blocker 0 / major 1(반영 완료) / minor 2(비차단, 기존 관례 그대로라 미반영).
+- **Major(반영 완료)**: `ExperienceModule.cs`가 Reactive 필드(`_currentExp`/`_currentLevel`/`_onLevelUp`)를 생성자 위에 선언 — convention §5(생성자 위=DI 받은 것만, 생성자 아래=Reactive) 위반. 필드 순서 재배치로 수정, 재컴파일 검증 통과.
+- **Minor(비차단, 보류)**: (1) `while` 조건과 루프 본문에서 `RequiredExp` 중복 호출(설계 의사코드와 동일 구조, 성능상 미미). (2) `GameSceneScope._experienceData` null 가드 없음(기존 `_itemDropData`/`_waveData`도 동일 패턴이라 이번 변경이 새로 만든 문제 아님).
+- 설계(`01-design.md`)-구현 매칭: 클래스 6개 전부 시그니처·책임 일치, DI 등록 코드도 설계 §4 초안과 완전 동일. 이탈 없음.
 
-### 게이트 B + 추가 버그(도넛이 원점 한 점에 스폰) — 근본 원인 규명·수정
-- `WaveData_Test.asset` 2엔트리를 PlayerRadius로 구성(엔트리1 min5/max9·NormalSpread[1~6s]·Count8, 엔트리2 min6/max10·Burst@3s·Count5).
-- **사용자 재보고("안 퍼진다, 한 곳(원점)에서 나온다")** — 실측으로 파고들어 진짜 원인 발견:
-  - ResolvePosition은 정상(로그 resolved=플레이어 주위 링, afterAssign=링). 그러나 프레임 경과 후 실제 transform은 전부 **원점**.
-  - **근본 원인 = CharacterController 텔레포트 버그**: 적 루트에 CC가 있고, CC가 **활성인 채** `transform.position`을 대입하면 Transform만 잠깐 바뀌고 CC 내부 위치는 풀 리셋값(원점) 그대로 → 다음 `Controller.Move()`가 transform을 원점으로 **스냅백**. (기존 Fixed 스폰도 항상 원점이었으나 적이 원점≈플레이어라 무증상이었음.)
-- **수정**: `EnemySpawnManager`에 `Teleport(transform, pos)` — CC 있으면 `enabled=false → position 대입 → enabled=true`(CC 내부 위치까지 동기화). 플레이어 이동에서 쓰던 것과 동일 패턴.
-- **재검증**: 플레이어를 (50,0,50)으로 이동 후 스폰 11마리 전부 dPlayer 3.5~8.7·**atOrigin 0**, 위치 x43~55/z43~57로 사방 분산 → 링 유지 확증(원점 아님).
-- **하네스 교훈**: 풀에서 꺼낸 CharacterController 오브젝트의 스폰 위치는 `transform.position` 직접 대입 금지 — CC를 껐다 켜야 내부 위치가 동기화됨. (안 그러면 첫 Move에서 원점 스냅백.)
+### 하네스 교훈
+- **AnimationCurve를 Module에 값으로만 주입하는 패턴**: `ScriptableObject` 자체가 아니라 `.RequiredExpCurve` 값만 생성자에 전달하면, Module이 Unity Object 수명(에셋 로드/언로드)에 결합되지 않고 `new`로 완전히 독립적인 유닛 테스트가 가능해진다. "Unity API 의존 금지"의 실질 기준은 "GameObject/Component/Collider/Time처럼 라이브 씬 상태에 결합됐는가"이지 "UnityEngine 네임스페이스를 한 글자도 안 쓰는가"가 아니다 — `AnimationCurve`/`Vector3`/`Mathf` 같은 값 타입은 예외.
+- **PRD가 명시하지 않은 배선 클래스(Context)가 필요할 수 있다**: PRD는 도메인 로직(`ExperienceModule`)만 명시했지만, 상류 계약(`IExpGainedSource`)과 연결하려면 별도 엔트리포인트가 필요했다. 설계 단계에서 이런 "PRD엔 없지만 배선을 위해 필요한 신규 클래스"를 명시적으로 게이트 A 승인 대상에 포함시켜야 사용자가 범위 확장을 인지할 수 있다.
 
 ### 남은 개선/후속 (비차단)
-2. **유닛테스트**: AnnulusSampler(반경 경계)·GaussianSampler·WaveModule(타임라인 전개·회귀) EditMode 테스트로 자동화(현재 execute_code 1회 실측).
-3. **RNG 시드**: WaveModule/AnnulusSampler는 무시드(런타임 랜덤). 재현 필요 시 시드 노출 여지.
-4. (이전 실행 이월) AttackSystem M1 설계문서 §3.1 정정, HitboxModule 풀 재사용, PlayerActor debt 정리.
+- Minor 2건(위 참고)은 필요 시 후속 정리.
+- 유닛테스트: `ExperienceModule`은 완전한 순수 C#이라 EditMode 테스트로 다중 레벨업·이월·커브 엣지케이스(0/음수 반환) 자동화 가능 — 아직 미작성.
+- PRD 3(`LevelUpSelection`)이 아직 없어 `LevelUpEvent` 실사용 검증(레벨업 선택 UI, 일시정지)은 못함. `IExperienceReader.OnLevelUp`을 그대로 구독하면 된다.
 
 ### 다음 테스트 (다음 실행 입력)
-- game-plan 순서상 다음은 **경험치·레벨업**(처치 시 XP 지급·레벨업 강화). `EnemyHealth.OnDeath`를 XP 훅으로 재사용 가능.
-- 코드 리뷰(code-reviewer)는 이번 스폰 확장분(WaveModule 타임라인·샘플러 순수성·EnemySpawnManager if 분기) 미진행 → 후속 점진 검토 여지.
+- game-plan/PRD 순서상 다음은 **PRD 3 `LevelUpSelection`**(레벨업 시 선택지 UI + 게임 일시정지 + 능력 적용). `docs/spec/LevelUpSelection.md`가 이미 준비돼 있다. 입력은 이번 `IExperienceReader.OnLevelUp`.

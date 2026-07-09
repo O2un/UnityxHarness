@@ -316,8 +316,21 @@ main() {
 
   init_main_log "$state_dir"
 
-  # 대화(세션)당 1회만 실행: 매 턴마다 브라우저 탭을 새로 여는 것을 막는다.
-  # 같은 CLAUDE_SESSION_ID면 스킵. 강제로 다시 열려면 FORCE_REOPEN_VIEWER=1
+  # 검증 완료 감지: unity-validate.sh가 이번 사이클에 실제로 검증을 수행했을 때만
+  # validation-done 마커를 남긴다(성공/실패/수동 모드 모두 포함). 마커가 없으면
+  # 아직 검증이 끝나지 않았거나 이번 Stop에서 검증이 요청되지 않은 것이므로 뷰어를 열지 않는다.
+  # 세션 게이트보다 먼저 확인·소비해야, 새 세션의 첫 Stop이 이전 세션에 남은
+  # stale 마커를 잘못 소비하는 일이 없다.
+  local validation_done_marker="$state_dir/validation-done"
+  if [ ! -f "$validation_done_marker" ]; then
+    write_log "No validation-done marker. Validation hasn't completed this cycle. Skipping viewer."
+    return 0
+  fi
+  rm -f "$validation_done_marker" 2>/dev/null || true
+
+  # 대화(세션)당 1회만 브라우저 탭을 새로 연다. 같은 CLAUDE_SESSION_ID면 탭 오픈은
+  # 스킵하되(서버는 이미 떠 있을 가능성이 높음), 위 마커는 이미 소비했으므로 다음
+  # 검증 전까지 다시 스킵 상태로 돌아간다. 강제로 다시 열려면 FORCE_REOPEN_VIEWER=1
   local session_flag_file="$state_dir/viewer-session.txt"
   if [ -n "${CLAUDE_SESSION_ID:-}" ] && [ "${FORCE_REOPEN_VIEWER:-0}" != "1" ]; then
     local prev_session=""
@@ -327,21 +340,6 @@ main() {
       return 0
     fi
     printf '%s\n' "$CLAUDE_SESSION_ID" > "$session_flag_file" 2>/dev/null || true
-  fi
-
-  # .cs 변경 감지: last-clear-ts 이후 변경된 파일이 없으면 뷰어 스킵
-  local ts_file="$state_dir/last-clear-ts.txt"
-  if [ -f "$ts_file" ]; then
-    local last_clear
-    last_clear="$(head -n 1 "$ts_file" 2>/dev/null | tr -d '[:space:]')"
-    if [ -n "$last_clear" ]; then
-      local changed
-      changed="$(find "$project_dir/Assets" -name '*.cs' -newer "$ts_file" 2>/dev/null | head -n 1)"
-      if [ -z "$changed" ]; then
-        write_log "No .cs changes since last prompt. Skipping viewer."
-        return 0
-      fi
-    fi
   fi
 
   local pid_file="$state_dir/server.pid"

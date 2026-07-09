@@ -3,6 +3,7 @@ using O2un.Camera;
 using O2un.Combat;
 using O2un.DataStore;
 using O2un.Manager;
+using O2un.Progression;
 using Unity.Cinemachine;
 using UnityEngine;
 using VContainer;
@@ -16,6 +17,7 @@ namespace O2un.DI
         [SerializeField] private CinemachineCamera _cinematicCamera;
         [SerializeField] private WaveDataSO _waveData;
         [SerializeField] private ItemDropDataSO _itemDropData;
+        [SerializeField] private ExperienceDataSO _experienceData;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -47,6 +49,12 @@ namespace O2un.DI
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();
             builder.Register<ExpGainedChannel>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.RegisterEntryPoint<ItemDropContext>();
+
+            builder.RegisterInstance(_experienceData);
+            builder.Register<ExperienceModule>(Lifetime.Singleton)
+                    .WithParameter("requiredExpCurve", _experienceData.RequiredExpCurve)
+                    .AsImplementedInterfaces();
+            builder.RegisterEntryPoint<ExperienceGainContext>();
         }
     }
 }

@@ -405,6 +405,7 @@ MonoBehaviour:
   _cinematicCamera: {fileID: 1878799329}
   _waveData: {fileID: 11400000, guid: 6c9762e9af92b447f87f9e5c176a16f3, type: 2}
   _itemDropData: {fileID: 11400000, guid: 7fa9d53dd683345b0817d07b309b9074, type: 2}
+  _experienceData: {fileID: 11400000, guid: a5d98c30b1ff045c9bb8616f36ce162e, type: 2}
 --- !u!4 &409293184
 Transform:
   m_ObjectHideFlags: 0

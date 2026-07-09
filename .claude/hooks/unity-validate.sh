@@ -96,6 +96,9 @@ fi
 stamp_last_run() {
     mkdir -p "$HOOK_DIR/.viewer-state" 2>/dev/null || true
     touch "$LAST_RUN_FILE" 2>/dev/null || true
+    # open-viewer.sh가 소비하는 신호: 검증이 이번 사이클에 실제로 수행됐음을 알린다.
+    # (성공·실패·수동 모드 모두 write_validation을 거치므로 여기서 한 번에 처리)
+    touch "$HOOK_DIR/.viewer-state/validation-done" 2>/dev/null || true
 }
 
 cleanup() {
