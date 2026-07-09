@@ -59,10 +59,10 @@ namespace O2un.Actors
             Vector3 velocity = _mover.Velocity.CurrentValue;
             View.Move(velocity);
 
-            Transform t = View.transform;
-            Vector3 pos = t.position;
-            pos.y = 0f;
-            t.position = pos;
+            // Transform t = View.transform;
+            // Vector3 pos = t.position;
+            // pos.y = 0f;
+            // t.position = pos;
 
             if (velocity.sqrMagnitude > 0f)
             {

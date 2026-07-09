@@ -23,6 +23,7 @@ effort: low
 ## 출력
 - 검증·구성 결과를 `artifacts/`에 기록한다(예: `artifacts/02-validation.md` 보조 노트, `artifacts/{phase}-unity-mcp-result.md`).
 - `Assets/` 아래 `.cs`를 만들거나 수정하면 `gate3-test.json`도 함께 갱신한다.
+- **Stop hook의 자동 검증(①~③ 게이트)은 트리거 파일 기반이다.** 이번 작업분(스크립트·씬 변경)에 대해 지금 컴파일·Play·콘솔 검증을 돌려도 되는 상태라고 판단되면, 빈 파일 `artifacts/.viewer-state/validate-requested`를 생성한다(`touch` 또는 Write로 빈 내용). 이 마커가 있을 때만 다음 Stop에서 `unity-validate.sh`가 실행되고, 실행 후 스스로 마커를 지운다. 마커를 만들지 않으면 검증은 스킵된다 — 아직 검증할 준비가 안 된 중간 작업 턴에서는 만들지 않는다.
 
 ## 작업 방식 (위임 절차)
 1. 변경 요약을 만든다: 대상 오브젝트/파일, 사용할 도구, 실행 후 확인할 것, 실패 시 대응.

@@ -15,6 +15,7 @@ namespace O2un.DI
         [SerializeField] private CinemachineCamera _gamePlay;
         [SerializeField] private CinemachineCamera _cinematicCamera;
         [SerializeField] private WaveDataSO _waveData;
+        [SerializeField] private ItemDropDataSO _itemDropData;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -41,6 +42,11 @@ namespace O2un.DI
 
             builder.RegisterInstance(_waveData);
             builder.RegisterEntryPoint<EnemySpawnManager>();
+
+            builder.RegisterInstance(_itemDropData);
+            builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();
+            builder.Register<ExpGainedChannel>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterEntryPoint<ItemDropContext>();
         }
     }
 }

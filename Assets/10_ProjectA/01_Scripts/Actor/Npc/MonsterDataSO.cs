@@ -9,9 +9,11 @@ namespace O2un.Actors
         [SerializeField] private int _maxHp = 10;
         [SerializeField] private MoveStats _move;
         [SerializeField] private SkillDefinitionSO _attackSkill;
+        [SerializeField] private int _exp = 1;
 
         public int MaxHp => _maxHp;
         public MoveStats Move => _move;
         public SkillDefinitionSO AttackSkill => _attackSkill;
+        public int Exp => _exp;
     }
 }

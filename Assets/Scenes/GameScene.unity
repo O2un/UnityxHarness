@@ -283,8 +283,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3826835, y: 0, z: 0, w: 0.9238795}
-  m_LocalPosition: {x: 0, y: 10, z: -10}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5035291, z: -7.7685847}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -404,6 +404,7 @@ MonoBehaviour:
   _gamePlay: {fileID: 1119576508}
   _cinematicCamera: {fileID: 1878799329}
   _waveData: {fileID: 11400000, guid: 6c9762e9af92b447f87f9e5c176a16f3, type: 2}
+  _itemDropData: {fileID: 11400000, guid: 7fa9d53dd683345b0817d07b309b9074, type: 2}
 --- !u!4 &409293184
 Transform:
   m_ObjectHideFlags: 0

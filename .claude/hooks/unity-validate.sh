@@ -76,26 +76,20 @@ set_fail_count() {
     printf '%s\n' "$1" > "$FAIL_COUNT_FILE" 2>/dev/null || true
 }
 
-# ---- 새 작업 여부로 판단(세션/대화 식별자에 의존하지 않음): 마지막 검증 이후
-#      Assets/**/*.cs 또는 artifacts|docs/**/*.md(설계·기획 문서)가 바뀐 적이 없으면 스킵.
-#      단, stop_hook_active=true(우리 hook이 block해서 생긴 재시도)면 항상 재검증한다.
-#      강제로 다시 돌리려면 FORCE_REVALIDATE=1 로 실행 ----
+# ---- 수동 트리거 게이트: artifacts/.viewer-state/validate-requested 마커 파일이
+#      있을 때만 검증을 실행한다. 이 파일은 unity-ai-operator가 "이제 검증해도 되는
+#      상태"라고 판단했을 때, 또는 사람이 직접 만들어서 생성한다.
+#      단, stop_hook_active=true(우리 hook이 block해서 생긴 재시도)면 마커 없이도 항상 재검증한다.
+REQUEST_FILE="$ARTIFACT_DIR/.viewer-state/validate-requested"
 LAST_RUN_FILE="$HOOK_DIR/.viewer-state/last-validated-ts.txt"
 if [ "$STOP_HOOK_ACTIVE" = "true" ]; then
-    printf 'unity-validate: stop_hook_active=true (retry continuation). Skipping change-detection gate.\n' >&2
-elif [ -f "$LAST_RUN_FILE" ] && [ "${FORCE_REVALIDATE:-0}" != "1" ]; then
-    cs_changed="$(find "$PROJECT_DIR/Assets" -name '*.cs' -newer "$LAST_RUN_FILE" 2>/dev/null | head -1)"
-    doc_changed=""
-    for d in "$PROJECT_DIR/artifacts" "$PROJECT_DIR/docs"; do
-        [ -d "$d" ] || continue
-        found="$(find "$d" -name '*.md' -newer "$LAST_RUN_FILE" 2>/dev/null | head -1)"
-        [ -n "$found" ] && doc_changed="$found"
-    done
-    if [ -z "$cs_changed" ] && [ -z "$doc_changed" ]; then
-        printf 'unity-validate: no new .cs/.md changes since last validation. Skipping. Set FORCE_REVALIDATE=1 to force.\n' >&2
-        exit 0
-    fi
-    # 새 작업이 확인된 fresh 사이클이므로 이전 실패 카운트는 무관하다.
+    printf 'unity-validate: stop_hook_active=true (retry continuation). Skipping trigger-file gate.\n' >&2
+elif [ ! -f "$REQUEST_FILE" ]; then
+    printf 'unity-validate: no validate-requested marker at %s. Skipping. Create it (or ask unity-ai-operator to) to run validation.\n' "$REQUEST_FILE" >&2
+    exit 0
+else
+    rm -f "$REQUEST_FILE" 2>/dev/null || true
+    # 명시적으로 요청된 fresh 사이클이므로 이전 실패 카운트는 무관하다.
     set_fail_count 0
 fi
 

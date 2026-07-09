@@ -143,7 +143,8 @@ memory 파일을 작성할때 프로젝트 루트에 있는 Memory 폴더에도 
 단순한 C# 문법 질문이나 특정 파일 한 줄 수정 같은 단발성 편집은 그냥 처리합니다.
 
 ## 흐름 요약
-설계(unity-architect) → **[승인: 배치 위치 공통/프로젝트]** → 구현(gameplay-engineer) → 씬·검증(unity-ai-operator, **[승인: 씬·에셋]**) → 리뷰(code-reviewer). 검증은 4단계 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인)로, ①~③은 Stop hook이 자동 수행합니다.
+설계(unity-architect) → **[승인: 배치 위치 공통/프로젝트]** → 구현(gameplay-engineer) → 씬·검증(unity-ai-operator, **[승인: 씬·에셋]**) → 리뷰(code-reviewer). 검증은 4단계 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인)로, ①~③은 Stop hook이 수행합니다.
+  - Stop hook의 자동 검증은 **수동 트리거 방식**입니다: `artifacts/.viewer-state/validate-requested` 마커 파일이 있을 때만 실행되고, 실행 후 스스로 지워집니다. unity-ai-operator가 검증할 준비가 된 시점에 이 마커를 생성합니다. 마커가 없으면 Stop마다 즉시 스킵되어, 긴 작업 중 매 턴 컴파일·Play 검증이 도는 것을 방지합니다.
 
 - **MVP 코드 배치 위치는 오픈 퀘스천**입니다. 각 시스템을 `00_CommonFramework`(공통)로 둘지 `10_ProjectA`(프로젝트 전용)로 둘지 구현 직전 사용자에게 확인하고, 임의로 정하지 않습니다.
 

@@ -23,13 +23,15 @@ namespace O2un.Actors
         private IActorRegistry _registry;
         private IActorQuery _query;
         private IAttackSpawner _spawner;
+        private IEnemyKillEvent _killEvent;
 
         [Inject]
-        public void Construct(IActorRegistry registry, IActorQuery query, IAttackSpawner spawner)
+        public void Construct(IActorRegistry registry, IActorQuery query, IAttackSpawner spawner, IEnemyKillEvent killEvent)
         {
             _registry = registry;
             _query = query;
             _spawner = spawner;
+            _killEvent = killEvent;
             Build();
         }
 
@@ -78,7 +80,11 @@ namespace O2un.Actors
 
         private void OnDeath()
         {
+            Vector3 position = transform.position;
+            int exp = null != _monsterData ? _monsterData.Exp : 0;
+
             _enemyContext?.Release();
+            _killEvent?.Publish(new EnemyKilledInfo(position, exp));
         }
 
         private void Update()
