@@ -13,6 +13,7 @@ skills:
 - 요구할 시스템을 Manager / Module / Service 로 나누고 각 클래스의 책임을 정의한다.
 - 의존 방향(Manager → Module, Manager →(interface)→ Service)을 지키는 인터페이스 경계를 정한다.
 - VContainer DI 바인딩 위치를 정한다: 프로그램 전 구간 유지 = `ProjectLifetimeScope`, 씬/모드 한정 = 해당 SceneScope(`GameSceneScope` 등, `CommonLifetimeScope` 상속).
+- DI 등록 방식도 함께 정한다: 여러 소비처가 타입으로 받거나 씬 autoInject 메서드 주입이면 `RegisterInstance`, 소비처가 하나뿐이고 재사용 가능성이 없으면 그 등록의 `WithParameter(...)` 파라미터 주입을 계획한다.
 - 기존 `00_CommonFramework` 시스템(InputManager, CameraManager, GameManager, ScoreManager, InventoryManager, PlayerActor/Mover/View 등)과의 연결·재사용 지점을 짚는다.
 
 ## 입력

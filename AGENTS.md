@@ -67,6 +67,7 @@ Assets/
   - MonoBehaviour 단위 객체 소속 (예: 캐릭터·적처럼 개별 오브젝트가 있을 때) — MonoBehaviour가 필드로 소유하고 로직 위임
   - 가능하면 게임 로직을 직접 포함하지 않고 Module에 위임. 단, 기능이 1~2개로 단순하면 Module로 굳이 분리하지 않아도 됨
 - **Module**: 순수 C# 클래스. Unity API에 의존하지 않음. `new`로 생성 가능해야 함
+  - 여기서 "Unity API 의존"이란 `MonoBehaviour` 상속, `Transform`/`GameObject`/컴포넌트 조작, 씬 탐색 같은 **씬·오브젝트 조작**을 말한다. `Mathf`·`Random` 같은 순수 정적 유틸이나 `AnimationCurve` 같은 **데이터 타입**은 값으로 받아 쓰는 것이므로 Module에서 사용해도 된다 (위반 아님, 리뷰에서 지적하지 말 것)
 - **Service**: 파일·씬·에셋 등 외부 시스템 접점. 반드시 인터페이스로 추상화
 
 ### Module 분리 판단 기준
@@ -97,6 +98,12 @@ Manager → (interface를 통해) Service
 | **UniTask** | 파일 I/O, 씬 로딩, `UniTask.Delay` 시간 대기 | `Task`, `Thread`, 코루틴 혼용 |
 
 허용 범위 밖의 기능이 필요하다고 판단되면 코드 작성을 **멈추고** 사람에게 먼저 확인하세요.
+
+### DI 등록 방식: RegisterInstance vs WithParameter
+
+- 어떤 값(예: ScriptableObject)을 **여러 곳에서 타입으로 주입**받거나, **씬 autoInject 대상의 메서드 주입**처럼 컨테이너가 타입으로 자동 해소해야 한다면 `RegisterInstance`로 컨테이너에 등록한다.
+- 반대로 **소비처가 하나뿐이고 다른 데서 쓰일 가능성이 없다면**, 전역 `RegisterInstance` 대신 그 등록의 `WithParameter(...)`로 값을 직접 넘기는 **파라미터 주입**을 쓴다. 의존 범위를 불필요하게 넓히지 않기 위함이다.
+- 아무도 주입받지 않는 `RegisterInstance`(죽은 등록)는 제거한다. 특히 `WithParameter`로 필요한 값을 이미 다 넘기면서 동시에 원본 SO를 `RegisterInstance`하는 중복을 주의한다.
 
 ---
 

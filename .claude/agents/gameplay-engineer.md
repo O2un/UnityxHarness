@@ -15,6 +15,8 @@ skills:
 - `artifacts/01-design.md`의 클래스 구조를 실제 스크립트로 구현한다.
 - convention.md의 네이밍·if 평가값 앞·캐싱·DI 클래스 작성 순서를 지킨다.
 - 새 전역 Manager는 `add-global-manager`, Manager 산하 순수 로직은 `add-module` Skill 절차를 따른다.
+- Module의 "Unity API 비의존"은 `MonoBehaviour`/`Transform`/컴포넌트·씬 조작을 피하라는 뜻이다. `Mathf`·`Random`·`AnimationCurve` 같은 순수 유틸·데이터 타입은 값으로 받아 써도 된다.
+- DI 등록: 소비처가 하나뿐이고 재사용 가능성이 없으면 `RegisterInstance`+생성자 주입 대신 그 등록의 `WithParameter(...)` 파라미터 주입을 쓴다. 여러 소비처가 타입으로 받거나 씬 autoInject 메서드 주입이면 `RegisterInstance`를 유지한다. `WithParameter`로 값을 다 넘기면서 원본 SO를 `RegisterInstance`하는 죽은 등록은 만들지 않는다.
 
 ## 입력
 - `artifacts/01-design.md` (구현할 설계)
