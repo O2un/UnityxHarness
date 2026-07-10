@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f45726774ed44daa0a0dc4130b1afd, type: 3}
+  m_Name: ArmoredMeleeEnemyData
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.MonsterDataSO
+  _maxHp: 60
+  _move:
+    _moveSpeed: 1.5
+    _rotationSpeed: 360
+  _attackSkill: {fileID: 11400000, guid: 6b9f5d3e8a2c47f1b0d6e4c9a7f12345, type: 2}
+  _exp: 20

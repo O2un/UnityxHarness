@@ -14,6 +14,8 @@ namespace O2un.Combat
         public Vector3 MoveDirection;
         public float Speed;
         public Transform FollowOwner;
+        public Vector3 FollowOffset;
+        public Quaternion FollowRotation;
 
         public float Lifetime;
         public float ReHitInterval;

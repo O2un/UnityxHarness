@@ -91,7 +91,7 @@ namespace O2un.Manager
             }
 
             controller.enabled = false;
-            target.position = position;
+            target.SetPositionAndRotation(position, Quaternion.identity);
             controller.enabled = true;
         }
 

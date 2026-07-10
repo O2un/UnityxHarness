@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f895a60f85fb7434e9d5d2dad2123a6b
+    m_Address: Enemy_ArmoredMelee
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1592cf5776b48477b838d09d7dfa0450, type: 2}
   m_SchemaSet:

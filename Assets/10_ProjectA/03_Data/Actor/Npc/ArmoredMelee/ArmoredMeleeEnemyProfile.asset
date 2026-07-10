@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf3a4d5e6c7b489abcdef0123456789a, type: 3}
+  m_Name: ArmoredMeleeEnemyProfile
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.ArmoredMeleeEnemyProfile
+  _seekState: {fileID: 11400000, guid: 8b3d7c1e2a4f456789abcdef0123456a, type: 2}
+  _meleeAttackState: {fileID: 11400000, guid: 3207a336368c47449d7d97d2595dbddd, type: 2}
+  _enterMeleeCondition: {fileID: 11400000, guid: 632011f9b9ea4a14b1907823ff4a25a5, type: 2}
+  _leaveMeleeCondition: {fileID: 11400000, guid: 6f1b5a9c0d2e4a3789abcdef0123456d, type: 2}
