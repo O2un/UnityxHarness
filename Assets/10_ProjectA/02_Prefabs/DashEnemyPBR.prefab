@@ -437,7 +437,7 @@ GameObject:
   - component: {fileID: 7787701572749896016}
   - component: {fileID: 2639609634784757700}
   m_Layer: 11
-  m_Name: SlimePBR
+  m_Name: DashEnemyPBR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -548,8 +548,8 @@ MonoBehaviour:
     _moveSpeed: 3
     _rotationSpeed: 720
   _view: {fileID: 6988593899151641125}
-  _profile: {fileID: 11400000, guid: 9a735bcfe4588408ca2cd82655075bc4, type: 2}
-  _monsterData: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f805, type: 2}
+  _profile: {fileID: 11400000, guid: 21da637e8464b40f48c3e43229db3a1f, type: 2}
+  _monsterData: {fileID: 11400000, guid: 4e4325babcec34e1db35852ed3eb92e9, type: 2}
   _damageable: {fileID: 2639609634784757700}
 --- !u!114 &2639609634784757700
 MonoBehaviour:

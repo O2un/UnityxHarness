@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a1c97cec28e94f53ac9ee04160fdd8e, type: 3}
-  m_Name: ChaseAIProfile_Slime
-  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.ChaseAIProfile
+  m_Script: {fileID: 11500000, guid: c698af506765a407d86e3bb86e6494b2, type: 3}
+  m_Name: DistanceWithinRangeConditionSO
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.DistanceWithinRangeConditionSO
+  _range: 4

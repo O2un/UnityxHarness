@@ -10,7 +10,7 @@ namespace O2un.Actors
     {
         [SerializeField] private MoveStats _stats;
         [SerializeField] private ActorView _view;
-        [SerializeField] private ChaseAIProfile _profile;
+        [SerializeField] private EnemyAIProfileSO _profile;
         [SerializeField] private MonsterDataSO _monsterData;
         [SerializeField] private DamageableView _damageable;
 

@@ -30,6 +30,7 @@ namespace O2un.Actors
             _mover = mover;
             _query = query;
             _health = health;
+            _blackboard.Transform = view.transform;
         }
 
         public override void Tick(float dt)
@@ -57,6 +58,7 @@ namespace O2un.Actors
         private void ApplyMovement()
         {
             Vector3 velocity = _mover.Velocity.CurrentValue;
+            View.SetCollisionDetection(_mover.CollisionEnabled);
             View.Move(velocity);
 
             // Transform t = View.transform;

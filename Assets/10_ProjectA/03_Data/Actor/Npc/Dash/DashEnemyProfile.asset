@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17f6bd62f374248f8a6fae3d2da4793b, type: 3}
+  m_Name: DashEnemyProfile
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Actors.DashEnemyProfile
+  _seekState: {fileID: 11400000, guid: 4e6ebf9554ae24a4aa6cc236279909f6, type: 2}
+  _windupState: {fileID: 11400000, guid: 20e781d36fc77455a9cf13f31768f88c, type: 2}
+  _dashState: {fileID: 11400000, guid: 349ca9b4b65c9405bb2ab06f09b24f73, type: 2}
+  _recoverState: {fileID: 11400000, guid: 571d484fc2e6c4b269b42b60b84f2ec5, type: 2}
+  _dashTrigger: {fileID: 11400000, guid: 488e675b4b09f4646b3abae5f6dbee89, type: 2}
