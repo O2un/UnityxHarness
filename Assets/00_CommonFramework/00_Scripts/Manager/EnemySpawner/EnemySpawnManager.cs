@@ -32,6 +32,12 @@ namespace O2un.Manager
 
         public async UniTask StartAsync(CancellationToken cancellation = default)
         {
+            int enemyLayer = LayerMask.NameToLayer("Enemy");
+            if (0 <= enemyLayer)
+            {
+                Physics.IgnoreLayerCollision(enemyLayer, enemyLayer, true);
+            }
+
             foreach (string key in _waveModule.RequiredKeys)
             {
                 GameObject prefab = await _assetService.LoadAsync<GameObject>(key);
