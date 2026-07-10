@@ -1,0 +1,18 @@
+{
+  "agents": {
+    "unity-architect": {
+      "backend": "internal"
+    },
+    "gameplay-engineer": {
+      "backend": "internal"
+    },
+    "code-reviewer": {
+      "backend": "external",
+      "command": "/codex:review --background",
+      "reason": "review_backend=codex 설정: code-reviewer 대신 /codex:rescue --background 를 실행하고, 결과를 /codex:result 로 받아 artifacts/03-review.md 에 기록하세요."
+    },
+    "unity-ai-operator": {
+      "backend": "internal"
+    }
+  }
+}
