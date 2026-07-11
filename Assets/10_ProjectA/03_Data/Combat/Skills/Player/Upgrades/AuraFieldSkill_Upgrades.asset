@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbdeb8e572cc4105986eb3a53d0b87ad, type: 3}
+  m_Name: AuraFieldSkill_Upgrades
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.Combat.SkillUpgradeSO
+  _skill: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f803, type: 2}
+  _list:
+  - _level: 2
+    _list:
+    - _displayName: Aura Range Lv2
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0.5
+      _reHitIntervalDelta: 0
+    - _displayName: Aura Pulse Lv2
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: -0.1
+    - _displayName: Aura Power Lv2
+      _cooldownDelta: 0
+      _damageDelta: 3
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 3
+    _list:
+    - _displayName: Aura Range Lv3
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0.75
+      _reHitIntervalDelta: 0
+    - _displayName: Aura Pulse Lv3
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: -0.1
+    - _displayName: Aura Power Lv3
+      _cooldownDelta: 0
+      _damageDelta: 4
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 4
+    _list:
+    - _displayName: Aura Range Lv4
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 1
+      _reHitIntervalDelta: 0
+    - _displayName: Aura Pulse Lv4
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: -0.1
+    - _displayName: Aura Power Lv4
+      _cooldownDelta: 0
+      _damageDelta: 6
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 5
+    _list:
+    - _displayName: Aura Range Lv5
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 1.25
+      _reHitIntervalDelta: 0
+    - _displayName: Aura Pulse Lv5
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: -0.1
+    - _displayName: Aura Power Lv5
+      _cooldownDelta: 0
+      _damageDelta: 8
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0

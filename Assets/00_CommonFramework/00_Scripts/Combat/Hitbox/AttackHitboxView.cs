@@ -12,6 +12,8 @@ namespace O2un.Combat
         public Vector3 MoveDirection;
         public float Speed;
         public Transform FollowOwner;
+        public Vector3 FollowOffset;
+        public Quaternion FollowRotation;
         public bool ReleaseOnHit;
     }
 
@@ -72,7 +74,9 @@ namespace O2un.Combat
 
             if (null != _motion.FollowOwner)
             {
-                transform.position = _motion.FollowOwner.position;
+                transform.SetPositionAndRotation(
+                    _motion.FollowOwner.position + _motion.FollowOwner.rotation * _motion.FollowOffset,
+                    _motion.FollowOwner.rotation * _motion.FollowRotation);
             }
             else if (_motion.Speed > 0f)
             {

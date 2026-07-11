@@ -52,7 +52,10 @@ namespace O2un.Combat
                 Rotation = rotation,
                 MoveDirection = Vector3.zero,
                 Speed = 0f,
-                FollowOwner = null,
+                FollowOwner = ctx.Owner,
+                FollowOffset = Quaternion.Inverse(ctx.OwnerRotation)
+                    * (rotation * Vector3.forward * (_stats.Range * 0.5f)),
+                FollowRotation = Quaternion.Inverse(ctx.OwnerRotation) * rotation,
                 Lifetime = _stats.Lifetime,
                 ReHitInterval = 0f,
                 ReleaseOnHit = false,

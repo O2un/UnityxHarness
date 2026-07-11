@@ -19,7 +19,7 @@ namespace O2un.Actors
         public void Init(
             IMoveDirectionProvider provider,
             IPlayerDataWriter playerData,
-            IPlayerDataReader playerReader,
+            PlayerHealthAdapter health,
             IActorRegistry registry,
             IActorQuery query,
             IAttackSpawner spawner)
@@ -31,7 +31,6 @@ namespace O2un.Actors
 
             if (null != _damageable)
             {
-                IHealth health = new PlayerHealthAdapter(playerReader, playerData);
                 _damageable.Bind(ActorType.Player, health);
             }
         }

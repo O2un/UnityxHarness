@@ -47,6 +47,8 @@ namespace O2un.Combat
                 MoveDirection = request.MoveDirection,
                 Speed = request.Speed,
                 FollowOwner = request.FollowOwner,
+                FollowOffset = request.FollowOffset,
+                FollowRotation = request.FollowRotation,
                 ReleaseOnHit = request.ReleaseOnHit,
             };
 

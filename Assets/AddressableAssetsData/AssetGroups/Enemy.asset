@@ -15,8 +15,18 @@ MonoBehaviour:
   m_GroupName: Enemy
   m_GUID: 3ee48857769fe47f29086ef42accaf9f
   m_SerializeEntries:
+  - m_GUID: 6da57770d9c1a49ad9fe093f6d3d58dc
+    m_Address: Enemy_Dash
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 928a1377c1cd4515b208fef3a396b8ea
     m_Address: Enemy_Slime
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f895a60f85fb7434e9d5d2dad2123a6b
+    m_Address: Enemy_ArmoredMelee
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

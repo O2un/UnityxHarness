@@ -60,5 +60,10 @@ namespace O2un.Actors
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
+
+        public void SetCollisionDetection(bool enabled)
+        {
+            Controller.detectCollisions = enabled;
+        }
     }
 }

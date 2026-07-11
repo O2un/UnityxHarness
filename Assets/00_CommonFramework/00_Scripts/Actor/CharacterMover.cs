@@ -23,6 +23,7 @@ namespace O2un.Actors
         public ReadOnlyReactiveProperty<Vector3> Velocity => _velocity;
         public Quaternion TargetRotation { get; private set; }
         public float RotationSpeed => _rotationSpeed;
+        public bool CollisionEnabled { get; private set; } = true;
 
         public void SetDirection(Vector3 worldDir)
         {
@@ -34,6 +35,16 @@ namespace O2un.Actors
 
             _velocity.Value = worldDir * _moveSpeed;
             TargetRotation = Quaternion.LookRotation(worldDir, Vector3.up);
+        }
+
+        public void SetVelocity(Vector3 velocity)
+        {
+            _velocity.Value = velocity;
+        }
+
+        public void SetCollisionEnabled(bool enabled)
+        {
+            CollisionEnabled = enabled;
         }
 
         public void Dispose()
