@@ -82,6 +82,10 @@ namespace O2un.Manager
             _killEvent.OnKilled
                     .Subscribe(_ => OnEnemyKilled())
                     .AddTo(_disposables);
+
+            _currentState
+                    .Subscribe(state => UnityEngine.Time.timeScale = state == GameState.Playing ? 1f : 0f)
+                    .AddTo(_disposables);
         }
 
         public void StartGame()
@@ -126,6 +130,7 @@ namespace O2un.Manager
 
         public void Dispose()
         {
+            UnityEngine.Time.timeScale = 1f;
             _disposables.Dispose();
             _currentState.Dispose();
             _killCount.Dispose();
