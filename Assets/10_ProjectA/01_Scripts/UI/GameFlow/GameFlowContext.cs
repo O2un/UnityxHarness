@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using O2un.Manager;
 using UnityEngine;
 using VContainer;
@@ -9,10 +10,12 @@ namespace O2un.UI
         [SerializeField] private GameFlowView _view;
 
         private GameFlowVM _vm;
+        private ISceneService _sceneService;
 
         [Inject]
-        public void Construct(IGameManager gameManager)
+        public void Construct(IGameManager gameManager, ISceneService sceneService)
         {
+            _sceneService = sceneService;
             _vm = new GameFlowVM(gameManager);
             _view.Bind(_vm);
             _view.GameSelectRequested += OnGameSelectRequested;
@@ -20,7 +23,7 @@ namespace O2un.UI
 
         private void OnGameSelectRequested()
         {
-            Debug.Log("[GameFlowContext] Game select requested (scene transition wired in stage 5).");
+            _sceneService.LoadSceneAsync(SCENE_NAME.GAME_SELECT_SCENE).Forget();
         }
 
         private void OnDestroy()
