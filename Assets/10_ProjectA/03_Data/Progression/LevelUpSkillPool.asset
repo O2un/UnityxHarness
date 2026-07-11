@@ -19,3 +19,4 @@ MonoBehaviour:
   _upgradeCandidates:
   - {fileID: 11400000, guid: 213dd6910cda48829a758848b4d048fe, type: 2}
   - {fileID: 11400000, guid: 038b837668af4a43b03f674b623748bb, type: 2}
+  - {fileID: 11400000, guid: 4a83ba141d4ff4ffcb064d2ccdb00576, type: 2}

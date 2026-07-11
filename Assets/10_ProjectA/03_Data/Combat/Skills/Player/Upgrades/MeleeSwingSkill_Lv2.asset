@@ -13,11 +13,96 @@ MonoBehaviour:
   m_Name: MeleeSwingSkill_Lv2
   m_EditorClassIdentifier: 
   _skill: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f801, type: 2}
-  _level: 2
-  _displayName: Melee Swing Lv2
-  _cooldownDelta: -0.15
-  _damageDelta: 6
-  _lifetimeDelta: 0
-  _speedDelta: 0
-  _rangeDelta: 0.5
-  _reHitIntervalDelta: 0
+  _list:
+  - _level: 2
+    _list:
+    - _displayName: Melee Swing Lv2
+      _cooldownDelta: -0.15
+      _damageDelta: 6
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0.5
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Rapid Lv2
+      _cooldownDelta: -0.25
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Heavy Lv2
+      _cooldownDelta: 0
+      _damageDelta: 10
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 3
+    _list:
+    - _displayName: Melee Reach Lv3
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0.5
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Rapid Lv3
+      _cooldownDelta: -0.2
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Power Lv3
+      _cooldownDelta: 0
+      _damageDelta: 8
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 4
+    _list:
+    - _displayName: Melee Reach Lv4
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0.75
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Rapid Lv4
+      _cooldownDelta: -0.2
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Power Lv4
+      _cooldownDelta: 0
+      _damageDelta: 12
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+  - _level: 5
+    _list:
+    - _displayName: Melee Reach Lv5
+      _cooldownDelta: 0
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 1
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Rapid Lv5
+      _cooldownDelta: -0.25
+      _damageDelta: 0
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0
+    - _displayName: Melee Power Lv5
+      _cooldownDelta: 0
+      _damageDelta: 16
+      _lifetimeDelta: 0
+      _speedDelta: 0
+      _rangeDelta: 0
+      _reHitIntervalDelta: 0

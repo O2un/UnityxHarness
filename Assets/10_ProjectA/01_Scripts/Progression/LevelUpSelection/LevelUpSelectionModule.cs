@@ -76,15 +76,33 @@ namespace O2un.Progression
             IReadOnlyList<SkillUpgradeSO> upgradeCandidates = _pool.UpgradeCandidates;
             for (int i = 0; i < upgradeCandidates.Count; i++)
             {
-                SkillUpgradeSO upgrade = upgradeCandidates[i];
-                if (null == upgrade || true == string.IsNullOrEmpty(upgrade.SkillId))
+                SkillUpgradeSO upgradeCandidate = upgradeCandidates[i];
+                if (null == upgradeCandidate)
                 {
                     continue;
                 }
 
-                if (true == receiver.HasSkill(upgrade.SkillId) && upgrade.Level > receiver.GetSkillLevel(upgrade.SkillId))
+                if (true == string.IsNullOrEmpty(upgradeCandidate.SkillId)
+                    || false == receiver.HasSkill(upgradeCandidate.SkillId))
                 {
-                    result.Add(new LevelUpSkillCandidate(upgrade));
+                    continue;
+                }
+
+                int nextLevel = receiver.GetSkillLevel(upgradeCandidate.SkillId) + 1;
+                IReadOnlyList<SkillUpgradeLevel> levels = upgradeCandidate.List;
+                for (int j = 0; j < levels.Count; j++)
+                {
+                    SkillUpgradeLevel level = levels[j];
+                    if (level.Level != nextLevel)
+                    {
+                        continue;
+                    }
+
+                    IReadOnlyList<SkillUpgradeEntry> upgrades = level.List;
+                    for (int k = 0; k < upgrades.Count; k++)
+                    {
+                        result.Add(new LevelUpSkillCandidate(upgradeCandidate, upgrades[k], level.Level));
+                    }
                 }
             }
 
