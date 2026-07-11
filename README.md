@@ -81,11 +81,12 @@ Input · Observer(R3) · Camera · UI(MVVM) · Save · UniTask · 씬 로딩 · 
 | ✅ | MCP — MCP for Unity(CoplayDev) 연결 (에디터 조작·컴파일·플레이 테스트) |
 | ✅ | Subagents — unity-architect · gameplay-engineer · unity-ai-operator · code-reviewer |
 | ✅ | Claude ↔ Codex 에이전트 라우팅 |
-| 🔨 | Evals · Observability |
+| ✅ | Evals — Stop hook이 매 종료 시 4단계 게이트 자동 판정 → `artifacts/02-validation.md` 기록 |
+| ✅ | Observability — Eval Viewer가 파이프라인 산출물(input·design·validation·review·chain-log)을 실시간 관측 |
 
-### 🔨 STEP 4 — AI 결과물 검증·리팩토링 루프
+### ✅ STEP 4 — AI 결과물 검증·리팩토링 루프
 설계 → 구현 → 씬·검증 → 리뷰 파이프라인을 Agent Team으로 구동.  
-4단계 검증 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인) 운영 중.
+4단계 검증 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인)를 Stop hook이 매 종료 시 자동 판정하고, Eval Viewer로 결과를 실시간 관측.
 
 ### 🔨 STEP 5 — 실전 게임 프로젝트
 **ProjectA (3D 뱀서류) — 플레이 가능 MVP 완성**
