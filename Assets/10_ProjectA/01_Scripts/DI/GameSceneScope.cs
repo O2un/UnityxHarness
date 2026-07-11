@@ -30,7 +30,8 @@ namespace O2un.DI
 
             builder.Register<UIStore>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<GameManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PlayerHealthAdapter>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.RegisterEntryPoint<GameManager>().AsSelf().As<IGameManager>();
 
             builder.Register<DefaultScoreCalculator>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<ScoreManager>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -44,7 +45,7 @@ namespace O2un.DI
             builder.Register<AttackSpawner>(Lifetime.Singleton).As<IAttackSpawner>();
 
             builder.RegisterInstance(_waveData);
-            builder.RegisterEntryPoint<EnemySpawnManager>();
+            builder.RegisterEntryPoint<EnemySpawnManager>().AsSelf();
 
             builder.RegisterInstance(_itemDropData);
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();

@@ -9,11 +9,13 @@ namespace O2un.Manager
         private readonly struct ScheduledSpawn
         {
             public readonly float Time;
+            public readonly int WaveIndex;
             public readonly SpawnRequest Request;
 
-            public ScheduledSpawn(float time, SpawnRequest request)
+            public ScheduledSpawn(float time, int waveIndex, SpawnRequest request)
             {
                 Time = time;
+                WaveIndex = waveIndex;
                 Request = request;
             }
         }
@@ -28,20 +30,35 @@ namespace O2un.Manager
             Random rng = seed.HasValue ? new Random(seed.Value) : new Random();
             _timeline = BuildTimeline(waves, rng);
             _requiredKeys = waves.Select(wave => wave.AddressableKey).Distinct().ToList();
+            TotalWaves = waves.Count;
         }
 
         public IReadOnlyList<string> RequiredKeys => _requiredKeys;
+        public bool IsExhausted => _nextIndex >= _timeline.Count;
+        public int TotalWaves { get; }
+        public int ReachedWave { get; private set; }
 
         public IReadOnlyList<SpawnRequest> GetSpawnsAt(float time)
         {
             _buffer.Clear();
             while (_nextIndex < _timeline.Count && _timeline[_nextIndex].Time <= time)
             {
-                _buffer.Add(_timeline[_nextIndex].Request);
+                ScheduledSpawn spawn = _timeline[_nextIndex];
+                _buffer.Add(spawn.Request);
+                if (spawn.WaveIndex + 1 > ReachedWave)
+                {
+                    ReachedWave = spawn.WaveIndex + 1;
+                }
                 _nextIndex++;
             }
 
             return _buffer;
+        }
+
+        public void Reset()
+        {
+            _nextIndex = 0;
+            ReachedWave = 0;
         }
 
         private static List<ScheduledSpawn> BuildTimeline(IReadOnlyList<WaveEntry> waves, Random rng)
@@ -56,7 +73,7 @@ namespace O2un.Manager
                 for (int i = 0; i < wave.Count; i++)
                 {
                     float time = ResolveSpawnTime(wave, rng);
-                    timeline.Add(new ScheduledSpawn(time, request));
+                    timeline.Add(new ScheduledSpawn(time, w, request));
                 }
             }
 

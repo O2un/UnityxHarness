@@ -39,6 +39,12 @@ namespace O2un.Progression
             }
         }
 
+        public void Reset()
+        {
+            _currentExp.Value = 0;
+            _currentLevel.Value = 1;
+        }
+
         private int RequiredExp(int level)
         {
             return Math.Max(1, Mathf.RoundToInt(_requiredExpCurve.Evaluate(level)));
