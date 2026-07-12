@@ -18,6 +18,9 @@ namespace O2un.Progression
         private readonly ReactiveProperty<IReadOnlyList<string>> _candidateLabels = new(Array.Empty<string>());
         public ReadOnlyReactiveProperty<IReadOnlyList<string>> CandidateLabels => _candidateLabels;
 
+        private readonly ReactiveProperty<IReadOnlyList<Sprite>> _candidateIcons = new(Array.Empty<Sprite>());
+        public ReadOnlyReactiveProperty<IReadOnlyList<Sprite>> CandidateIcons => _candidateIcons;
+
         public LevelUpSelectionViewModel(LevelUpSelectionModule module, IExperienceReader experienceReader)
         {
             _module = module;
@@ -45,12 +48,15 @@ namespace O2un.Progression
             }
 
             string[] labels = new string[_currentCandidates.Count];
+            Sprite[] icons = new Sprite[_currentCandidates.Count];
             for (int i = 0; i < _currentCandidates.Count; i++)
             {
                 labels[i] = _currentCandidates[i].Label;
+                icons[i] = _currentCandidates[i].Icon;
             }
 
             _candidateLabels.Value = labels;
+            _candidateIcons.Value = icons;
             _isVisible.Value = true;
         }
 
@@ -91,6 +97,7 @@ namespace O2un.Progression
             _disposables.Dispose();
             _isVisible.Dispose();
             _candidateLabels.Dispose();
+            _candidateIcons.Dispose();
         }
     }
 }

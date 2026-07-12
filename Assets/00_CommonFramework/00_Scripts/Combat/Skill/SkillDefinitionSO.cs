@@ -13,9 +13,11 @@ namespace O2un.Combat
         [SerializeField] protected AttackHitboxView _hitboxPrefab;
         [SerializeField] protected string _poolKey;
         [SerializeField] protected ActorType _targetTeam = ActorType.Enemy;
+        [SerializeField] protected Sprite _icon;
 
         public string SkillId => _skillId;
         public int Level => _level;
+        public Sprite Icon => _icon;
 
         protected string PoolKey =>
             string.IsNullOrEmpty(_poolKey)

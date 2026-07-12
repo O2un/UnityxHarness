@@ -20,4 +20,5 @@ MonoBehaviour:
   _hitboxPrefab: {fileID: 9029808509028132479, guid: a3c6542fb95c34ceb9584571da3b80bd, type: 3}
   _poolKey: Hitbox_Projectile
   _targetTeam: 1
+  _icon: {fileID: 21300000, guid: 620b8be08ee784fbba10540a515f3e95, type: 3}
   _speed: 8

@@ -47,6 +47,7 @@ namespace O2un.Combat
         [SerializeField] private SkillUpgradeLevel[] _list;
 
         public SkillDefinitionSO Skill => _skill;
+        public Sprite Icon => null != _skill ? _skill.Icon : null;
         public string SkillId => null != _skill ? _skill.SkillId : string.Empty;
         public IReadOnlyList<SkillUpgradeLevel> List => _list ?? Array.Empty<SkillUpgradeLevel>();
     }
