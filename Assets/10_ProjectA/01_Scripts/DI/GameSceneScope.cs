@@ -1,4 +1,5 @@
 using O2un.Actors;
+using O2un.Audio;
 using O2un.Camera;
 using O2un.Combat;
 using O2un.DataStore;
@@ -59,6 +60,10 @@ namespace O2un.DI
             builder.RegisterEntryPoint<ExperienceGainContext>();
 
             builder.RegisterInstance(_levelUpSkillPool);
+
+            builder.RegisterComponentInHierarchy<AudioPlayerView>();
+            builder.Register<AudioManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterEntryPoint<GameAudioBinder>();
         }
     }
 }
