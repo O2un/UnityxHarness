@@ -30,7 +30,7 @@ namespace O2un.Manager
             Random rng = seed.HasValue ? new Random(seed.Value) : new Random();
             _timeline = BuildTimeline(waves, rng);
             _requiredKeys = waves.Select(wave => wave.AddressableKey).Distinct().ToList();
-            TotalWaves = waves.Count;
+            TotalWaves = _timeline.Count > 0 ? _timeline.Max(spawn => spawn.WaveIndex) : 0;
         }
 
         public IReadOnlyList<string> RequiredKeys => _requiredKeys;
@@ -45,9 +45,9 @@ namespace O2un.Manager
             {
                 ScheduledSpawn spawn = _timeline[_nextIndex];
                 _buffer.Add(spawn.Request);
-                if (spawn.WaveIndex + 1 > ReachedWave)
+                if (spawn.WaveIndex > ReachedWave)
                 {
-                    ReachedWave = spawn.WaveIndex + 1;
+                    ReachedWave = spawn.WaveIndex;
                 }
                 _nextIndex++;
             }
@@ -69,11 +69,12 @@ namespace O2un.Manager
             {
                 WaveEntry wave = waves[w];
                 SpawnRequest request = SpawnRequest.FromEntry(wave);
+                int waveNumber = wave.WaveNumber > 0 ? wave.WaveNumber : w + 1;
 
                 for (int i = 0; i < wave.Count; i++)
                 {
                     float time = ResolveSpawnTime(wave, rng);
-                    timeline.Add(new ScheduledSpawn(time, w, request));
+                    timeline.Add(new ScheduledSpawn(time, waveNumber, request));
                 }
             }
 

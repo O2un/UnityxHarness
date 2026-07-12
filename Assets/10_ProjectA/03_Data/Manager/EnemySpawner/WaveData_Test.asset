@@ -11,9 +11,10 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1550435ca526c4640ae880f87d232710, type: 3}
   m_Name: WaveData_Test
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   _waves:
-  - AddressableKey: Enemy_ArmoredMelee
+  - WaveNumber: 1
+    AddressableKey: Enemy_Slime
     SpawnTime: 1
     Count: 8
     Position: {x: 0, y: 0, z: 0}
@@ -21,4 +22,114 @@ MonoBehaviour:
     MinRadius: 5
     MaxRadius: 9
     Timing: 1
-    EndTime: 20
+    EndTime: 12
+  - WaveNumber: 2
+    AddressableKey: Enemy_Slime
+    SpawnTime: 14
+    Count: 6
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 26
+  - WaveNumber: 2
+    AddressableKey: Enemy_Dash
+    SpawnTime: 14
+    Count: 4
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 6
+    MaxRadius: 10
+    Timing: 1
+    EndTime: 26
+  - WaveNumber: 3
+    AddressableKey: Enemy_Slime
+    SpawnTime: 28
+    Count: 5
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 40
+  - WaveNumber: 3
+    AddressableKey: Enemy_Dash
+    SpawnTime: 28
+    Count: 4
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 6
+    MaxRadius: 10
+    Timing: 1
+    EndTime: 40
+  - WaveNumber: 3
+    AddressableKey: Enemy_ArmoredMelee
+    SpawnTime: 28
+    Count: 3
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 40
+  - WaveNumber: 4
+    AddressableKey: Enemy_Slime
+    SpawnTime: 42
+    Count: 7
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 54
+  - WaveNumber: 4
+    AddressableKey: Enemy_Dash
+    SpawnTime: 42
+    Count: 5
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 6
+    MaxRadius: 10
+    Timing: 1
+    EndTime: 54
+  - WaveNumber: 4
+    AddressableKey: Enemy_ArmoredMelee
+    SpawnTime: 42
+    Count: 4
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 54
+  - WaveNumber: 5
+    AddressableKey: Enemy_Slime
+    SpawnTime: 56
+    Count: 10
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 70
+  - WaveNumber: 5
+    AddressableKey: Enemy_Dash
+    SpawnTime: 56
+    Count: 7
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 6
+    MaxRadius: 10
+    Timing: 1
+    EndTime: 70
+  - WaveNumber: 5
+    AddressableKey: Enemy_ArmoredMelee
+    SpawnTime: 56
+    Count: 6
+    Position: {x: 0, y: 0, z: 0}
+    Placement: 1
+    MinRadius: 5
+    MaxRadius: 9
+    Timing: 1
+    EndTime: 70

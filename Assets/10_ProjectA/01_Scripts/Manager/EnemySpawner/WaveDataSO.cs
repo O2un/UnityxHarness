@@ -19,6 +19,7 @@ namespace O2un.Manager
     [Serializable]
     public struct WaveEntry
     {
+        public int WaveNumber;
         public string AddressableKey;
         public float SpawnTime;
         public int Count;
