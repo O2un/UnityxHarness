@@ -20,4 +20,5 @@ MonoBehaviour:
   _hitboxPrefab: {fileID: 6755275351473225416, guid: d8ebc4a23fc60459fb8e0c3107f3e063, type: 3}
   _poolKey: Hitbox_Melee
   _targetTeam: 1
+  _icon: {fileID: 21300000, guid: 584618bd4de854edb81a0c1d22528ae3, type: 3}
   _range: 2

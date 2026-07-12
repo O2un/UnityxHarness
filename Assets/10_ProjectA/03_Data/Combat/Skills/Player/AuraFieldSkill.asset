@@ -20,4 +20,5 @@ MonoBehaviour:
   _hitboxPrefab: {fileID: 2848507957428542437, guid: 868fbee55d49745c8babb4b488f88f6d, type: 3}
   _poolKey: Hitbox_Aura
   _targetTeam: 1
+  _icon: {fileID: 21300000, guid: 49a3179aca2c944fab3e8fe1d53c117a, type: 3}
   _reHitInterval: 0.5

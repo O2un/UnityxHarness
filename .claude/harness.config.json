@@ -7,7 +7,7 @@
       "backend": "internal"
     },
     "code-reviewer": {
-      "backend": "internal",
+      "backend": "external",
       "command": "/codex:rescue --background",
       "reason": "review_backend=codex 설정: code-reviewer 대신 /codex:rescue 를 실행하고, 결과를 /codex:result 로 받아 artifacts/03-review.md 에 기록하세요."
     },

@@ -14,7 +14,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: 3777614f7ddf340d0b27af629670d2c4
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 053dd89d5f8e8421582c82040afeefc7
+    m_Address: sfx/player_hit
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 123f55d5daa0942c5b15c6c2a8a0c36f
+    m_Address: sfx/enemy_death
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 23e47cc0b66714cfbbfa652772728b85
+    m_Address: sfx/game_over
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2e788aaa74ff749b9a344465ada920f3
+    m_Address: sfx/exp_pickup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b756d05dc29e4cd7924afa4ba75f76e
+    m_Address: sfx/level_up
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bd071d987c6924ab0ab421685026fadd
+    m_Address: bgm/battle
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 1592cf5776b48477b838d09d7dfa0450, type: 2}
   m_SchemaSet:

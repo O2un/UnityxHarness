@@ -1,5 +1,6 @@
 using O2un.Actors;
 using O2un.Combat;
+using UnityEngine;
 
 namespace O2un.Progression
 {
@@ -29,6 +30,8 @@ namespace O2un.Progression
         public string Label => null != _upgrade && false == string.IsNullOrEmpty(_upgradeEntry.DisplayName)
             ? _upgradeEntry.DisplayName
             : null != _upgrade ? _upgrade.name : _learnSkill.name;
+
+        public Sprite Icon => null != _upgrade ? _upgrade.Icon : _learnSkill.Icon;
 
         public bool ApplyTo(IPlayerSkillReceiver receiver)
         {

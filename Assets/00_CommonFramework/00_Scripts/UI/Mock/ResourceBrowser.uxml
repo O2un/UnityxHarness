@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/00_CommonFramework/00_Scripts/UI/Mock/ResourceBrowser.uss?fileID=7433441132597879392&amp;guid=b70840e3f20904a04b09411d57e99fa1&amp;type=3#ResourceBrowser"/>
+    <ui:VisualElement name="root" class="root">
+        <uie:Toolbar class="toolbar">
+            <uie:ToolbarSearchField name="search" class="search"/>
+            <uie:ToolbarMenu name="type-filter" text="유형: 전체" class="filter"/>
+            <uie:ToolbarButton name="refresh" text="Refresh" class="refresh"/>
+        </uie:Toolbar>
+        <ui:ListView name="list" class="list"/>
+        <ui:VisualElement name="detail" class="detail">
+            <ui:Label name="detail-name" text="player_icon" class="detail-name"/>
+            <ui:Label name="detail-path" text="Assets/50_2DResources/UI/Icons/player_icon.png" class="detail-path"/>
+            <ui:Button name="ping" text="Project 창에서 보기" class="ping"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

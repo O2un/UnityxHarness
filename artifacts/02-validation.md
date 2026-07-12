@@ -72,3 +72,64 @@
 - 각 카드는 `CardId`, `BranchId`, 부모 카드 ID, 스킬 참조와 스탯 델타를 보유한다.
 - `LevelUpSkillPool.asset`은 기존 평면 업그레이드 후보를 비우고 카드셋 4개만 참조한다.
 - `git diff --check` 통과.
+
+---
+
+# 02. 검증 (4단계 게이트) · audio-system
+
+작성: unity-ai-operator
+일시: 2026-07-12
+
+| 단계 | 결과 | 비고 |
+| --- | --- | --- |
+| 1. 컴파일 | ✅ 통과 | `refresh_unity`(force, compile) 후 `read_console(types=[error])` 0건. `isCompiling=false` 확인. |
+| 2. Play 콘솔 에러 | ✅ 통과(DI 배선) / ⚠️ 예상된 리소스 미존재 | DI 해소 에러 0건. Addressables 키(`bgm/battle`) 미존재로 인한 로드 실패 2건은 예상된 것(클립 미제작). |
+| 3. 기능 점검 | ⏳ 대기 | 실제 오디오 클립 준비 후 재검증 필요. |
+| 4. 사용자 확인 | ⏳ 대기 | |
+
+## 검증 대상 스크립트
+- `Assets/00_CommonFramework/00_Scripts/Manager/AudioManager/IAudioService.cs` (신규)
+- `Assets/00_CommonFramework/00_Scripts/Manager/AudioManager/AudioManager.cs` (신규)
+- `Assets/00_CommonFramework/00_Scripts/Manager/AudioManager/AudioPlayerView.cs` (신규)
+- `Assets/10_ProjectA/01_Scripts/Audio/GameAudioBinder.cs` (신규)
+- `Assets/10_ProjectA/01_Scripts/DI/GameSceneScope.cs` (수정, 오디오 3줄 등록)
+
+## 게이트 1 — 컴파일
+- `refresh_unity(mode=force, scope=all, compile=request)` 실행, 도메인 리로드 완료 후 `read_console(types=[error])` = 0건. **통과.**
+
+## 게이트 B — 씬·에셋 배치
+### 씬 GameObject
+- 활성 씬 `GameScene`(`Assets/90_Scenes/GameScene.unity`)에 빈 GameObject `AudioPlayer` 생성.
+- `O2un.Manager.AudioPlayerView` 컴포넌트 부착. 부착 시 `Reset()`이 **AudioSource 2개를 자동 추가**함을 확인:
+  - `_bgmSource` (fileID 1700283892): `Loop=1`, `m_PlayOnAwake=0`
+  - `_sfxSource` (fileID 1700283891): `Loop=0`, `m_PlayOnAwake=0`
+  - 두 SerializeField가 씬 파일에 정상 바인딩됨(디스크 직렬화로 재확인, 둘 다 non-zero fileID). 수동 부착 불필요.
+- `RegisterComponentInHierarchy<AudioPlayerView>()`가 이 컴포넌트를 찾을 수 있도록 GameSceneScope와 동일 씬(GameScene)에 배치됨.
+- 씬 저장 완료.
+
+### 플레이스홀더 AudioClip — 생성 생략(사유 명시)
+- **무음 AudioClip 에셋은 Unity MCP로 생성 불가**: `AudioClip`은 직렬화 가능한 `.asset` 형태가 없고 실제 오디오 바이너리 임포트를 통해서만 생성된다. 무음 클립 생성은 실제 오디오 파일 없이는 불가능하므로 생략.
+- 아래 6개 Addressables 주소는 **주소만 필요하며 실제 클립은 리소스 준비 시 채운다**:
+  - `bgm/battle`, `sfx/enemy_death`, `sfx/level_up`, `sfx/exp_pickup`, `sfx/game_over`, `sfx/player_hit`
+- 그 결과, Play 모드에서 `LoadAsync`가 키를 못 찾아 나는 에러는 **예상된 리소스 미존재 에러**이며 배선 문제가 아님.
+
+## 게이트 2 — Play 모드 콘솔
+Play 진입 → 콘솔 수집 → 종료.
+
+### DI 배선 에러: 0건 (통과)
+- `AudioPlayerView` 주입 실패, VContainer 해소 실패 등 배선 에러 없음(`filter_text=VContainer` 0건 포함).
+- `RegisterComponentInHierarchy<AudioPlayerView>` / `Register<AudioManager>().AsImplementedInterfaces()` / `RegisterEntryPoint<GameAudioBinder>()` 3줄 등록이 정상 해소됨(GameAudioBinder.Initialize가 실행되어 `PlayBgmAsync("bgm/battle")` 호출까지 도달했음이 아래 에러 로그로 역으로 증명됨).
+
+### 리소스 미존재 에러: 예상됨 (클립 미제작)
+```
+[AssetManager] No asset of type UnityEngine.AudioClip found. key=bgm/battle
+InvalidOperationException: [AssetManager] key=bgm/battle has no asset of type UnityEngine.AudioClip.
+```
+- BGM 자동 재생(`GameAudioBinder.Initialize` → `PlayBgmAsync(BGM_BATTLE)`)이 시작 즉시 `bgm/battle` 로드를 시도하다 발생. **의도된 미존재 에러.** SFX 키들은 게임 이벤트(적 처치 등) 발생 시점에 로드되므로 진입 직후엔 나타나지 않았다.
+
+### 무관 경고(참고)
+- `LiberationSans SDF` 폰트에 한글 글리프(준/비/중) 없음 경고 3건 — 오디오와 무관한 **기존 UI/TMP 이슈**.
+
+## 결론
+- 컴파일·씬 배선·DI 해소 모두 정상. 오디오 시스템 배선은 완결.
+- 실제 재생 검증(게이트 3)은 6개 주소에 실제(또는 무음) AudioClip을 Addressables로 등록한 뒤 재수행 필요.

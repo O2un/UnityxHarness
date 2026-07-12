@@ -1,0 +1,89 @@
+.root {
+    flex-grow: 1;
+    padding: 8px;
+    background-color: rgb(56, 56, 56);
+}
+
+.toolbar {
+    margin-bottom: 8px;
+}
+
+.search {
+    width: 200px;
+}
+
+.filter {
+    margin-left: 6px;
+}
+
+.refresh {
+    margin-left: auto;
+}
+
+.list {
+    flex-grow: 1;
+    border-width: 1px;
+    border-color: rgb(35, 35, 35);
+    border-radius: 3px;
+    background-color: rgb(48, 48, 48);
+}
+
+/* 목록 행 */
+.row {
+    flex-direction: row;
+    height: 26px;
+    align-items: center;
+    padding-left: 8px;
+}
+
+.row:hover {
+    background-color: rgb(62, 62, 62);
+}
+
+.row.selected {
+    background-color: rgb(44, 93, 135);
+}
+
+.row > .cell-name {
+    width: 40%;
+    color: rgb(220, 220, 220);
+}
+
+.row > .cell-type {
+    width: 30%;
+    color: rgb(170, 170, 170);
+}
+
+.row > .cell-status {
+    width: 30%;
+    color: rgb(150, 200, 150);
+}
+
+/* 확인 필요 상태 강조 */
+.row > .cell-status.needs-check {
+    color: rgb(220, 160, 90);
+    -unity-font-style: bold;
+}
+
+/* 하단 상세 */
+.detail {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 3px;
+    background-color: rgb(48, 48, 48);
+}
+
+.detail-name {
+    -unity-font-style: bold;
+    color: rgb(230, 230, 230);
+}
+
+.detail-path {
+    margin-top: 2px;
+    color: rgb(160, 160, 160);
+}
+
+.ping {
+    margin-top: 8px;
+    align-self: flex-start;
+}
