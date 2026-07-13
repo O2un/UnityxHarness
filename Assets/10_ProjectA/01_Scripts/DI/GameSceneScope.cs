@@ -1,5 +1,8 @@
 using O2un.Actors;
 using O2un.Audio;
+#if UNITY_EDITOR
+using O2un.BalanceProbe;
+#endif
 using O2un.Camera;
 using O2un.Combat;
 using O2un.DataStore;
@@ -64,6 +67,11 @@ namespace O2un.DI
             builder.RegisterComponentInHierarchy<AudioPlayerView>();
             builder.Register<AudioManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.RegisterEntryPoint<GameAudioBinder>();
+
+            builder.Register<EnemyDamageChannel>(Lifetime.Singleton).AsImplementedInterfaces();
+#if UNITY_EDITOR
+            builder.RegisterEntryPoint<BalanceProbeManager>();
+#endif
         }
     }
 }

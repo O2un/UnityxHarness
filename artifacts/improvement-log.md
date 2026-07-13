@@ -1,27 +1,26 @@
 # 개선 기록 (improvement-log)
 
-## 2026-07-12 · audio-system 구현
+## 2026-07-13 · balance-probe 구현
 
 ### 구현 내용
-- BGM 1채널 + SFX PlayOneShot + 볼륨 반영의 최소 오디오 시스템.
-- 재생 코어(`00_CommonFramework/00_Scripts/Manager/AudioManager/`): `IAudioService`, `AudioManager`(순수 C# 싱글턴, IAssetService+AudioPlayerView 주입), `AudioPlayerView`(MonoBehaviour, BGM/SFX AudioSource 2개).
-- 이벤트→SFX 매핑(`10_ProjectA/01_Scripts/Audio/GameAudioBinder.cs`): 처치·레벨업·경험치·사망 + 피격(HP 감소 단일 지점) 5종 구독, 진입 시 `bgm/battle` 재생.
-- DI: `GameSceneScope`에 `RegisterComponentInHierarchy<AudioPlayerView>` + `AudioManager` 싱글턴 + `RegisterEntryPoint<GameAudioBinder>` 3줄.
-- 리뷰 후 SFX 로드 dedupe(`_sfxLoading`) + try/finally 예외 처리 적용(M1·M2).
-- 결정: 볼륨 저장 안 함(반영만), CommonFramework는 ProjectA 이벤트 타입 미참조.
+에디터 전용 밸런스 실측 계측 도구. 사람이 한 판 플레이하는 동안 웨이브 구간별 실측 지표를 기존 이벤트 구독으로 모아 판 종료 시 CSV 출력. 전부 `Assets/10_ProjectA/01_Scripts/`, CommonFramework 무변경.
+
+- **데미지 채널** (`Combat/Damage/`): `EnemyDamageChannel`(= `IEnemyDamageSource`+`IEnemyDamagePublisher`), ExpGainedChannel 패턴 그대로. `EnemyHealth.VaryHP`가 HP 감소분을 publish → 생존자 포함 정확한 총 데미지로 실측 DPS 산출.
+- **주입 배선**: `NpcContext.Construct`에 `IEnemyDamagePublisher` 추가 → `new EnemyHealth(maxHp, _damagePublisher)`.
+- **BalanceProbeManager** (`BalanceProbe/`, 파일 전체 `#if UNITY_EDITOR`): IInitializable/ITickable/IDisposable 엔트리포인트. 5개 웨이브 윈도(1–12/14–26/28–40/42–54/56–70초) 하드코딩. 구간별 집계: measuredDps(=Σ데미지/구간길이)·kills·peakAlive(`IActorQuery.GetActive(Enemy).Count` 폴링)·level·wasHit·visited. Playing 전이 시 계측 시작, Victory/Defeat에서 `BalanceLogs/balance-probe_<ts>.csv` 출력, Idle 전이 시 ResetRun(재시작 대비).
+- **DI** (`GameSceneScope`): `EnemyDamageChannel` 무조건 등록(빌드에서도 NpcContext가 IEnemyDamagePublisher 필요) + 프로브 엔트리포인트는 `#if UNITY_EDITOR`.
+- `.gitignore`에 `/BalanceLogs/` 추가.
+
+### 결정 (사용자 승인)
+- DPS 소스: EnemyHealth 이벤트 채널(정확도 우선) — PRD의 '비침범' AC를 정확도 위해 완화. 게임 로직 수정은 HP 감소 1지점 publish로 최소화.
+- 출력 경로: 프로젝트 루트 `BalanceLogs/`. 종료 훅: `IGameManager.CurrentState`(클리어·게임오버 둘 다).
 
 ### 검증
-- Gate 1 컴파일: 통과(에러 0, 도메인 리로드 완료). 리뷰 후 재수정분도 재확인.
-- Gate B 씬: `GameScene`에 `AudioPlayer` GameObject + `AudioPlayerView` 부착, AudioSource 2개 Reset 자동 구성, 씬 저장.
-- Gate 2 Play: **DI 배선 에러 0(통과)**. Addressables 키 미존재 에러는 예상됨 — 플레이스홀더 AudioClip을 MCP로 생성 불가해 6개 주소가 아직 비어 있음.
-
-### 후속 변경 (2026-07-12 · "게임 시작 시 BGM")
-- BGM 재생 시점을 씬 로드(Initialize) → **`IGameManager.CurrentState == Playing`** 전이로 변경. Victory/Defeat 시 StopBgm, Pause→Resume 재시작 방지 `_bgmStarted` 가드. `GameAudioBinder` 생성자에 `IGameManager` 추가(GameSceneScope에서 `.As<IGameManager>()` 기등록).
-- **`bgm/battle` Addressable 등록 완료**: 기존 파일 `Assets/10_ProjectA/53_Sound_Resources/bgm/battle.mp3`(guid bd071d987c6924ab0ab421685026fadd)를 `Default Local Group`에 주소 `bgm/battle`로 등록.
-- `AudioPlayer`의 AudioSource 2개 `spatialBlend=0`(2D) 설정 — 거리 감쇠 방지.
-- 검증: 컴파일 0, DI 해소 정상, Idle 진입 시 BGM 미재생(설계대로), 이전 로드 실패 에러 소멸 확인.
+- Gate 1 컴파일: 통과(에러 0). 신규 파일은 `refresh scope=all`로 임포트해야 인식됨(scripts-only 리프레시로는 새 .cs 미컴파일 → 최초 CS0234/CS0246 발생, full refresh로 해소).
+- Gate 2 Play: 진입 에러 0, DI 그래프 정상(EnemyDamageChannel이 NpcContext 충족, 프로브 엔트리포인트 생성).
+- Gate 3·4: 미완 — CSV는 UI Start→판 종료까지 실제 플레이해야 생성. MCP UI 클릭 불가로 자동화 불가.
 
 ### 다음 실행 규칙 (미완 항목)
-- **SFX 클립 5개는 아직 Addressables 미등록**: `sfx/enemy_death`, `sfx/level_up`, `sfx/exp_pickup`, `sfx/game_over`, `sfx/player_hit`. 파일이 준비되면 등록. 등록 전까지 해당 SFX 로드 에러는 정상.
-- **Gate 4(사용자 확인)**: GameSelect → Start 버튼으로 Playing 진입 후 BGM이 실제로 들리는지 확인. (MCP는 UI 클릭 불가라 여기까지만 자동 검증됨)
-- 볼륨 슬라이더 옵션 UI는 범위 밖 — 붙일 때 `SetBgmVolume`/`SetSfxVolume` 배선.
+- **Gate 3·4 수동 확인 필요**: GameScene Play → GameSelect Start → 한 판 완주 → 콘솔 `[BalanceProbe] ... 저장` 로그 + 루트 `BalanceLogs/*.csv` 생성 확인. CSV 축(웨이브·DPS·peakAlive)이 `docs/evals/wave-balance-prep.md`와 대조 가능한지 확인.
+- 동시 타격 수 지표는 미구현(PRD Open Question, 히트박스 이벤트 부재로 Needs Assumption). 필요 시 스킬 히트 채널 추가로 확장.
+- `WINDOWS`는 `WaveData_Test` 기준 하드코딩. 웨이브 구성이 바뀌면 이 상수도 갱신 필요(WaveDataSO에서 동적 산출로 확장 여지).

@@ -111,3 +111,6 @@ Assets/Packages/
 Assets/99_3rd/*
 Assets/99_3rd.meta
 artifacts/02-validation.md
+
+# Balance probe (editor-only instrumentation output)
+/BalanceLogs/

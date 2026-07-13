@@ -8,11 +8,13 @@ namespace O2un.Combat
         private readonly int _maxHp;
         private readonly ReactiveProperty<int> _hp;
         private readonly Subject<Unit> _onDeath = new();
+        private readonly IEnemyDamagePublisher _damagePublisher;
 
-        public EnemyHealth(int maxHp)
+        public EnemyHealth(int maxHp, IEnemyDamagePublisher damagePublisher = null)
         {
             _maxHp = maxHp;
             _hp = new ReactiveProperty<int>(maxHp);
+            _damagePublisher = damagePublisher;
         }
 
         public ReadOnlyReactiveProperty<int> CurrentHP => _hp;
@@ -27,7 +29,14 @@ namespace O2un.Combat
                 return;
             }
 
-            _hp.Value = Math.Clamp(_hp.Value + delta, 0, _maxHp);
+            int before = _hp.Value;
+            _hp.Value = Math.Clamp(before + delta, 0, _maxHp);
+
+            int dealt = before - _hp.Value;
+            if (0 < dealt)
+            {
+                _damagePublisher?.Publish(dealt);
+            }
 
             if (0 == _hp.Value)
             {

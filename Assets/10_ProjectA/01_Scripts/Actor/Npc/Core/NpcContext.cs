@@ -24,14 +24,16 @@ namespace O2un.Actors
         private IActorQuery _query;
         private IAttackSpawner _spawner;
         private IEnemyKillEvent _killEvent;
+        private IEnemyDamagePublisher _damagePublisher;
 
         [Inject]
-        public void Construct(IActorRegistry registry, IActorQuery query, IAttackSpawner spawner, IEnemyKillEvent killEvent)
+        public void Construct(IActorRegistry registry, IActorQuery query, IAttackSpawner spawner, IEnemyKillEvent killEvent, IEnemyDamagePublisher damagePublisher)
         {
             _registry = registry;
             _query = query;
             _spawner = spawner;
             _killEvent = killEvent;
+            _damagePublisher = damagePublisher;
             Build();
         }
 
@@ -42,7 +44,7 @@ namespace O2un.Actors
             CharacterMover mover = new(moveStats);
 
             int maxHp = null != _monsterData ? _monsterData.MaxHp : 1;
-            _health = new EnemyHealth(maxHp);
+            _health = new EnemyHealth(maxHp, _damagePublisher);
 
             _actor = new NpcActor(_profile.Build(blackboard, mover), blackboard, mover, _view, _registry, _query, _health);
 
