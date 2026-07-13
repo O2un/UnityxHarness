@@ -25,7 +25,7 @@ namespace O2un.DI
         [SerializeField] private ExperienceDataSO _experienceData;
         [SerializeField] private LevelUpSkillPoolSO _levelUpSkillPool;
 
-        [SerializeField] private List<MonoBehaviour> _sceneInitializables = new();
+        [SerializeField] private List<GameObject> _sceneInitializables = new();
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -83,21 +83,19 @@ namespace O2un.DI
         {
             for (int i = 0; i < _sceneInitializables.Count; i++)
             {
-                MonoBehaviour mb = _sceneInitializables[i];
+                GameObject mb = _sceneInitializables[i];
                 if (null == mb)
                 {
                     Debug.LogError($"[GameSceneScope] '{name}' _sceneInitializables[{i}]가 비어 있습니다.");
                     continue;
                 }
 
-                if (mb is not ISceneInitializable initializable)
+                var initializable = mb.GetComponent<ISceneInitializable>();
+                if (null != initializable)
                 {
-                    Debug.LogError($"[GameSceneScope] '{mb.name}'({mb.GetType().Name})는 ISceneInitializable을 구현하지 않습니다.");
-                    continue;
+                    resolver.InjectGameObject(mb);
+                    initializable.Init();
                 }
-
-                resolver.Inject(mb);
-                initializable.Init();
             }
         }
     }

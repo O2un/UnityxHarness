@@ -17,7 +17,7 @@ MonoBehaviour:
     _moveSpeed: 3.5
     _rotationSpeed: 720
   _attackSkill: {fileID: 0}
-  _exp: 5
+  _exp: 6
   _contactHitboxPrefab: {fileID: 6755275351473225416, guid: d8ebc4a23fc60459fb8e0c3107f3e063, type: 3}
   _contactHitboxPoolKey: Hitbox_DashContact
   _contactReHitInterval: 0.5

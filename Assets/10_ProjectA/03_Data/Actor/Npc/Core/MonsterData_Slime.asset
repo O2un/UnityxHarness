@@ -17,3 +17,4 @@ MonoBehaviour:
     _moveSpeed: 3
     _rotationSpeed: 720
   _attackSkill: {fileID: 11400000, guid: 1a2b3c4d5e6f708192a3b4c5d6e7f804, type: 2}
+  _exp: 2
