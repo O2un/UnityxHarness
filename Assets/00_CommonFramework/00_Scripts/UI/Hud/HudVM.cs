@@ -11,18 +11,20 @@ namespace O2un.UI
         private readonly ReactiveProperty<float> _currentHp = new();
         public ReadOnlyReactiveProperty<float> CurrentHp => _currentHp;
 
+        private readonly CompositeDisposable _disposables = new();
+
         public HudVM(IUIReader uireader, IPlayerDataReader playerData)
         {
             IsVisible = uireader.GetVisible(UIType.HUD);
             playerData.CurrentHP.Subscribe(x=>
             {
                 _currentHp.Value = (float)x/ playerData.MaxHP.CurrentValue;
-            });
-            
+            }).AddTo(_disposables);
         }
 
         public void Dispose()
         {
+            _disposables.Dispose();
             _currentHp.Dispose();
         }
     }

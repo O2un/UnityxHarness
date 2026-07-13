@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using O2un.Actors;
 using O2un.Audio;
 #if UNITY_EDITOR
@@ -23,6 +24,8 @@ namespace O2un.DI
         [SerializeField] private ItemDropDataSO _itemDropData;
         [SerializeField] private ExperienceDataSO _experienceData;
         [SerializeField] private LevelUpSkillPoolSO _levelUpSkillPool;
+
+        [SerializeField] private List<MonoBehaviour> _sceneInitializables = new();
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -72,6 +75,30 @@ namespace O2un.DI
 #if UNITY_EDITOR
             builder.RegisterEntryPoint<BalanceProbeManager>();
 #endif
+
+            builder.RegisterBuildCallback(InitializeSceneComponents);
+        }
+
+        private void InitializeSceneComponents(IObjectResolver resolver)
+        {
+            for (int i = 0; i < _sceneInitializables.Count; i++)
+            {
+                MonoBehaviour mb = _sceneInitializables[i];
+                if (null == mb)
+                {
+                    Debug.LogError($"[GameSceneScope] '{name}' _sceneInitializables[{i}]가 비어 있습니다.");
+                    continue;
+                }
+
+                if (mb is not ISceneInitializable initializable)
+                {
+                    Debug.LogError($"[GameSceneScope] '{mb.name}'({mb.GetType().Name})는 ISceneInitializable을 구현하지 않습니다.");
+                    continue;
+                }
+
+                resolver.Inject(mb);
+                initializable.Init();
+            }
         }
     }
 }

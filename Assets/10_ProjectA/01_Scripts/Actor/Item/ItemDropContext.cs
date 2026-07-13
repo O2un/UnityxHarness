@@ -8,7 +8,7 @@ using VContainer.Unity;
 
 namespace O2un.Actors
 {
-    public sealed class ItemDropContext : IAsyncStartable
+    public sealed class ItemDropContext : IAsyncStartable, IDisposable
     {
         private readonly IAssetService _assetService;
         private readonly IPoolService _poolService;
@@ -66,8 +66,17 @@ namespace O2un.Actors
             pickSubscription = item.OnPicked.Subscribe(amount =>
             {
                 _expPublisher.Publish(amount);
-                pickSubscription?.Dispose();
+                if (null != pickSubscription)
+                {
+                    _disposables.Remove(pickSubscription);
+                }
             });
+            pickSubscription.AddTo(_disposables);
+        }
+
+        public void Dispose()
+        {
+            _disposables.Dispose();
         }
     }
 }

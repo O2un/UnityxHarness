@@ -5,7 +5,7 @@
 ## 요약
 
 - Pass: 대부분의 금지 패턴·경계·의존 방향·Addressables 등록 항목
-- Issue: 2건 (R3 lifecycle 미바인딩 재발 사례)
+- Issue: 2건 (R3 lifecycle 미바인딩 재발 사례) — **2026-07-13 모두 수정 완료**
 - Needs Play Check: 3건
 
 ---
@@ -60,17 +60,19 @@
 
 ## Issue 항목
 
-### I1. `HudVM`의 `CurrentHP` 구독이 lifecycle에 바인딩되지 않음 (미해제 구독)
+### I1. `HudVM`의 `CurrentHP` 구독이 lifecycle에 바인딩되지 않음 (미해제 구독) — ✅ 수정됨 (2026-07-13)
 - 파일·라인: `Assets/00_CommonFramework/00_Scripts/UI/Hud/HudVM.cs:17-20`
 - 규칙·기록 근거: convention.md "구독은 `.AddTo(DisposableR3)`"; chain-log에서 R3 필드 순서·구독 누락이 다수 실행(2026-07-09 ExperienceSystem major1 "Reactive 필드 순서 위반", 2026-07-05 이후 반복)에서 재발한 항목.
 - 현재 상태: `playerData.CurrentHP.Subscribe(...)`에 `.AddTo(...)`도 없고 반환 `IDisposable`을 필드로 잡지도 않음. `Dispose()`(24행)는 `_currentHp`만 해제하고 이 구독은 방치 → `HudVM` 파기 후에도 `playerData.CurrentHP`가 살아있는 동안 콜백이 유지되어 파기된 `_currentHp.Value`에 기록 시도(ObjectDisposedException 위험) 및 구독 누수.
 - 다음 확인 방법: 코드상 확정된 위반. 재현은 씬 전환/재시작으로 `HudVM` 재생성 시 콜백 중복 여부를 Play에서 관찰 가능.
+- 조치: `CompositeDisposable _disposables` 필드 추가, `CurrentHP.Subscribe(...)`를 `.AddTo(_disposables)`로 바인딩, `Dispose()`에서 `_disposables.Dispose()` 후 `_currentHp.Dispose()` 호출.
 
-### I2. `ItemDropContext`가 `IDisposable` 미구현 — `_disposables`/`pickSubscription` 미해제
+### I2. `ItemDropContext`가 `IDisposable` 미구현 — `_disposables`/`pickSubscription` 미해제 — ✅ 수정됨 (2026-07-13)
 - 파일·라인: `Assets/10_ProjectA/01_Scripts/Actor/Item/ItemDropContext.cs:11, 19, 50, 65-70`
 - 규칙·기록 근거: convention.md 구독 lifecycle 규칙; chain-log 2026-07-09 ItemDropSystem 항목(하류 계약 배선체).
 - 현재 상태: 클래스가 `IAsyncStartable`만 구현하고 `IDisposable`은 미구현. 50행 `_killEvent.OnKilled.Subscribe(...).AddTo(_disposables)`로 담아둔 `_disposables`(19행)를 해제하는 `Dispose()`가 없어 VContainer 스코프 파기 시 정리되지 않음. 또한 66행 `pickSubscription`은 픽업 콜백 안에서만 self-dispose하므로, 픽업 없이 아이템이 파기/스코프 종료되면 누수. `GameSceneScope.cs:54`는 `RegisterEntryPoint<ItemDropContext>()`로 등록 → 스코프 종료 시 Dispose 훅이 없어 구독이 남음.
 - 다음 확인 방법: 코드상 확정된 위반. Play에서 씬 재시작 반복 시 kill 이벤트당 드랍 콜백 중복 여부로 실증 가능.
+- 조치: `IDisposable` 구현 및 `Dispose()`에서 `_disposables.Dispose()` 호출(스코프 종료 시 kill 구독 해제). `pickSubscription`을 `_disposables`에 담아 픽업 전 파기/스코프 종료 시에도 해제되게 하고, 픽업 시엔 `_disposables.Remove(...)`로 정리.
 
 ---
 
