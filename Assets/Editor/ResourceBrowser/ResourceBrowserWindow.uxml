@@ -1,0 +1,23 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <Style src="project://database/Assets/Editor/ResourceBrowser/ResourceBrowserWindow.uss?fileID=7433441132597879392&amp;guid=90d4c04bdab124c4083520e4f340f896&amp;type=3#ResourceBrowserWindow"/>
+    <ui:VisualElement name="root" class="root">
+        <uie:Toolbar class="toolbar">
+            <uie:ToolbarSearchField name="search" class="search"/>
+            <uie:ToolbarMenu name="type-filter" text="유형: 전체" class="filter"/>
+            <ui:Toggle name="tracked-only" label="정비 대상만" class="tracked-only"/>
+            <uie:ToolbarButton name="refresh" text="Refresh" class="refresh"/>
+        </uie:Toolbar>
+        <ui:VisualElement name="roots" class="roots">
+            <ui:TextField name="root-field" label="검색 루트" class="root-field"/>
+            <ui:TextField name="inventory-field" label="인벤토리 문서" class="inventory-field"/>
+        </ui:VisualElement>
+        <ui:ListView name="list" virtualization-method="DynamicHeight" class="list"/>
+        <ui:VisualElement name="detail" class="detail">
+            <ui:Label name="detail-name" text="-" class="detail-name"/>
+            <ui:Label name="detail-path" text="" class="detail-path"/>
+            <ui:Label name="detail-type" text="" class="detail-type"/>
+            <ui:Label name="detail-status" text="" class="detail-status"/>
+            <ui:Button name="ping" text="Project 창에서 보기" class="ping"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
