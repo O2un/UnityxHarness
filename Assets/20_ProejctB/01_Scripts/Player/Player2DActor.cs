@@ -1,18 +1,21 @@
-using System;
+using O2un.Actors;
 using O2un.Input;
 using R3;
 using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
-    public sealed class Player2DActor : IDisposable
+    public sealed class Player2DActor : Actor<PlayerView>
     {
         private readonly PlayerMover _mover;
         private readonly CompositeDisposable _disposables = new();
 
         private float _moveX;
 
-        public Player2DActor(MovementData data, IInputReader input)
+        public override ActorType Type => ActorType.Player;
+
+        public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry)
+            : base(view, registry)
         {
             _mover = new PlayerMover(data);
 
@@ -20,7 +23,7 @@ namespace O2un.ProjectB.Platformer
             input.IsJumpPressed.Subscribe(_ => _mover.QueueJump()).AddTo(_disposables);
         }
 
-        public void Tick()
+        public override void Tick(float dt)
         {
             _mover.SetMoveInput(_moveX);
         }
@@ -30,9 +33,10 @@ namespace O2un.ProjectB.Platformer
             return _mover.ResolveVelocity(grounded, currentVerticalVelocity);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             _disposables.Dispose();
+            base.Dispose();
         }
     }
 }

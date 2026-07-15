@@ -3,7 +3,7 @@ using UnityEngine;
 namespace O2un.Actors
 {
     [RequireComponent(typeof(CharacterController))]
-    public sealed class ActorView : MonoBehaviour
+    public sealed class ActorView : MonoBehaviour, IActorView
     {
         private static readonly int SPEED_HASH = Animator.StringToHash("Speed");
 

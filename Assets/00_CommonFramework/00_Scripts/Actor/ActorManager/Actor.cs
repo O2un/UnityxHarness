@@ -6,20 +6,15 @@ namespace O2un.Actors
     public abstract class Actor : IActor, IDisposable
     {
         private readonly IActorRegistry _registry;
-        private readonly ActorView _view;
 
         private bool _registered;
 
         public abstract ActorType Type { get; }
-        public Transform Transform => _view.transform;
+        public abstract Transform Transform { get; }
 
-        protected ActorView View => _view;
-
-        protected Actor(ActorView view, IActorRegistry registry)
+        protected Actor(IActorRegistry registry)
         {
-            _view = view;
             _registry = registry;
-            _view.Bind(this);
         }
 
         public abstract void Tick(float dt);
@@ -48,8 +43,29 @@ namespace O2un.Actors
 
         public virtual void Dispose()
         {
-            _view.Unbind(this);
             Unregister();
+        }
+    }
+
+    public abstract class Actor<TView> : Actor where TView : class, IActorView
+    {
+        private readonly TView _view;
+
+        public override Transform Transform => _view.transform;
+
+        protected TView View => _view;
+
+        protected Actor(TView view, IActorRegistry registry)
+            : base(registry)
+        {
+            _view = view;
+            _view.Bind(this);
+        }
+
+        public override void Dispose()
+        {
+            _view.Unbind(this);
+            base.Dispose();
         }
     }
 }

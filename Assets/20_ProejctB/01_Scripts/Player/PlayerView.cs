@@ -1,20 +1,52 @@
+using O2un.Actors;
 using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    public sealed class PlayerView : MonoBehaviour
+    public sealed class PlayerView : MonoBehaviour, IActorView
     {
         private static readonly RaycastHit2D[] _hits = new RaycastHit2D[4];
 
         private Rigidbody2D _body;
         private Collider2D _collider;
+        private Actor _actor;
 
         private Rigidbody2D Body => _body ??= GetComponent<Rigidbody2D>();
         private Collider2D Collider => _collider ??= GetComponent<Collider2D>();
 
         public Transform FollowTarget => transform;
         public float VerticalVelocity => Body.linearVelocity.y;
+
+        private void OnEnable()
+        {
+            _actor?.Register();
+        }
+
+        private void OnDisable()
+        {
+            _actor?.Unregister();
+        }
+
+        public void Bind(Actor actor)
+        {
+            _actor = actor;
+
+            if (true == isActiveAndEnabled)
+            {
+                _actor.Register();
+            }
+        }
+
+        public void Unbind(Actor actor)
+        {
+            if (false == ReferenceEquals(_actor, actor))
+            {
+                return;
+            }
+
+            _actor = null;
+        }
 
         public void ApplyVelocity(Vector2 velocity)
         {

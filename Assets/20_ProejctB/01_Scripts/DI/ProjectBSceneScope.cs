@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using O2un.Actors;
 using O2un.DI;
 using UnityEngine;
 using VContainer;
@@ -12,6 +13,8 @@ namespace O2un.ProjectB.Platformer
 
         protected override void Configure(IContainerBuilder builder)
         {
+            builder.Register<ActorManager>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+
             builder.RegisterBuildCallback(InitializeSceneComponents);
         }
 
