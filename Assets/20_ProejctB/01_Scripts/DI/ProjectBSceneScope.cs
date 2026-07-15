@@ -13,7 +13,7 @@ namespace O2un.ProjectB.Platformer
 
         protected override void Configure(IContainerBuilder builder)
         {
-            builder.Register<ActorManager>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.RegisterEntryPoint<ActorManager>().AsSelf();
 
             builder.RegisterBuildCallback(InitializeSceneComponents);
         }

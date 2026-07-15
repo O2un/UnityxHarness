@@ -19,7 +19,6 @@ namespace O2un.Actors
         private NpcActor _actor;
         private EnemyHealth _health;
         private EnemyContext _enemyContext;
-        private SkillModule _attackSkills;
         private IActorRegistry _registry;
         private IActorQuery _query;
         private IAttackSpawner _spawner;
@@ -46,7 +45,8 @@ namespace O2un.Actors
             int maxHp = null != _monsterData ? _monsterData.MaxHp : 1;
             _health = new EnemyHealth(maxHp, _damagePublisher);
 
-            _actor = new NpcActor(_profile.Build(blackboard, mover), blackboard, mover, _view, _registry, _query, _health);
+            SkillModule attackSkills = BuildAttackSkills();
+            _actor = new NpcActor(_profile.Build(blackboard, mover), blackboard, mover, _view, _registry, _query, _health, attackSkills);
 
             if (null != _damageable)
             {
@@ -65,7 +65,6 @@ namespace O2un.Actors
                 Debug.LogWarning($"[NpcContext] '{name}'에서 EnemyContext를 찾지 못해 풀 재사용 시 체력이 리셋되지 않습니다.");
             }
 
-            _attackSkills = BuildAttackSkills();
         }
 
         private SkillModule BuildAttackSkills()
@@ -89,18 +88,10 @@ namespace O2un.Actors
             _killEvent?.Publish(new EnemyKilledInfo(position, exp));
         }
 
-        private void Update()
-        {
-            float dt = Time.deltaTime;
-            _actor?.Tick(dt);
-            _attackSkills?.Tick(dt);
-        }
-
         private void OnDestroy()
         {
             _disposables.Dispose();
             _actor?.Dispose();
-            _attackSkills?.Dispose();
         }
     }
 }

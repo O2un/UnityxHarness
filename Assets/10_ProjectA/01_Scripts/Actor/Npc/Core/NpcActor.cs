@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace O2un.Actors
 {
-    public sealed class NpcActor : Actor<ActorView>
+    public sealed class NpcActor : Actor<ActorView>, IActorTickable
     {
         private readonly BaseEnemyAI _ai;
         private readonly EnemyBlackboard _blackboard;
         private readonly CharacterMover _mover;
         private readonly IActorQuery _query;
         private readonly EnemyHealth _health;
+        private readonly SkillModule _attackSkills;
 
         public override ActorType Type => ActorType.Enemy;
         public EnemyHealth Health => _health;
@@ -22,7 +23,8 @@ namespace O2un.Actors
             ActorView view,
             IActorRegistry registry,
             IActorQuery query,
-            EnemyHealth health)
+            EnemyHealth health,
+            SkillModule attackSkills)
             : base(view, registry)
         {
             _ai = ai;
@@ -30,6 +32,7 @@ namespace O2un.Actors
             _mover = mover;
             _query = query;
             _health = health;
+            _attackSkills = attackSkills;
             _blackboard.Transform = view.transform;
         }
 
@@ -38,6 +41,7 @@ namespace O2un.Actors
             UpdateTarget();
             _ai.Tick(dt);
             ApplyMovement();
+            _attackSkills?.Tick(dt);
         }
 
         private void UpdateTarget()
@@ -77,6 +81,7 @@ namespace O2un.Actors
             base.Dispose();
             _mover.Dispose();
             _health.Dispose();
+            _attackSkills?.Dispose();
         }
     }
 }

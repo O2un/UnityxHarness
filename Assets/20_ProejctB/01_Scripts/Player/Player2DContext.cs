@@ -27,16 +27,6 @@ namespace O2un.ProjectB.Platformer
             _actor = new Player2DActor(_data, _input, _view, _registry);
         }
 
-        private void Update()
-        {
-            _actor?.Tick(Time.deltaTime);
-        }
-
-        private void FixedUpdate()
-        {
-            _actor?.FixedTick(Time.fixedDeltaTime);
-        }
-
         private void OnDestroy()
         {
             _actor?.Dispose();

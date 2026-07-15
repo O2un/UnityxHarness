@@ -45,7 +45,7 @@ namespace O2un.DI
 
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            builder.Register<ActorManager>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.RegisterEntryPoint<ActorManager>().AsSelf();
 
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
 

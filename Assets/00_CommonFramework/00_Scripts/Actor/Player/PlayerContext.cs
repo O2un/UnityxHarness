@@ -59,11 +59,6 @@ namespace O2un.Actors
             return new SkillModule(defs, context);
         }
 
-        private void Update()
-        {
-            _actor?.Tick(Time.deltaTime);
-        }
-
         private void OnDestroy()
         {
             _actor?.Dispose();

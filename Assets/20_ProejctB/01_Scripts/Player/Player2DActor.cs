@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
-    public sealed class Player2DActor : Actor<PlayerView>
+    public sealed class Player2DActor : Actor<PlayerView>, IActorTickable, IActorFixedTickable
     {
         private readonly PlayerMover _mover;
         private readonly LayerMask _groundMask;
@@ -30,15 +30,15 @@ namespace O2un.ProjectB.Platformer
             input.IsJumpReleased.Subscribe(_ => _mover.RequestJumpCut()).AddTo(_disposables);
         }
 
-        public override void Tick(float dt)
+        public override void Tick(float deltaTime)
         {
             _mover.SetMoveInput(_moveX);
         }
 
-        public void FixedTick(float dt)
+        public void FixedTick(float fixedDeltaTime)
         {
             bool grounded = View.CheckGrounded(_groundMask, _groundCastSize, _groundCastDistance);
-            Vector2 velocity = _mover.ResolveVelocity(grounded, View.VerticalVelocity, dt);
+            Vector2 velocity = _mover.ResolveVelocity(grounded, View.VerticalVelocity, fixedDeltaTime);
             View.ApplyPhysics(velocity, grounded);
         }
 

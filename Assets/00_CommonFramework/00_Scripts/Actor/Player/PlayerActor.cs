@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace O2un.Actors
 {
-    public sealed class PlayerActor : Actor<ActorView>, IPlayerSkillReceiver
+    public sealed class PlayerActor : Actor<ActorView>, IPlayerSkillReceiver, IActorTickable
     {
         private readonly CharacterMover _mover;
         private readonly IMoveDirectionProvider _provider;
