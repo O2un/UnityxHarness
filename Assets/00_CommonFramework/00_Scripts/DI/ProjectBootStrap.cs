@@ -30,7 +30,7 @@ namespace O2un.DI
             await UniTask.WhenAll(waitTasks);
             Debug.Log("매니저 준비 완료");
 
-            await _sceneService.LoadSceneAsync(SCENE_NAME.GAME_SELECT_SCENE);
+            //await _sceneService.LoadSceneAsync(SCENE_NAME.GAME_SELECT_SCENE);
         }
     }
 }

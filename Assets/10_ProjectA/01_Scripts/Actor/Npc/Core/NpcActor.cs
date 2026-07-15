@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace O2un.Actors
 {
-    public sealed class NpcActor : Actor
+    public sealed class NpcActor : Actor<ActorView>
     {
         private readonly BaseEnemyAI _ai;
         private readonly EnemyBlackboard _blackboard;
