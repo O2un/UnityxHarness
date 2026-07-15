@@ -34,15 +34,7 @@ namespace O2un.ProjectB.Platformer
 
         private void FixedUpdate()
         {
-            if (null == _actor)
-            {
-                return;
-            }
-
-            bool grounded = _view.CheckGrounded(_data.GroundMask, _data.GroundCastSize, _data.GroundCastDistance);
-            Vector2 velocity = _actor.ResolvePhysics(grounded, _view.VerticalVelocity, Time.fixedDeltaTime);
-            _view.ApplyVelocity(velocity);
-            _view.UpdateAnimation(grounded);
+            _actor?.FixedTick(Time.fixedDeltaTime);
         }
 
         private void OnDestroy()

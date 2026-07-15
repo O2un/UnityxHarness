@@ -8,6 +8,9 @@ namespace O2un.ProjectB.Platformer
     public sealed class Player2DActor : Actor<PlayerView>
     {
         private readonly PlayerMover _mover;
+        private readonly LayerMask _groundMask;
+        private readonly Vector2 _groundCastSize;
+        private readonly float _groundCastDistance;
         private readonly CompositeDisposable _disposables = new();
 
         private float _moveX;
@@ -18,6 +21,9 @@ namespace O2un.ProjectB.Platformer
             : base(view, registry)
         {
             _mover = new PlayerMover(data);
+            _groundMask = data.GroundMask;
+            _groundCastSize = data.GroundCastSize;
+            _groundCastDistance = data.GroundCastDistance;
 
             input.Move.Subscribe(v => _moveX = v.x).AddTo(_disposables);
             input.IsJumpPressed.Subscribe(_ => _mover.QueueJump()).AddTo(_disposables);
@@ -29,9 +35,11 @@ namespace O2un.ProjectB.Platformer
             _mover.SetMoveInput(_moveX);
         }
 
-        public Vector2 ResolvePhysics(bool grounded, float currentVerticalVelocity, float dt)
+        public void FixedTick(float dt)
         {
-            return _mover.ResolveVelocity(grounded, currentVerticalVelocity, dt);
+            bool grounded = View.CheckGrounded(_groundMask, _groundCastSize, _groundCastDistance);
+            Vector2 velocity = _mover.ResolveVelocity(grounded, View.VerticalVelocity, dt);
+            View.ApplyPhysics(velocity, grounded);
         }
 
         public override void Dispose()

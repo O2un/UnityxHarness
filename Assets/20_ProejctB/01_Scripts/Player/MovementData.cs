@@ -5,17 +5,17 @@ namespace O2un.ProjectB.Platformer
     [CreateAssetMenu(menuName = "ProjectB/Platformer/MovementData")]
     public sealed class MovementData : ScriptableObject
     {
-        [SerializeField] private float _maxMoveSpeed;
-        [SerializeField] private float _jumpVelocity;
+        [SerializeField, Min(0f)] private float _maxMoveSpeed;
+        [SerializeField, Min(0f)] private float _jumpVelocity;
         [SerializeField] private LayerMask _groundMask;
-        [SerializeField] private float _groundCastDistance;
+        [SerializeField, Min(0f)] private float _groundCastDistance;
         [SerializeField] private Vector2 _groundCastSize;
 
-        [SerializeField] private float _coyoteTime;
-        [SerializeField] private float _jumpBufferTime;
-        [SerializeField] private float _acceleration;
-        [SerializeField] private float _deceleration;
-        [SerializeField] private float _jumpCutFactor;
+        [SerializeField, Min(0f)] private float _coyoteTime;
+        [SerializeField, Min(0f)] private float _jumpBufferTime;
+        [SerializeField, Min(0f)] private float _acceleration;
+        [SerializeField, Min(0f)] private float _deceleration;
+        [SerializeField, Range(0f, 1f)] private float _jumpCutFactor;
 
         public float MaxMoveSpeed => _maxMoveSpeed;
         public float JumpVelocity => _jumpVelocity;

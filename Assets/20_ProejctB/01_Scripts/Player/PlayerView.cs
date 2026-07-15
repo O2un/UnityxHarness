@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(SpriteRenderer))]
+    [RequireComponent(typeof(Animator))]
     public sealed class PlayerView : MonoBehaviour, IActorView
     {
         private const float FACING_VELOCITY_THRESHOLD = 0.01f;
@@ -64,17 +65,10 @@ namespace O2un.ProjectB.Platformer
             _actor = null;
         }
 
-        public void ApplyVelocity(Vector2 velocity)
+        public void ApplyPhysics(Vector2 velocity, bool grounded)
         {
             Body.linearVelocity = velocity;
-        }
-
-        public void UpdateAnimation(bool grounded)
-        {
-            Vector2 velocity = Body.linearVelocity;
-            Animator.SetFloat(_speedHash, Mathf.Abs(velocity.x));
-            Animator.SetFloat(_groundDistanceHash, true == grounded ? 0f : 1f);
-            Animator.SetFloat(_fallSpeedHash, velocity.y);
+            UpdateAnimation(grounded);
         }
 
         private void UpdateFacing()
@@ -88,6 +82,14 @@ namespace O2un.ProjectB.Platformer
             {
                 Renderer.flipX = true;
             }
+        }
+
+        private void UpdateAnimation(bool grounded)
+        {
+            Vector2 velocity = Body.linearVelocity;
+            Animator.SetFloat(_speedHash, Mathf.Abs(velocity.x));
+            Animator.SetFloat(_groundDistanceHash, true == grounded ? 0f : 1f);
+            Animator.SetFloat(_fallSpeedHash, velocity.y);
         }
 
         public bool CheckGrounded(LayerMask mask, Vector2 size, float distance)
