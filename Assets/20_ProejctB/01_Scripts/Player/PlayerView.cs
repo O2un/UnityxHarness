@@ -5,6 +5,8 @@ namespace O2un.ProjectB.Platformer
     [RequireComponent(typeof(Rigidbody2D))]
     public sealed class PlayerView : MonoBehaviour
     {
+        private static readonly RaycastHit2D[] _hits = new RaycastHit2D[4];
+
         private Rigidbody2D _body;
         private Collider2D _collider;
 
@@ -21,10 +23,21 @@ namespace O2un.ProjectB.Platformer
 
         public bool CheckGrounded(LayerMask mask, Vector2 size, float distance)
         {
-            Bounds bounds = Collider.bounds;
+            Collider2D self = Collider;
+            Bounds bounds = self.bounds;
             Vector2 origin = new(bounds.center.x, bounds.min.y);
-            RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, distance, mask);
-            return null != hit.collider;
+            int count = Physics2D.BoxCastNonAlloc(origin, size, 0f, Vector2.down, _hits, distance, mask);
+
+            for (int i = 0; i < count; i++)
+            {
+                Collider2D hit = _hits[i].collider;
+                if (null != hit && hit != self)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

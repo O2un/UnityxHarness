@@ -1,6 +1,5 @@
 using O2un.DI;
 using O2un.Input;
-using R3;
 using UnityEngine;
 using VContainer;
 
@@ -13,10 +12,7 @@ namespace O2un.ProjectB.Platformer
 
         [Inject] private IInputReader _input;
 
-        private readonly CompositeDisposable _disposables = new();
-
-        private PlayerMover _mover;
-        private float _moveX;
+        private Player2DActor _actor;
 
         public void Init()
         {
@@ -26,32 +22,29 @@ namespace O2un.ProjectB.Platformer
                 return;
             }
 
-            _mover = new PlayerMover(_data);
-
-            _input.Move.Subscribe(v => _moveX = v.x).AddTo(_disposables);
-            _input.IsJumpPressed.Subscribe(_ => _mover.QueueJump()).AddTo(_disposables);
+            _actor = new Player2DActor(_data, _input);
         }
 
         private void Update()
         {
-            _mover?.SetMoveInput(_moveX);
+            _actor?.Tick();
         }
 
         private void FixedUpdate()
         {
-            if (null == _mover)
+            if (null == _actor)
             {
                 return;
             }
 
             bool grounded = _view.CheckGrounded(_data.GroundMask, _data.GroundCastSize, _data.GroundCastDistance);
-            Vector2 velocity = _mover.ResolveVelocity(grounded, _view.VerticalVelocity);
+            Vector2 velocity = _actor.ResolvePhysics(grounded, _view.VerticalVelocity);
             _view.ApplyVelocity(velocity);
         }
 
         private void OnDestroy()
         {
-            _disposables.Dispose();
+            _actor?.Dispose();
         }
     }
 }
