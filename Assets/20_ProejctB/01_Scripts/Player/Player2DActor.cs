@@ -1,10 +1,11 @@
+using System;
 using O2un.Input;
 using R3;
 using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
-    public sealed class Player2DActor
+    public sealed class Player2DActor : IDisposable
     {
         private readonly PlayerMover _mover;
         private readonly CompositeDisposable _disposables = new();
