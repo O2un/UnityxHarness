@@ -8,6 +8,8 @@ namespace O2un.ProjectB.Platformer
     {
         private static readonly RaycastHit2D[] _hits = new RaycastHit2D[4];
 
+        private ContactFilter2D _filter;
+
         private Rigidbody2D _body;
         private Collider2D _collider;
         private Actor _actor;
@@ -58,7 +60,12 @@ namespace O2un.ProjectB.Platformer
             Collider2D self = Collider;
             Bounds bounds = self.bounds;
             Vector2 origin = new(bounds.center.x, bounds.min.y);
-            int count = Physics2D.BoxCastNonAlloc(origin, size, 0f, Vector2.down, _hits, distance, mask);
+
+            _filter.useTriggers = false;
+            _filter.useLayerMask = true;
+            _filter.layerMask = mask;
+
+            int count = Physics2D.BoxCast(origin, size, 0f, Vector2.down, _filter, _hits, distance);
 
             for (int i = 0; i < count; i++)
             {
