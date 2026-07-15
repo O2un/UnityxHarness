@@ -133,3 +133,77 @@ InvalidOperationException: [AssetManager] key=bgm/battle has no asset of type Un
 ## 결론
 - 컴파일·씬 배선·DI 해소 모두 정상. 오디오 시스템 배선은 완결.
 - 실제 재생 검증(게이트 3)은 6개 주소에 실제(또는 무음) AudioClip을 Addressables로 등록한 뒤 재수행 필요.
+
+---
+
+# 02. 검증 (4단계 게이트) · 2d-player-movement-part1
+
+작성: unity-ai-operator
+일시: 2026-07-15
+대상 씬: `Assets/20_ProejctB/Demo.unity` · 설계: `artifacts/01-design.md`
+
+| 단계 | 결과 | 비고 |
+| --- | --- | --- |
+| 1. 컴파일 | ✅ 통과 | `refresh_unity`(force, scope=all, compile=request) 후 `read_console(types=[error])` 0건 |
+| 2. Play 콘솔 에러 | ✅ 통과 | Play 진입~종료 에러 0건. DI 주입 성공(Player2DContext 실패 로그 없음, IInputReader 미해소 없음, NullRef 없음) |
+| 3. 기능 점검 (실플레이 조작) | ⏳ 대기 | 사람이 직접 재생 필요 — 아래 체크리스트 |
+| 4. 사용자 확인 | ⏳ 대기 | |
+
+## 게이트 1 — 컴파일
+- 신규 스크립트(`Assets/20_ProejctB/01_Scripts/**`: MovementData, PlayerMover, PlayerView, Player2DContext, ProjectBSceneScope)가 인식되도록 `refresh_unity(mode=force, scope=all, compile=request)` 실행 후 도메인 리로드 완료.
+- `read_console(types=[error])` = 0건. **통과.**
+
+## 게이트 B — 레이어·에셋·씬 배치 (사용자 승인 완료)
+
+### 레이어
+- `Ground` 레이어 추가(slot 8). `Player` 레이어는 기존 존재(slot 31).
+
+### 에셋
+- `Assets/20_ProejctB/01_Scripts/Player/MovementData.asset` (신규)
+  - MaxMoveSpeed=7, JumpVelocity=12, GroundCastDistance=0.15, GroundCastSize=(0.9, 0.1)
+  - GroundMask = Ground(bit 256, slot 8). Player 자기 자신 미포함.
+  - `manage_asset`가 임의 ScriptableObject 생성을 지원하지 않아 `.asset` YAML을 MonoScript GUID로 직접 작성 후 임포트. `get_info`로 타입 `O2un.ProjectB.Platformer.MovementData` 인식 확인.
+
+### 씬 GameObject (Demo.unity)
+기존 장식 스프라이트/Grid/Unitychan 등 15개 루트가 있는 씬 위에 아래 추가:
+
+| GameObject | 컴포넌트 | 참조/설정 |
+| --- | --- | --- |
+| ProjectLifetimeScope | `O2un.DI.ProjectLifetimeScope` | 부모 전역 스코프(InputManager 등 등록). Demo 단독 재생만으로 IInputReader 해소 목적 |
+| ProjectBSceneScope | `O2un.ProjectB.Platformer.ProjectBSceneScope` | `_sceneInitializables[0]` = Player (씬 YAML 검증: fileID 519641238 = Player GO) |
+| Player (layer=Player) | Rigidbody2D, BoxCollider2D, PlayerView, Player2DContext | 아래 상세 |
+| Ground (layer=Ground) | BoxCollider2D | pos(0,-3), scale(20,1), collider size(1,1) |
+| Directional Light | Light(type=Directional) | 신규 |
+| Main Camera | Camera | orthographic=true 설정(기존 오브젝트) |
+
+Player 상세:
+- Rigidbody2D: gravityScale=3, constraints=FreezeRotationZ, collisionDetection=Continuous, interpolation=Interpolate
+- BoxCollider2D: size(0.8, 1)
+- Player2DContext `_data` → MovementData.asset (guid 840e8ab7ce628408db4d0e2ba59e9a20, type 2) — 저장된 씬 YAML로 검증됨
+- Player2DContext `_view` → 같은 오브젝트의 PlayerView (fileID 519641240, PlayerView MonoBehaviour) — 씬 YAML로 검증됨
+- 위치 (0,0,0): Ground 상단(y≈-2.5) 위 공중 약간
+
+참조 할당 상태: `_data`·`_view`·`_sceneInitializables` 모두 저장된 씬 YAML에서 유효 guid/fileID로 확인됨.
+
+## 게이트 2 — Play 모드 콘솔
+- Play 진입 → 콘솔 수집 → 3초 후 재확인 → Play 종료.
+- `read_console(types=[error])` = 0건. `Player2DContext` 필터 에러 0건.
+- DI 그래프가 `Player2DContext`에 `IInputReader`를 성공적으로 주입(주입 실패 시 뜨는 "의존성 주입 실패" 로그 없음). ProjectLifetimeScope + ProjectBSceneScope 공존으로 Demo 단독 재생만으로 해소됨.
+- 관찰된 Warning은 전부 기존 3rd-party `Unitychan`(BaseSpriteController.cs:7 "Input Reader is not assigned")로 이번 작업과 무관·에러 아님.
+- 기능 관찰(velocity 로그 등)은 이 세션 도구로 실시간 수집이 불가하여 미수행 — 실조작 관찰은 게이트 3에서 사람이 수행.
+
+## 게이트 3 — 사람 재생 체크리스트 (미완)
+Demo.unity를 열고 Play 후 직접 확인:
+- [ ] 좌우 입력으로 Player가 수평 이동한다.
+- [ ] 점프 입력 1회당 정확히 1회만 점프한다(연속 재점프 없음).
+- [ ] 공중에서 점프 입력해도 접지 순간에만 점프가 발동한다.
+- [ ] 지면(Ground) 착지 시 접지 판정되어 재점프 가능하다.
+- [ ] 프레임률과 무관하게 이동 속도가 일정하다(Update 계산 / FixedUpdate 적용 분리).
+- [ ] Player가 Ground를 뚫지 않고 착지한다.
+
+## 게이트 4 — 사용자 확인 (미완)
+- 게이트 3 체크리스트 만족 시 사용자 최종 확인.
+
+## 결론
+- Gate 1(컴파일)·Gate 2(Play 진입 에러) 통과. 씬·에셋·레이어·DI 배선 완결.
+- Gate 3/4는 실조작이 필요하여 사람 재생 대기.

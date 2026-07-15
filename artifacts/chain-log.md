@@ -3,6 +3,18 @@
 이 프로젝트에서 하네스로 진행한 작업 이력의 축약본. 한 실행이 끝날 때 improvement-log.md의 핵심만 요약해 누적한다.
 Phase 0의 기본 입력은 improvement-log.md이며, 이 파일은 과거 내역 확인이 필요할 때만 참조한다.
 
+## 2026-07-13 · balance-probe 구현 (요약 이월)
+
+- 에디터 전용 밸런스 실측 계측 도구. `EnemyDamageChannel`(HP 감소 publish)로 생존자 포함 정확한 DPS 산출, `BalanceProbeManager`(전체 `#if UNITY_EDITOR`)가 5개 웨이브 윈도별 measuredDps/kills/peakAlive/level 집계 → 판 종료 시 `BalanceLogs/*.csv` 출력. 전부 `10_ProjectA`, CommonFramework 무변경. Gate 1·2 통과, Gate 3·4는 실플레이 필요로 수동 확인 대기.
+
+---
+
+## 2026-07-12 · audio-system 리뷰 (요약 이월)
+
+- blocker 0 / major 0 / minor 3. 재생 코어(Common)는 ProjectA 이벤트 타입 무참조, Binder만 인터페이스 경유 소비. M1(SFX fire-and-forget 예외)·M2(로드 전 중복 재생)는 `_sfxLoading` HashSet + try/finally로 적용 완료. M3(concrete 주입)은 IHealth에 OnDeath 없어 현행 유지.
+
+---
+
 ## 2026-07-11 · skill-upgrade-content 구현
 
 - 배치(게이트 A 승인): 공통 스킬·히트박스 확장은 `00_CommonFramework`, 카드 SO와 후보 필터링은 `10_ProjectA`; 카드 데이터는 `03_Data/SkillUpgradeCards` 전용 폴더.

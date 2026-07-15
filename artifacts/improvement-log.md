@@ -1,26 +1,29 @@
 # 개선 기록 (improvement-log)
 
-## 2026-07-13 · balance-probe 구현
+## 2026-07-15 · 2D Player Movement Part 1 (이동·점프 코어) 구현
 
 ### 구현 내용
-에디터 전용 밸런스 실측 계측 도구. 사람이 한 판 플레이하는 동안 웨이브 구간별 실측 지표를 기존 이벤트 구독으로 모아 판 종료 시 CSV 출력. 전부 `Assets/10_ProjectA/01_Scripts/`, CommonFramework 무변경.
+2D 플랫포머 이동·점프 기본기. Rigidbody2D velocity 기반 좌우 이동 + velocity.y 직접 부여 점프, BoxCast 접지 판정, Update(계산)/FixedUpdate(적용) 틱 분리. 전부 `Assets/20_ProejctB/01_Scripts/`, 네임스페이스 `O2un.ProjectB.Platformer`(기존 3D `O2un.Actors`와 완전 분리 — 사용자 승인). CommonFramework 무변경.
 
-- **데미지 채널** (`Combat/Damage/`): `EnemyDamageChannel`(= `IEnemyDamageSource`+`IEnemyDamagePublisher`), ExpGainedChannel 패턴 그대로. `EnemyHealth.VaryHP`가 HP 감소분을 publish → 생존자 포함 정확한 총 데미지로 실측 DPS 산출.
-- **주입 배선**: `NpcContext.Construct`에 `IEnemyDamagePublisher` 추가 → `new EnemyHealth(maxHp, _damagePublisher)`.
-- **BalanceProbeManager** (`BalanceProbe/`, 파일 전체 `#if UNITY_EDITOR`): IInitializable/ITickable/IDisposable 엔트리포인트. 5개 웨이브 윈도(1–12/14–26/28–40/42–54/56–70초) 하드코딩. 구간별 집계: measuredDps(=Σ데미지/구간길이)·kills·peakAlive(`IActorQuery.GetActive(Enemy).Count` 폴링)·level·wasHit·visited. Playing 전이 시 계측 시작, Victory/Defeat에서 `BalanceLogs/balance-probe_<ts>.csv` 출력, Idle 전이 시 ResetRun(재시작 대비).
-- **DI** (`GameSceneScope`): `EnemyDamageChannel` 무조건 등록(빌드에서도 NpcContext가 IEnemyDamagePublisher 필요) + 프로브 엔트리포인트는 `#if UNITY_EDITOR`.
-- `.gitignore`에 `/BalanceLogs/` 추가.
+- **PlayerMover** (순수 Module): `SetMoveInput`/`QueueJump`/`ResolveVelocity(bool grounded, float currentVy)`. 점프 플래그는 `grounded && queued`일 때만 소비 후 즉시 false → FixedUpdate N회에도 재점프 없음, 공중 유지 후 접지 순간 1회. MovementData 스칼라만 캐싱, Vector2 값 타입만 사용(Unity API 비의존).
+- **PlayerView** (Mono, `[RequireComponent(Rigidbody2D)]`): `ApplyVelocity`→`linearVelocity`(Unity6), `VerticalVelocity`, `CheckGrounded(mask,size,dist)`=콜라이더 하단 중심 원점 BoxCast, `FollowTarget => transform`(Part3 카메라 훅).
+- **MovementData** (SO): MaxMoveSpeed/JumpVelocity/GroundMask/GroundCastDistance/GroundCastSize. 캐스트 파라미터도 SO 노출(Part2 코요테/버퍼 접지 타이밍 튜닝 대비).
+- **Player2DContext** (Mono, ISceneInitializable): `[Inject] IInputReader` + `[SerializeField]` MovementData/PlayerView. Update=SetMoveInput, FixedUpdate=CheckGrounded→ResolveVelocity→ApplyVelocity. `IsJumpPressed.Subscribe(_=>QueueJump()).AddTo`(R3 허용 범위).
+- **ProjectBSceneScope** (신규 LifetimeScope): GameSceneScope 패턴 차용, `_sceneInitializables`+RegisterBuildCallback. IInputReader/MovementData는 등록 안 함(부모 스코프 해소 + 인스펙터 직접 할당).
 
 ### 결정 (사용자 승인)
-- DPS 소스: EnemyHealth 이벤트 채널(정확도 우선) — PRD의 '비침범' AC를 정확도 위해 완화. 게임 로직 수정은 HP 감소 1지점 publish로 최소화.
-- 출력 경로: 프로젝트 루트 `BalanceLogs/`. 종료 훅: `IGameManager.CurrentState`(클리어·게임오버 둘 다).
+- 배치: `20_ProejctB` 프로젝트 전용(PRD 명시). Actor 레이어 생략(기능 2개, Context가 Mover 직접 소유).
+- 접지: BoxCast + 캐스트 파라미터 SO 노출.
+- **씬 구조(§6-E)**: Demo.unity 안에 ProjectLifetimeScope + ProjectBSceneScope 함께 배치 → 단독 재생만으로 IInputReader 해소. (정식 부트 체인 경유 아님 — Part 1 검증 단순화 목적.)
 
 ### 검증
-- Gate 1 컴파일: 통과(에러 0). 신규 파일은 `refresh scope=all`로 임포트해야 인식됨(scripts-only 리프레시로는 새 .cs 미컴파일 → 최초 CS0234/CS0246 발생, full refresh로 해소).
-- Gate 2 Play: 진입 에러 0, DI 그래프 정상(EnemyDamageChannel이 NpcContext 충족, 프로브 엔트리포인트 생성).
-- Gate 3·4: 미완 — CSV는 UI Start→판 종료까지 실제 플레이해야 생성. MCP UI 클릭 불가로 자동화 불가.
+- Gate 1 컴파일: 통과(refresh scope=all 후 에러 0). 신규 .cs는 full refresh 필요(scripts-only는 미컴파일 — 반복되는 하네스 이슈).
+- Gate 2 Play: 진입~3초 에러 0, DI가 Player2DContext에 IInputReader 주입 성공.
+- Gate 3·4: 미완 — 사람이 Demo.unity 재생해 실조작 확인 필요.
+- 리뷰: blocker 0/major 0/minor 2(둘 다 안전/오탐). 의존 방향·틱 분리·점프 1회·R3·금지패턴 통과.
 
 ### 다음 실행 규칙 (미완 항목)
-- **Gate 3·4 수동 확인 필요**: GameScene Play → GameSelect Start → 한 판 완주 → 콘솔 `[BalanceProbe] ... 저장` 로그 + 루트 `BalanceLogs/*.csv` 생성 확인. CSV 축(웨이브·DPS·peakAlive)이 `docs/evals/wave-balance-prep.md`와 대조 가능한지 확인.
-- 동시 타격 수 지표는 미구현(PRD Open Question, 히트박스 이벤트 부재로 Needs Assumption). 필요 시 스킬 히트 채널 추가로 확장.
-- `WINDOWS`는 `WaveData_Test` 기준 하드코딩. 웨이브 구성이 바뀌면 이 상수도 갱신 필요(WaveDataSO에서 동적 산출로 확장 여지).
+- **Gate 3·4 수동 확인**: Demo.unity 재생 → 좌우 이동 / 점프 1입력 1회 / 공중 점프는 접지 순간 발동 / 착지 후 재점프 / 프레임률 무관 이동 / Ground 관통 없음. 체크리스트는 `artifacts/02-validation.md` part1 섹션.
+- **M1(BoxCast 자기 히트)**: 현재 GroundMask=Ground(layer8)만이라 안전. Player 레이어가 마스크에 섞이면 항상 grounded=true 되므로 씬 재배선 시 주의.
+- **Part 2 입력 준비**: PlayerMover의 점프/접지 계약 + IsGrounded 캐시가 코요테/버퍼 훅. MovementData가 코요테·버퍼·가변점프 값 확장 지점. PlayerView.FollowTarget이 Part 3 카메라 대상.
+- **씬 구조 재검토**: Demo에 ProjectLifetimeScope 직접 배치는 검증용 단순화. 실제 게임 흐름(부트 체인)에 편입할 땐 이 배선 조정 필요.
