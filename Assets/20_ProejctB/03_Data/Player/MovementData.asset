@@ -19,3 +19,8 @@ MonoBehaviour:
     m_Bits: 256
   _groundCastDistance: 0.15
   _groundCastSize: {x: 0.9, y: 0.1}
+  _coyoteTime: 0.1
+  _jumpBufferTime: 0.1
+  _acceleration: 60
+  _deceleration: 80
+  _jumpCutFactor: 0.5

@@ -40,8 +40,9 @@ namespace O2un.ProjectB.Platformer
             }
 
             bool grounded = _view.CheckGrounded(_data.GroundMask, _data.GroundCastSize, _data.GroundCastDistance);
-            Vector2 velocity = _actor.ResolvePhysics(grounded, _view.VerticalVelocity);
+            Vector2 velocity = _actor.ResolvePhysics(grounded, _view.VerticalVelocity, Time.fixedDeltaTime);
             _view.ApplyVelocity(velocity);
+            _view.UpdateAnimation(grounded);
         }
 
         private void OnDestroy()

@@ -6,16 +6,25 @@ namespace O2un.ProjectB.Platformer
     [RequireComponent(typeof(Rigidbody2D))]
     public sealed class PlayerView : MonoBehaviour, IActorView
     {
+        private const float FACING_VELOCITY_THRESHOLD = 0.01f;
+
         private static readonly RaycastHit2D[] _hits = new RaycastHit2D[4];
+        private static readonly int _speedHash = Animator.StringToHash("Speed");
+        private static readonly int _groundDistanceHash = Animator.StringToHash("GroundDistance");
+        private static readonly int _fallSpeedHash = Animator.StringToHash("FallSpeed");
 
         private ContactFilter2D _filter;
 
         private Rigidbody2D _body;
         private Collider2D _collider;
+        private SpriteRenderer _renderer;
+        private Animator _animator;
         private Actor _actor;
 
         private Rigidbody2D Body => _body ??= GetComponent<Rigidbody2D>();
         private Collider2D Collider => _collider ??= GetComponent<Collider2D>();
+        private SpriteRenderer Renderer => _renderer ??= GetComponent<SpriteRenderer>();
+        private Animator Animator => _animator ??= GetComponent<Animator>();
 
         public Transform FollowTarget => transform;
         public float VerticalVelocity => Body.linearVelocity.y;
@@ -28,6 +37,11 @@ namespace O2un.ProjectB.Platformer
         private void OnDisable()
         {
             _actor?.Unregister();
+        }
+
+        private void LateUpdate()
+        {
+            UpdateFacing();
         }
 
         public void Bind(Actor actor)
@@ -53,6 +67,27 @@ namespace O2un.ProjectB.Platformer
         public void ApplyVelocity(Vector2 velocity)
         {
             Body.linearVelocity = velocity;
+        }
+
+        public void UpdateAnimation(bool grounded)
+        {
+            Vector2 velocity = Body.linearVelocity;
+            Animator.SetFloat(_speedHash, Mathf.Abs(velocity.x));
+            Animator.SetFloat(_groundDistanceHash, true == grounded ? 0f : 1f);
+            Animator.SetFloat(_fallSpeedHash, velocity.y);
+        }
+
+        private void UpdateFacing()
+        {
+            float horizontalVelocity = Body.linearVelocity.x;
+            if (FACING_VELOCITY_THRESHOLD < horizontalVelocity)
+            {
+                Renderer.flipX = false;
+            }
+            else if (-FACING_VELOCITY_THRESHOLD > horizontalVelocity)
+            {
+                Renderer.flipX = true;
+            }
         }
 
         public bool CheckGrounded(LayerMask mask, Vector2 size, float distance)

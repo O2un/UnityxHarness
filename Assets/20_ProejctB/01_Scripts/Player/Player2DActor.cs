@@ -21,6 +21,7 @@ namespace O2un.ProjectB.Platformer
 
             input.Move.Subscribe(v => _moveX = v.x).AddTo(_disposables);
             input.IsJumpPressed.Subscribe(_ => _mover.QueueJump()).AddTo(_disposables);
+            input.IsJumpReleased.Subscribe(_ => _mover.RequestJumpCut()).AddTo(_disposables);
         }
 
         public override void Tick(float dt)
@@ -28,9 +29,9 @@ namespace O2un.ProjectB.Platformer
             _mover.SetMoveInput(_moveX);
         }
 
-        public Vector2 ResolvePhysics(bool grounded, float currentVerticalVelocity)
+        public Vector2 ResolvePhysics(bool grounded, float currentVerticalVelocity, float dt)
         {
-            return _mover.ResolveVelocity(grounded, currentVerticalVelocity);
+            return _mover.ResolveVelocity(grounded, currentVerticalVelocity, dt);
         }
 
         public override void Dispose()
