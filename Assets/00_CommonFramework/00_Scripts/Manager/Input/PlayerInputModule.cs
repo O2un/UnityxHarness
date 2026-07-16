@@ -10,13 +10,16 @@ namespace O2un.Input
         private readonly ReactiveProperty<Vector2> _move = new();
         private readonly Subject<Unit> _jump = new();
         private readonly Subject<Unit> _jumpReleased = new();
+        private readonly Subject<Unit> _attack = new();
 
         public ReadOnlyReactiveProperty<Vector2> Move => _move;
         public Observable<Unit> Jump => _jump;
         public Observable<Unit> JumpReleased => _jumpReleased;
+        public Observable<Unit> Attack => _attack;
 
         public void Dispose()
         {
+            _attack.Dispose();
             _jumpReleased.Dispose();
             _jump.Dispose();
             _move.Dispose();
@@ -24,7 +27,10 @@ namespace O2un.Input
 
         public void OnAttack(InputAction.CallbackContext context)
         {
-            throw new NotImplementedException();
+            if(context.performed)
+            {
+                _attack.OnNext(Unit.Default);
+            }
         }
 
         public void OnJump(InputAction.CallbackContext context)

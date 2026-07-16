@@ -10,6 +10,7 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private MovementData _data;
         [SerializeField] private PlayerView _view;
+        [SerializeField] private MeleeComboRefs _meleeRefs;
 
         [Inject] private IInputReader _input;
         [Inject] private IActorRegistry _registry;
@@ -24,7 +25,15 @@ namespace O2un.ProjectB.Platformer
                 return;
             }
 
-            _actor = new Player2DActor(_data, _input, _view, _registry);
+            MeleeComboRefs meleeRefs = _meleeRefs;
+            if (null == meleeRefs || false == meleeRefs.IsValid)
+            {
+                // 근접 콤보 씬 설정(SO·View·Bridge 할당) 전에는 공격만 비활성하고 이동·점프는 유지
+                Debug.LogWarning($"[Player2DContext] '{name}' MeleeComboRefs 미할당 — 근접 공격 비활성으로 시작");
+                meleeRefs = null;
+            }
+
+            _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs);
         }
 
         private void OnDestroy()

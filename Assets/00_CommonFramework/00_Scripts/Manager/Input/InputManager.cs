@@ -16,6 +16,7 @@ namespace O2un.Input
         public ReadOnlyReactiveProperty<Vector2> Move => _playerInput.Move;
         public Observable<Unit> IsJumpPressed => _playerInput.Jump;
         public Observable<Unit> IsJumpReleased => _playerInput.JumpReleased;
+        public Observable<Unit> IsAttackPressed => _playerInput.Attack;
         private readonly GameInput _inputActions = new();
         private readonly PlayerInputModule _playerInput = new();
         private readonly UIInputModule _uiInput  = new();

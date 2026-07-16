@@ -43,7 +43,7 @@ namespace O2un.Actors
             CharacterMover mover = new(moveStats);
 
             int maxHp = null != _monsterData ? _monsterData.MaxHp : 1;
-            _health = new EnemyHealth(maxHp, _damagePublisher);
+            _health = new EnemyHealth(maxHp, _damagePublisher.Publish);
 
             SkillModule attackSkills = BuildAttackSkills();
             _actor = new NpcActor(_profile.Build(blackboard, mover), blackboard, mover, _view, _registry, _query, _health, attackSkills);

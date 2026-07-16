@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd46f63e687a47b3b221371c23e13f5, type: 3}
+  m_Name: ComboData
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.MeleeComboData
+  _inputBufferTime: 0.15
+  _stages:
+  - _damage: 1
+    _hitboxSize: {x: 0.35, y: 0.55}
+    _hitboxOffset: {x: 0, y: 0.35}
+  - _damage: 2
+    _hitboxSize: {x: 0.35, y: 0.55}
+    _hitboxOffset: {x: 0.3, y: 0.35}
+  - _damage: 3
+    _hitboxSize: {x: 0.35, y: 0.55}
+    _hitboxOffset: {x: 0.3, y: 0.35}

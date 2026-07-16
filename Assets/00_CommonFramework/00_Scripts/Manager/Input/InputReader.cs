@@ -8,5 +8,6 @@ namespace O2un.Input
         ReadOnlyReactiveProperty<Vector2> Move {get;}
         Observable<Unit> IsJumpPressed {get;}
         Observable<Unit> IsJumpReleased {get;}
+        Observable<Unit> IsAttackPressed {get;}
     }
 }
