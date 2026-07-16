@@ -1,39 +1,54 @@
-using System;
+using R3;
 using UnityEngine;
 
 namespace O2un.ProjectB.Platformer
 {
     public sealed class MeleeAnimationEventBridge : MonoBehaviour
     {
-        public event Action OnHitboxOn;
-        public event Action OnHitboxOff;
-        public event Action OnComboWindowOpen;
-        public event Action OnComboWindowClose;
-        public event Action OnAttackEnd;
+        private readonly Subject<Unit> _onHitboxOn = new();
+        private readonly Subject<Unit> _onHitboxOff = new();
+        private readonly Subject<Unit> _onComboWindowOpen = new();
+        private readonly Subject<Unit> _onComboWindowClose = new();
+        private readonly Subject<Unit> _onAttackEnd = new();
+
+        public Observable<Unit> OnHitboxOn => _onHitboxOn;
+        public Observable<Unit> OnHitboxOff => _onHitboxOff;
+        public Observable<Unit> OnComboWindowOpen => _onComboWindowOpen;
+        public Observable<Unit> OnComboWindowClose => _onComboWindowClose;
+        public Observable<Unit> OnAttackEnd => _onAttackEnd;
 
         public void AnimEvent_HitboxOn()
         {
-            OnHitboxOn?.Invoke();
+            _onHitboxOn.OnNext(Unit.Default);
         }
 
         public void AnimEvent_HitboxOff()
         {
-            OnHitboxOff?.Invoke();
+            _onHitboxOff.OnNext(Unit.Default);
         }
 
         public void AnimEvent_ComboWindowOpen()
         {
-            OnComboWindowOpen?.Invoke();
+            _onComboWindowOpen.OnNext(Unit.Default);
         }
 
         public void AnimEvent_ComboWindowClose()
         {
-            OnComboWindowClose?.Invoke();
+            _onComboWindowClose.OnNext(Unit.Default);
         }
 
         public void AnimEvent_AttackEnd()
         {
-            OnAttackEnd?.Invoke();
+            _onAttackEnd.OnNext(Unit.Default);
+        }
+
+        private void OnDestroy()
+        {
+            _onHitboxOn.Dispose();
+            _onHitboxOff.Dispose();
+            _onComboWindowOpen.Dispose();
+            _onComboWindowClose.Dispose();
+            _onAttackEnd.Dispose();
         }
     }
 }

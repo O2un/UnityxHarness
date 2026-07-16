@@ -44,14 +44,14 @@ namespace O2un.ProjectB.Platformer
                 _combo = new MeleeComboModule(_comboData.StageCount, _comboData.InputBufferTime);
                 _stageHitboxes = CreateStageHitboxes(_comboData);
 
-                _combo.OnAttackTriggered += OnAttackTriggered;
-                _combo.OnComboReset += OnComboReset;
+                _combo.OnAttackTriggered.Subscribe(OnAttackTriggered).AddTo(_disposables);
+                _combo.OnComboReset.Subscribe(_ => OnComboReset()).AddTo(_disposables);
 
-                _bridge.OnHitboxOn += OnHitboxOn;
-                _bridge.OnHitboxOff += _attackView.DisableHitbox;
-                _bridge.OnComboWindowOpen += _combo.OpenComboWindow;
-                _bridge.OnComboWindowClose += _combo.CloseComboWindow;
-                _bridge.OnAttackEnd += _combo.NotifyStageEnd;
+                _bridge.OnHitboxOn.Subscribe(_ => OnHitboxOn()).AddTo(_disposables);
+                _bridge.OnHitboxOff.Subscribe(_ => _attackView.DisableHitbox()).AddTo(_disposables);
+                _bridge.OnComboWindowOpen.Subscribe(_ => _combo.OpenComboWindow()).AddTo(_disposables);
+                _bridge.OnComboWindowClose.Subscribe(_ => _combo.CloseComboWindow()).AddTo(_disposables);
+                _bridge.OnAttackEnd.Subscribe(_ => _combo.NotifyStageEnd()).AddTo(_disposables);
 
                 input.IsAttackPressed.Subscribe(_ => _combo.PressAttack()).AddTo(_disposables);
             }
@@ -80,19 +80,8 @@ namespace O2un.ProjectB.Platformer
 
         public override void Dispose()
         {
-            if (null != _combo)
-            {
-                _combo.OnAttackTriggered -= OnAttackTriggered;
-                _combo.OnComboReset -= OnComboReset;
-
-                _bridge.OnHitboxOn -= OnHitboxOn;
-                _bridge.OnHitboxOff -= _attackView.DisableHitbox;
-                _bridge.OnComboWindowOpen -= _combo.OpenComboWindow;
-                _bridge.OnComboWindowClose -= _combo.CloseComboWindow;
-                _bridge.OnAttackEnd -= _combo.NotifyStageEnd;
-            }
-
             _disposables.Dispose();
+            _combo?.Dispose();
             base.Dispose();
         }
 

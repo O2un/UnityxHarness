@@ -1,8 +1,9 @@
 using System;
+using R3;
 
 namespace O2un.ProjectB.Platformer
 {
-    public sealed class MeleeComboModule
+    public sealed class MeleeComboModule : IDisposable
     {
         private readonly int _stageCount;
         private readonly float _inputBufferTime;
@@ -17,8 +18,11 @@ namespace O2un.ProjectB.Platformer
         public bool IsComboWindowOpen => _isComboWindowOpen;
         public bool HasBufferedInput => _bufferTimer > 0f;
 
-        public event Action<int> OnAttackTriggered;
-        public event Action OnComboReset;
+        private readonly Subject<int> _onAttackTriggered = new();
+        private readonly Subject<Unit> _onComboReset = new();
+
+        public Observable<int> OnAttackTriggered => _onAttackTriggered;
+        public Observable<Unit> OnComboReset => _onComboReset;
 
         public MeleeComboModule(int stageCount, float inputBufferTime)
         {
@@ -115,7 +119,7 @@ namespace O2un.ProjectB.Platformer
             _transitioned = _currentStage > 0;
             _currentStage = stage;
             _isComboWindowOpen = false;
-            OnAttackTriggered?.Invoke(stage);
+            _onAttackTriggered.OnNext(stage);
         }
 
         private void ResetCombo()
@@ -124,7 +128,13 @@ namespace O2un.ProjectB.Platformer
             _isComboWindowOpen = false;
             _bufferTimer = 0f;
             _transitioned = false;
-            OnComboReset?.Invoke();
+            _onComboReset.OnNext(Unit.Default);
+        }
+
+        public void Dispose()
+        {
+            _onAttackTriggered.Dispose();
+            _onComboReset.Dispose();
         }
     }
 }
