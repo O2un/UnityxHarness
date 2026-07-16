@@ -17,6 +17,7 @@ namespace O2un.Input
         public Observable<Unit> IsJumpPressed => _playerInput.Jump;
         public Observable<Unit> IsJumpReleased => _playerInput.JumpReleased;
         public Observable<Unit> IsAttackPressed => _playerInput.Attack;
+        public Observable<Unit> IsSkillPressed => _playerInput.Skill;
         private readonly GameInput _inputActions = new();
         private readonly PlayerInputModule _playerInput = new();
         private readonly UIInputModule _uiInput  = new();

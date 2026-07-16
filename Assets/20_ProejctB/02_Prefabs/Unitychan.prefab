@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 7078415576215409587}
   - component: {fileID: 7798004111854544132}
   - component: {fileID: 104588656094980050}
+  - component: {fileID: 8907202261871387013}
   m_Layer: 31
   m_Name: Unitychan
   m_TagString: Untagged
@@ -223,6 +224,9 @@ MonoBehaviour:
     _data: {fileID: 11400000, guid: abded944f81104fc08894feb8b021d6c, type: 2}
     _attackView: {fileID: 1024590800674626378}
     _bridge: {fileID: 104588656094980050}
+  _rangedRefs:
+    _data: {fileID: 11400000, guid: 8297681fc4efc4d21a19d403e543b7b5, type: 2}
+    _bridge: {fileID: 8907202261871387013}
 --- !u!114 &104588656094980050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,6 +239,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7afac6113e94b41be98e100c5dbbbcd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.MeleeAnimationEventBridge
+--- !u!114 &8907202261871387013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7952306243411095618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b45cbf4d5f80d4323b23a7d026332150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.RangedAnimationEventBridge
 --- !u!1 &8103848732965047839
 GameObject:
   m_ObjectHideFlags: 0

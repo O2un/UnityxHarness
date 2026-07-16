@@ -1,6 +1,7 @@
 using O2un.Actors;
 using O2un.Combat;
 using O2un.Input;
+using O2un.Manager;
 using R3;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace O2un.ProjectB.Platformer
     public sealed class Player2DActor : Actor<PlayerView>, IActorTickable, IActorFixedTickable
     {
         private const float MELEE_HITBOX_LIFETIME = float.MaxValue;
+
+        private static readonly int _skillHash = Animator.StringToHash("Skill");
 
         private readonly PlayerMover _mover;
         private readonly LayerMask _groundMask;
@@ -21,13 +24,17 @@ namespace O2un.ProjectB.Platformer
         private readonly MeleeAnimationEventBridge _bridge;
         private readonly HitboxModule[] _stageHitboxes;
 
+        private readonly RangedSkillModule _rangedSkill;
+        private readonly RangedSkillData _rangedData;
+        private readonly IPoolService _pool;
+
         private readonly CompositeDisposable _disposables = new();
 
         private float _moveX;
 
         public override ActorType Type => ActorType.Player;
 
-        public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry, MeleeComboRefs meleeRefs)
+        public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry, MeleeComboRefs meleeRefs, RangedSkillRefs rangedRefs, IPoolService pool)
             : base(view, registry)
         {
             _mover = new PlayerMover(data);
@@ -53,7 +60,22 @@ namespace O2un.ProjectB.Platformer
                 _bridge.OnComboWindowClose.Subscribe(_ => _combo.CloseComboWindow()).AddTo(_disposables);
                 _bridge.OnAttackEnd.Subscribe(_ => _combo.NotifyStageEnd()).AddTo(_disposables);
 
-                input.IsAttackPressed.Subscribe(_ => _combo.PressAttack()).AddTo(_disposables);
+                input.IsAttackPressed.Subscribe(_ => PressMeleeAttack()).AddTo(_disposables);
+            }
+
+            if (null != rangedRefs && null != pool)
+            {
+                _rangedData = rangedRefs.Data;
+                _pool = pool;
+
+                _rangedSkill = new RangedSkillModule(_rangedData.Cooldown, _rangedData.MaxCastTime);
+
+                _rangedSkill.OnActivated.Subscribe(_ => View.SetAnimatorTrigger(_skillHash)).AddTo(_disposables);
+
+                rangedRefs.Bridge.OnFireProjectile.Subscribe(_ => FireProjectile()).AddTo(_disposables);
+                rangedRefs.Bridge.OnSkillEnd.Subscribe(_ => _rangedSkill.NotifyCastEnd()).AddTo(_disposables);
+
+                input.IsSkillPressed.Subscribe(_ => _rangedSkill.TryActivate()).AddTo(_disposables);
             }
 
             input.Move.Subscribe(v => _moveX = v.x).AddTo(_disposables);
@@ -69,6 +91,7 @@ namespace O2un.ProjectB.Platformer
         {
             _mover.SetMoveInput(_moveX);
             _combo?.Tick(deltaTime);
+            _rangedSkill?.Tick(deltaTime);
         }
 
         public void FixedTick(float fixedDeltaTime)
@@ -82,6 +105,7 @@ namespace O2un.ProjectB.Platformer
         {
             _disposables.Dispose();
             _combo?.Dispose();
+            _rangedSkill?.Dispose();
             base.Dispose();
         }
 
@@ -126,6 +150,53 @@ namespace O2un.ProjectB.Platformer
 
             MeleeComboStage stageData = _comboData.GetStage(stage);
             _attackView.EnableHitbox(stageData.HitboxSize, stageData.HitboxOffset);
+        }
+
+        private void PressMeleeAttack()
+        {
+            if (null != _rangedSkill && true == _rangedSkill.IsCasting)
+            {
+                return;
+            }
+
+            _combo.PressAttack();
+        }
+
+        private void FireProjectile()
+        {
+            if (null == _rangedSkill || null == _rangedData.ProjectilePrefab)
+            {
+                return;
+            }
+
+            string poolKey = _rangedData.PoolKey;
+            if (false == _pool.IsRegistered(poolKey))
+            {
+                _pool.Register(poolKey, _rangedData.ProjectilePrefab);
+            }
+
+            IPoolHandle<Projectile2DView> handle = _pool.GetHandle<Projectile2DView>(poolKey);
+            if (null == handle)
+            {
+                return;
+            }
+
+            Projectile2DView projectile = handle.Get();
+
+            var config = new HitboxConfig(
+                _rangedData.Damage,
+                ActorType.Enemy,
+                HitPolicy.OncePerTarget,
+                0f,
+                _rangedData.Lifetime);
+
+            var hitbox = new HitboxModule(config);
+
+            Vector2 facing = View.FacingDirection;
+            Vector2 offset = _rangedData.MuzzleOffset;
+            Vector3 origin = View.transform.position + new Vector3(facing.x < 0f ? -offset.x : offset.x, offset.y, 0f);
+
+            projectile.Configure(hitbox, facing, _rangedData.ProjectileSpeed, origin, true);
         }
 
         private void CancelAttackIfActive()

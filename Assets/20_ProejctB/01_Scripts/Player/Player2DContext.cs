@@ -1,6 +1,7 @@
 using O2un.Actors;
 using O2un.DI;
 using O2un.Input;
+using O2un.Manager;
 using UnityEngine;
 using VContainer;
 
@@ -11,9 +12,11 @@ namespace O2un.ProjectB.Platformer
         [SerializeField] private MovementData _data;
         [SerializeField] private PlayerView _view;
         [SerializeField] private MeleeComboRefs _meleeRefs;
+        [SerializeField] private RangedSkillRefs _rangedRefs;
 
         [Inject] private IInputReader _input;
         [Inject] private IActorRegistry _registry;
+        [Inject] private IPoolService _pool;
 
         private Player2DActor _actor;
 
@@ -33,7 +36,15 @@ namespace O2un.ProjectB.Platformer
                 meleeRefs = null;
             }
 
-            _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs);
+            RangedSkillRefs rangedRefs = _rangedRefs;
+            if (null == rangedRefs || false == rangedRefs.IsValid || null == _pool)
+            {
+                // 스킬 씬 설정(SO·Bridge·프리팹) 전에는 스킬만 비활성하고 이동·근접은 유지
+                Debug.LogWarning($"[Player2DContext] '{name}' RangedSkillRefs/IPoolService 미할당 — 원거리 스킬 비활성으로 시작");
+                rangedRefs = null;
+            }
+
+            _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs, rangedRefs, _pool);
         }
 
         private void OnDestroy()

@@ -29,6 +29,12 @@ namespace O2un.ProjectB.Platformer
 
         public Transform FollowTarget => transform;
         public float VerticalVelocity => Body.linearVelocity.y;
+        public Vector2 FacingDirection => true == Renderer.flipX ? Vector2.left : Vector2.right;
+
+        public void SetAnimatorTrigger(int hash)
+        {
+            Animator.SetTrigger(hash);
+        }
 
         private void OnEnable()
         {

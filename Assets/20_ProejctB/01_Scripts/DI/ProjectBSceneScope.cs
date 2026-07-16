@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using O2un.Actors;
 using O2un.DI;
+using O2un.Manager;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -14,6 +15,8 @@ namespace O2un.ProjectB.Platformer
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPoint<ActorManager>().AsSelf();
+
+            builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
 
             builder.RegisterBuildCallback(InitializeSceneComponents);
         }
