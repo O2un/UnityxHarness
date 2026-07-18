@@ -10,6 +10,7 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private string _destinationId = "next";
         [SerializeField] private GameObject _promptRoot;
+        [SerializeField] private GameObject _openedEffectRoot;
         [SerializeField] private LayerMask _playerLayers;
 
         private readonly Subject<string> _onTransitionRequested = new();
@@ -36,6 +37,7 @@ namespace O2un.ProjectB.Platformer
                 .AddTo(_disposables);
 
             ApplyPromptVisibility();
+            ApplyOpenedEffect();
         }
 
         private void Open()
@@ -44,6 +46,7 @@ namespace O2un.ProjectB.Platformer
 
             // 콜라이더를 껐다 켜는 대신 상태 플래그로 막으므로, 이미 범위 안에 서 있어도 여기서 프롬프트가 뜬다.
             ApplyPromptVisibility();
+            ApplyOpenedEffect();
         }
 
         private void OnAttackPressed()
@@ -94,6 +97,17 @@ namespace O2un.ProjectB.Platformer
             }
 
             _promptRoot.SetActive(CanInteract);
+        }
+
+        // 프롬프트와 달리 범위와 무관하게 열림 상태만 따른다.
+        private void ApplyOpenedEffect()
+        {
+            if (null == _openedEffectRoot)
+            {
+                return;
+            }
+
+            _openedEffectRoot.SetActive(_isOpen);
         }
 
         private void OnDestroy()
