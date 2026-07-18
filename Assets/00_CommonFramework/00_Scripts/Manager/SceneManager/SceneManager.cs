@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using O2un.UI;
 using R3;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
+using VContainer.Unity;
 
 namespace O2un.Manager 
 {
@@ -19,7 +24,7 @@ namespace O2un.Manager
         public const string GAME_SELECT_SCENE = "GameSelect";
     }
 
-    public sealed class SceneManager : IDisposable, ISceneService, ILoadingSource
+    public sealed class SceneManager : IDisposable, ISceneService, ILoadingSource, IAdditiveSceneLoader
     {
         public enum SceneState
         {
@@ -31,11 +36,13 @@ namespace O2un.Manager
 
         private readonly ReactiveProperty<SceneState> _currentState = new(SceneState.Idle);
         private readonly ReactiveProperty<float> _loadingProgress = new(0f);
+        private readonly Dictionary<Scene, AsyncOperationHandle<SceneInstance>> _additiveHandles = new();
         public ReadOnlyReactiveProperty<SceneState> CurrentState => _currentState;
         public ReadOnlyReactiveProperty<float> LoadingProgress => _loadingProgress;
 
         public void Dispose()
         {
+            _additiveHandles.Clear();
             _currentState.Dispose();
             _loadingProgress.Dispose();
         }
@@ -77,6 +84,55 @@ namespace O2un.Manager
                 _currentState.Value = SceneState.Idle;
                 _loadingProgress.Value = 0;
             }
+        }
+
+        public async UniTask<Scene> LoadAdditiveSceneAsync(string key, LifetimeScope parentScope)
+        {
+            var handle = default(AsyncOperationHandle<SceneInstance>);
+
+            try
+            {
+                if(null != parentScope)
+                {
+                    using(LifetimeScope.EnqueueParent(parentScope))
+                    {
+                        handle = Addressables.LoadSceneAsync(key, LoadSceneMode.Additive);
+                        await handle.ToUniTask();
+                    }
+                }
+                else
+                {
+                    handle = Addressables.LoadSceneAsync(key, LoadSceneMode.Additive);
+                    await handle.ToUniTask();
+                }
+            }
+            catch(Exception e)
+            {
+                Debug.LogError($"[SceneManager] Additive load failed. key={key}\n{e}");
+
+                if(handle.IsValid())
+                {
+                    Addressables.Release(handle);
+                }
+
+                throw;
+            }
+
+            var scene = handle.Result.Scene;
+            _additiveHandles[scene] = handle;
+            return scene;
+        }
+
+        public async UniTask UnloadSceneAsync(Scene scene)
+        {
+            if(false == _additiveHandles.TryGetValue(scene, out var handle))
+            {
+                Debug.LogWarning($"[SceneManager] Unload skipped. Not loaded by this loader. scene={scene.name}");
+                return;
+            }
+
+            _additiveHandles.Remove(scene);
+            await Addressables.UnloadSceneAsync(handle).ToUniTask();
         }
     }
 }

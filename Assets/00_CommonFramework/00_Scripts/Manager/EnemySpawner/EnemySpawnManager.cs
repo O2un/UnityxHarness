@@ -16,6 +16,7 @@ namespace O2un.Manager
         private readonly IActorQuery _actorQuery;
         private readonly IEnemyKillEvent _killEvent;
         private readonly ISpawnPlacer _spawnPlacer;
+        private readonly Transform _spawnRoot;
 
         public EnemySpawnManager(
             IAssetService assetService,
@@ -23,13 +24,15 @@ namespace O2un.Manager
             IActorQuery actorQuery,
             IEnemyKillEvent killEvent,
             ISpawnPlacer spawnPlacer,
-            WaveDataSO waveData)
+            WaveDataSO waveData,
+            Transform spawnRoot)
         {
             _assetService = assetService;
             _poolService = poolService;
             _actorQuery = actorQuery;
             _killEvent = killEvent;
             _spawnPlacer = spawnPlacer;
+            _spawnRoot = spawnRoot;
 
             if (SpawnTriggerMode.KillBased == waveData.TriggerMode)
             {
@@ -80,7 +83,7 @@ namespace O2un.Manager
 
                     if (false == _poolService.IsRegistered(key))
                     {
-                        _poolService.Register(key, context);
+                        _poolService.Register(key, context, _spawnRoot);
                     }
                 }
             }
@@ -242,6 +245,15 @@ namespace O2un.Manager
 
         public void Dispose()
         {
+            // 스폰 루트가 룸 씬에 있으면 언로드와 함께 인스턴스가 파괴되므로 풀 등록도 같이 걷어낸다.
+            if (null != _spawnRoot)
+            {
+                foreach (string key in RequiredKeys)
+                {
+                    _poolService.Unregister(key);
+                }
+            }
+
             _killSubscription.Dispose();
             _onCleared.Dispose();
         }
