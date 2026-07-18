@@ -128,7 +128,6 @@ MonoBehaviour:
   _attackStateNames:
   - attack1
   - attack2
-  _idleStateName: idle
 --- !u!1 &6268399112200107182
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,7 +325,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &2995235297012740515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,6 +338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecc0caccc6efc4e0bb0033d122847527, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.NpcView
+  _idleStateName: idle
+  _runStateName: run
 --- !u!114 &1595064358338609356
 MonoBehaviour:
   m_ObjectHideFlags: 0
