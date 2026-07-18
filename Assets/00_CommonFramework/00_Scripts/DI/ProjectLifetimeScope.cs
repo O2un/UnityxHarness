@@ -1,6 +1,7 @@
 using O2un.Data;
 using O2un.Input;
 using O2un.Manager;
+using O2un.Sound;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -17,6 +18,7 @@ namespace O2un.DI
             builder.Register<OptionManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<SceneManager>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<AssetManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<SoundSignalChannel>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterEntryPoint<ProjectBootStrap>();
         }
