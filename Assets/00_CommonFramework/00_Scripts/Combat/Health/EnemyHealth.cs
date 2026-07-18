@@ -8,6 +8,7 @@ namespace O2un.Combat
         private readonly int _maxHp;
         private readonly ReactiveProperty<int> _hp;
         private readonly Subject<Unit> _onDeath = new();
+        private readonly Subject<int> _onDamagedSignal = new();
         private readonly Action<int> _onDamaged;
 
         public EnemyHealth(int maxHp, Action<int> onDamaged = null)
@@ -20,6 +21,7 @@ namespace O2un.Combat
         public ReadOnlyReactiveProperty<int> CurrentHP => _hp;
         public int MaxHP => _maxHp;
         public Observable<Unit> OnDeath => _onDeath;
+        public Observable<int> OnDamaged => _onDamagedSignal;
         public bool IsDead => _hp.Value <= 0;
 
         public void VaryHP(int delta)
@@ -36,6 +38,7 @@ namespace O2un.Combat
             if (0 < dealt)
             {
                 _onDamaged?.Invoke(dealt);
+                _onDamagedSignal.OnNext(dealt);
             }
 
             if (0 == _hp.Value)
@@ -53,6 +56,7 @@ namespace O2un.Combat
         {
             _hp.Dispose();
             _onDeath.Dispose();
+            _onDamagedSignal.Dispose();
         }
     }
 }

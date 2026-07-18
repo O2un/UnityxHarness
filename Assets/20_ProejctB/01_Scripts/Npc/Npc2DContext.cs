@@ -1,6 +1,7 @@
 using O2un.Actors;
 using O2un.Combat;
 using O2un.DI;
+using O2un.Sound;
 using R3;
 using UnityEngine;
 using VContainer;
@@ -11,9 +12,11 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private NpcView _view;
         [SerializeField] private Damageable2DView _damageable;
+        [SerializeField] private Enemy2DSensorView _sensor;
         [SerializeField] private int _maxHp = 10;
 
         [Inject] private IActorRegistry _registry;
+        [Inject] private ISoundSignalSource _soundSource;
 
         private readonly CompositeDisposable _disposables = new();
 
@@ -28,8 +31,13 @@ namespace O2un.ProjectB.Platformer
             }
 
             EnemyHealth health = new(_maxHp);
-            _actor = new Npc2DActor(_view, _registry, health);
+            _actor = new Npc2DActor(_view, _registry, health, _sensor);
             _damageable.Bind(ActorType.Enemy, health);
+
+            if (null != _sensor)
+            {
+                _sensor.Init(_soundSource, health.OnDamaged);
+            }
 
             health.CurrentHP
                 .Subscribe(hp => Debug.Log($"[Npc2DContext] '{name}' HP {hp}/{health.MaxHP}"))
