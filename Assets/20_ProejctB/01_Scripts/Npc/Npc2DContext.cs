@@ -22,6 +22,8 @@ namespace O2un.ProjectB.Platformer
 
         private Npc2DActor _actor;
 
+        public IEnemy2DBlackboard Blackboard => _actor?.Blackboard;
+
         public void Init()
         {
             if (null == _view || null == _damageable || null == _registry)

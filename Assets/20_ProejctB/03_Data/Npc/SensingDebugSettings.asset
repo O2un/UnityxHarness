@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5ef4db5c6ed4a768d3e9f76ca32f69, type: 3}
+  m_Name: SensingDebugSettings
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.SensingDebugSettingsSO
+  _drawWhenSelectedOnly: 1
+  _showSight: 1
+  _showHearing: 1
+  _showGroundAndWall: 1
+  _showRanges: 1
+  _showLabels: 1
+  _sightColor: {r: 1, g: 1, b: 1, a: 0.35}
+  _sightVisibleColor: {r: 1, g: 0.35, b: 0.2, a: 0.6}
+  _hearingColor: {r: 0.3, g: 0.7, b: 1, a: 0.35}
+  _hearingActiveColor: {r: 0.3, g: 1, b: 1, a: 0.9}
+  _probeClearColor: {r: 0.4, g: 1, b: 0.4, a: 0.9}
+  _probeHitColor: {r: 1, g: 0.85, b: 0.2, a: 0.9}
+  _rangeColor: {r: 0.6, g: 0.6, b: 0.6, a: 0.3}
+  _lastKnownColor: {r: 1, g: 0.5, b: 0.9, a: 0.9}
+  _labelColor: {r: 1, g: 1, b: 1, a: 1}
+  _lineThickness: 2
+  _lastKnownMarkerSize: 0.25

@@ -6,7 +6,7 @@ namespace O2un.ProjectB.Platformer
     public sealed class EnemySensingData : ScriptableObject
     {
         [SerializeField, Min(0f)] private float _sightDistance = 8f;
-        [SerializeField, Range(0f, 180f)] private float _sightAngle = 60f;
+        [SerializeField, Range(0f, 360f)] private float _sightAngle = 60f;
         [SerializeField, Min(0f)] private float _hearingRadius = 6f;
         [SerializeField, Min(0f)] private float _aggroRange = 10f;
         [SerializeField, Min(0.01f)] private float _sensingInterval = 0.1f;

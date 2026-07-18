@@ -24,6 +24,9 @@ namespace O2un.ProjectB.Platformer
         private SensorSnapshot _snapshot;
 
         public SensorSnapshot Snapshot => _snapshot;
+        public EnemySensingData Data => _data;
+        public Transform EyeOrigin => null != _eyeOrigin ? _eyeOrigin : transform;
+        public Transform GroundProbe => null != _groundProbe ? _groundProbe : transform;
 
         public void Init(ISoundSignalSource soundSource, Observable<int> onDamaged)
         {
@@ -118,7 +121,7 @@ namespace O2un.ProjectB.Platformer
             }
 
             Vector2 forward = new(facing, 0f);
-            if (Vector2.Angle(forward, toTarget) > _data.SightAngle)
+            if (Vector2.Angle(forward, toTarget) > _data.SightAngle * 0.5f)
             {
                 return true;
             }

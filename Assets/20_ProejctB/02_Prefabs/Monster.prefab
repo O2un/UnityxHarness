@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 1595064358338609356}
   - component: {fileID: 1778012957169452290}
   - component: {fileID: 3403828150862819469}
+  - component: {fileID: 5221045749757780683}
   m_Layer: 11
   m_Name: Monster
   m_TagString: Untagged
@@ -281,6 +282,21 @@ MonoBehaviour:
   _data: {fileID: 11400000, guid: 754bbc39527d846cebe300c42ca5a2c7, type: 2}
   _eyeOrigin: {fileID: 2085676525548185588}
   _groundProbe: {fileID: 57783951936313816}
+--- !u!114 &5221045749757780683
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6268399112200107182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7be3a6286e00749a9b7be5bf8f04affe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.EnemySensingDebugView
+  _settings: {fileID: 11400000, guid: 10a736aab649e4f4b97563292142a20b, type: 2}
+  _sensor: {fileID: 3403828150862819469}
+  _context: {fileID: 1778012957169452290}
 --- !u!1 &6963033273414582076
 GameObject:
   m_ObjectHideFlags: 0
