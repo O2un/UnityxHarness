@@ -11,5 +11,32 @@
             "Write(./**/Build/**)",
             "Bash(curl *)"
         ]
+    },
+    "hooks": {
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "sh .claude/hooks/unity-validate.sh"
+                    },
+                    {
+                        "type": "command",
+                        "command": "bash .claude/hooks/open-viewer.sh"
+                    }
+                ]
+            }
+        ],
+        "PreToolUse": [
+            {
+                "matcher": "Task|Agent",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "sh \"$CLAUDE_PROJECT_DIR/.claude/hooks/agent-router.sh\""
+                    }
+                ]
+            }
+        ]
     }
 }
