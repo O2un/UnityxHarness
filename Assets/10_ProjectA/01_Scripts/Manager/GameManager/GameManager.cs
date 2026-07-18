@@ -33,7 +33,7 @@ namespace O2un.Manager
 
     public sealed class GameManager : IGameManager, IInitializable, IDisposable
     {
-        private readonly EnemySpawnManager _spawnManager;
+        private readonly IEnemySpawner _spawnManager;
         private readonly PlayerHealthAdapter _playerHealth;
         private readonly IEnemyKillEvent _killEvent;
         private readonly IExperienceReader _experienceReader;
@@ -46,7 +46,7 @@ namespace O2un.Manager
         private readonly CompositeDisposable _disposables = new();
 
         public GameManager(
-            EnemySpawnManager spawnManager,
+            IEnemySpawner spawnManager,
             PlayerHealthAdapter playerHealth,
             IEnemyKillEvent killEvent,
             IExperienceReader experienceReader,

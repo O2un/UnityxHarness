@@ -16,6 +16,13 @@ namespace O2un.Manager
         NormalSpread,
     }
 
+    // 기존 에셋에 필드가 없어 0으로 역직렬화되므로 Time이 첫 번째여야 한다.
+    public enum SpawnTriggerMode
+    {
+        Time,
+        KillBased,
+    }
+
     [Serializable]
     public struct WaveEntry
     {
@@ -36,8 +43,10 @@ namespace O2un.Manager
     [CreateAssetMenu(fileName = "WaveData", menuName = "O2un/Enemy/WaveData")]
     public sealed class WaveDataSO : ScriptableObject
     {
+        [SerializeField] private SpawnTriggerMode _triggerMode;
         [SerializeField] private List<WaveEntry> _waves = new();
 
+        public SpawnTriggerMode TriggerMode => _triggerMode;
         public IReadOnlyList<WaveEntry> Waves => _waves;
     }
 }

@@ -51,8 +51,16 @@ namespace O2un.DI
 
             builder.Register<AttackSpawner>(Lifetime.Singleton).As<IAttackSpawner>();
 
-            builder.RegisterInstance(_waveData);
-            builder.RegisterEntryPoint<EnemySpawnManager>().AsSelf();
+            builder.RegisterEntryPoint<EnemyLayerCollisionInitializer>();
+
+            if (null == _waveData)
+            {
+                Debug.LogError($"[GameSceneScope] '{name}' _waveData가 비어 있습니다. 적 스폰이 등록되지 않습니다.");
+            }
+            else
+            {
+                builder.RegisterEnemySpawner<CharacterControllerSpawnPlacer>(_waveData);
+            }
 
             builder.RegisterInstance(_itemDropData);
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 636d2726b7a404fcea826fe70a4a4a7d, type: 3}
+  m_Name: StageData_1
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.StageDataSO
+  _rooms:
+  - {fileID: 11400000, guid: e198fbda9dd1b4188b512d1364072754, type: 2}
+  - {fileID: 11400000, guid: aea315988fa954b60aea3172271099fe, type: 2}
+  _fadeOutDuration: 0.3
+  _fadeInDuration: 0.3

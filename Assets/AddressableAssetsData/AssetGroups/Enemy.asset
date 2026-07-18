@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a829ef82bd3ba409694fa2bc0a647f3e
+    m_Address: Enemy_Monster
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f895a60f85fb7434e9d5d2dad2123a6b
     m_Address: Enemy_ArmoredMelee
     m_ReadOnly: 0

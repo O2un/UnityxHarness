@@ -10,12 +10,16 @@ namespace O2un.Manager
     {
         private readonly IObjectResolver _resolver;
         private readonly T _prefab;
+        private readonly Transform _parent;
+        private readonly Vector3 _prefabScale;
         private readonly ObjectPool<T> _pool;
 
-        public PoolModule(IObjectResolver resolver, T prefab)
+        public PoolModule(IObjectResolver resolver, T prefab, Transform parent = null)
         {
             _resolver = resolver;
             _prefab = prefab;
+            _parent = parent;
+            _prefabScale = prefab.transform.localScale;
             _pool = new ObjectPool<T>(OnCreate, OnGet, OnRelease, OnDestroy);
         }
 
@@ -36,7 +40,9 @@ namespace O2un.Manager
 
         private T OnCreate()
         {
-            T instance = _resolver.Instantiate(_prefab);
+            T instance = null != _parent
+                    ? _resolver.Instantiate(_prefab, _parent)
+                    : _resolver.Instantiate(_prefab);
 
             if (instance is IPoolable poolable)
             {
@@ -49,10 +55,10 @@ namespace O2un.Manager
         private void OnGet(T obj)
         {
             Transform t = obj.transform;
-            t.SetParent(null);
+            t.SetParent(_parent);
             t.localPosition = Vector3.zero;
             t.localRotation = Quaternion.identity;
-            t.localScale = Vector3.one;
+            t.localScale = _prefabScale;
             obj.gameObject.SetActive(true);
 
             if (obj is IPoolable poolable)
