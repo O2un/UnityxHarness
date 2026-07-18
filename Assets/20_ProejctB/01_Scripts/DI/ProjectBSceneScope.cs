@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using O2un.Actors;
+using O2un.DataStore;
 using O2un.DI;
 using O2un.Manager;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace O2un.ProjectB.Platformer
             builder.RegisterEntryPoint<ActorManager>().AsSelf();
 
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
+            builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.RegisterBuildCallback(InitializeSceneComponents);
         }

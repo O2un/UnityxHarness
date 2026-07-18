@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f3ce9db2d0645639ec4720c8b03cd3, type: 3}
+  m_Name: PlatformEnemyAIProfile
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.PlatformEnemyAIProfile
+  _patrolState: {fileID: 11400000, guid: 0c0816e98883d44328023cf3baec7758, type: 2}
+  _detectState: {fileID: 11400000, guid: db0d55a2fb8954416af3add7e5f4ec91, type: 2}
+  _chaseState: {fileID: 11400000, guid: 6631afb8ae7734f60b29fd2953bebe33, type: 2}
+  _attackState: {fileID: 11400000, guid: bc2d19635f2824c58b66fc16e4e24d80, type: 2}
+  _playerVisible: {fileID: 11400000, guid: 62f7405f9b3d346cfb6901ffe8c46498, type: 2}
+  _heardSound: {fileID: 11400000, guid: 759f1bacb34b049b5a98e82cf8044ede, type: 2}
+  _detectConfirmed: {fileID: 11400000, guid: 62204297cee854efd987c4b384b98d87, type: 2}
+  _detectFailed: {fileID: 11400000, guid: b7d117532adf345a9a859b96a31ee3be, type: 2}
+  _withinAttackRange: {fileID: 11400000, guid: b485815a56baf4287a0acca3dc238300, type: 2}
+  _attackFinished: {fileID: 11400000, guid: a2b46fe0a66b04ee6a24f91e570fa7f9, type: 2}
+  _chaseGiveUp: {fileID: 11400000, guid: 119ac72146af74ebda249623436b58e2, type: 2}
+  _tookDamage: {fileID: 11400000, guid: 09a10e07f559f4952b1a23ac84465786, type: 2}

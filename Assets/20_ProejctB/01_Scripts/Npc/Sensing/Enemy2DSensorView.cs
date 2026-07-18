@@ -18,6 +18,7 @@ namespace O2un.ProjectB.Platformer
         private SensingTimerModule _timer;
         private HearingModule _hearing;
 
+        private float _facing = 1f;
         private bool _heardSoundLatched;
         private bool _wasHitLatched;
 
@@ -50,8 +51,10 @@ namespace O2un.ProjectB.Platformer
             Sense();
         }
 
-        public void Tick(float dt)
+        public void Tick(float dt, float facing)
         {
+            _facing = facing;
+
             if (null == _timer)
             {
                 return;
@@ -76,7 +79,7 @@ namespace O2un.ProjectB.Platformer
         private void Sense()
         {
             Vector2 selfPosition = transform.position;
-            float facing = 0f <= transform.localScale.x ? 1f : -1f;
+            float facing = _facing;
             Vector2 eye = null != _eyeOrigin ? (Vector2)_eyeOrigin.position : selfPosition;
 
             bool hasTarget = TryFindVisibleTarget(eye, facing, out Vector2 targetPosition, out bool isVisible);

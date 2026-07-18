@@ -13,6 +13,8 @@ namespace O2un.ProjectB.Platformer
         [SerializeField] private NpcView _view;
         [SerializeField] private Damageable2DView _damageable;
         [SerializeField] private Enemy2DSensorView _sensor;
+        [SerializeField] private Enemy2DAIProfileSO _aiProfile;
+        [SerializeField] private EnemyMeleeAttackView _attackView;
         [SerializeField] private int _maxHp = 10;
 
         [Inject] private IActorRegistry _registry;
@@ -33,7 +35,7 @@ namespace O2un.ProjectB.Platformer
             }
 
             EnemyHealth health = new(_maxHp);
-            _actor = new Npc2DActor(_view, _registry, health, _sensor);
+            _actor = new Npc2DActor(_view, _registry, health, _sensor, _aiProfile, _attackView);
             _damageable.Bind(ActorType.Enemy, health);
 
             if (null != _sensor)

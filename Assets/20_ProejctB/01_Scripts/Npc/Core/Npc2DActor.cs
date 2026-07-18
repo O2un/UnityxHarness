@@ -1,4 +1,5 @@
 using O2un.Actors;
+using O2un.AI;
 using O2un.Combat;
 
 namespace O2un.ProjectB.Platformer
@@ -9,17 +10,30 @@ namespace O2un.ProjectB.Platformer
         private readonly Enemy2DSensorView _sensor;
         private readonly Enemy2DBlackboard _blackboard;
         private readonly PerceptionMemoryModule _memory = new();
+        private readonly Npc2DMover _mover = new();
+        private readonly BaseEnemyAI _ai;
+        private readonly IEnemyAttackExecutor _attackExecutor;
 
         public override ActorType Type => ActorType.Enemy;
         public EnemyHealth Health => _health;
         public IEnemy2DBlackboard Blackboard => _blackboard;
 
-        public Npc2DActor(NpcView view, IActorRegistry registry, EnemyHealth health, Enemy2DSensorView sensor)
+        public Npc2DActor(
+            NpcView view,
+            IActorRegistry registry,
+            EnemyHealth health,
+            Enemy2DSensorView sensor,
+            Enemy2DAIProfileSO profile,
+            IEnemyAttackExecutor attackExecutor)
             : base(view, registry)
         {
             _health = health;
             _sensor = sensor;
+            _attackExecutor = attackExecutor;
             _blackboard = new Enemy2DBlackboard();
+
+            Enemy2DAIContext context = new(_blackboard, _mover, attackExecutor);
+            _ai = null != profile ? profile.Build(context) : null;
         }
 
         public override void Tick(float dt)
@@ -29,9 +43,13 @@ namespace O2un.ProjectB.Platformer
                 return;
             }
 
-            _sensor.Tick(dt);
+            _sensor.Tick(dt, _mover.Facing);
             _memory.Tick(dt);
             UpdateBlackboard();
+
+            _ai?.Tick(dt);
+
+            View.ApplyPhysics(_mover.VelocityX, _mover.Facing, true == _attackExecutor?.IsAttacking);
         }
 
         private void UpdateBlackboard()
@@ -39,7 +57,7 @@ namespace O2un.ProjectB.Platformer
             SensorSnapshot snapshot = _sensor.Snapshot;
 
             _blackboard.SelfPosition = snapshot.SelfPosition;
-            _blackboard.Facing = snapshot.Facing;
+            _blackboard.Facing = _mover.Facing;
             _blackboard.HasTarget = snapshot.HasTarget;
             _blackboard.TargetPosition = snapshot.TargetPosition;
             _blackboard.IsPlayerVisible = snapshot.IsPlayerVisible;
