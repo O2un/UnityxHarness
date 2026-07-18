@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using O2un.DI;
 using O2un.Manager;
+using R3;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,8 +12,11 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private WaveDataSO _waveData;
         [SerializeField] private Transform _playerSpawnPoint;
+        [SerializeField] private List<RoomDoorView> _doors = new();
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
+
+        private readonly CompositeDisposable _disposables = new();
 
         public Vector3 PlayerSpawnPosition =>
                 null != _playerSpawnPoint ? _playerSpawnPoint.position : Vector3.zero;
@@ -44,6 +48,8 @@ namespace O2un.ProjectB.Platformer
                 resolver.Resolve<IRoomSignalPublisher>().PublishRoomReady(PlayerSpawnPosition);
             }
 
+            BindDoors(resolver);
+
             for (int i = 0; i < _sceneInitializables.Count; i++)
             {
                 GameObject mb = _sceneInitializables[i];
@@ -60,6 +66,40 @@ namespace O2un.ProjectB.Platformer
                     initializable.Init();
                 }
             }
+        }
+
+        // 문은 진행 가능 여부를 판단하지 않는다. 여기서 신호를 그대로 중계하고,
+        // 전환 가능 여부·중복 입력 무시는 RoomModule.RequestTransition의 상태 검사에 맡긴다.
+        private void BindDoors(IObjectResolver resolver)
+        {
+            if (0 == _doors.Count)
+            {
+                return;
+            }
+
+            var progression = resolver.Resolve<IRoomProgression>();
+
+            for (int i = 0; i < _doors.Count; i++)
+            {
+                RoomDoorView door = _doors[i];
+                if (null == door)
+                {
+                    Debug.LogError($"[RoomSceneScope] '{name}' _doors[{i}]가 비어 있습니다.");
+                    continue;
+                }
+
+                resolver.InjectGameObject(door.gameObject);
+
+                door.OnTransitionRequested
+                    .Subscribe(destinationId => progression.RequestTransition(destinationId))
+                    .AddTo(_disposables);
+            }
+        }
+
+        protected override void OnDestroy()
+        {
+            _disposables.Dispose();
+            base.OnDestroy();
         }
     }
 }
