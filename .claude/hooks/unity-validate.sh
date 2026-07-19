@@ -482,6 +482,63 @@ filter_error_lines() {
         grep -Ev '^Saving results to:'
 }
 
+# read_console(detailed) 응답에서 "프로젝트 코드에 기인한" 에러만 남긴다.
+# 스택 프레임이 전부 Unity 자체 코드(예: UnityEditor.Graphs.Graph.OnEnable —
+# /Users/bokken/build/output/unity/... 경로)인 항목은 에디터 내부 노이즈이며,
+# 이것까지 실패로 치면 Gate 2가 영구히 통과 불가가 된다.
+# 판정 기준: 스택 또는 file에 Assets/ 프레임이 하나라도 있으면 프로젝트 기인으로 본다.
+# 스택이 아예 없는 항목은 판단 근거가 없으므로 보수적으로 남긴다(놓치는 것보다 낫다).
+filter_project_errors() {
+    require_python
+    python3 -c '
+import json, sys
+
+raw = sys.stdin.read().strip()
+if not raw:
+    raise SystemExit(0)
+try:
+    obj = json.loads(raw)
+except Exception:
+    print(raw)
+    raise SystemExit(0)
+
+result = obj.get("result") or {}
+payload = result.get("structuredContent")
+if payload is None:
+    text = ""
+    for item in result.get("content") or []:
+        if item.get("type") == "text":
+            text = item.get("text") or ""
+            break
+    try:
+        payload = json.loads(text) if text else None
+    except Exception:
+        payload = None
+if not payload:
+    raise SystemExit(0)
+
+entries = payload.get("data") or []
+if isinstance(entries, str):
+    print(entries.strip())
+    raise SystemExit(0)
+
+for e in entries:
+    if not isinstance(e, dict):
+        line = str(e).strip()
+        if line:
+            print(line)
+        continue
+    stack = (e.get("stackTrace") or "") + "\n" + (e.get("file") or "")
+    if stack.strip() and "Assets/" not in stack:
+        continue
+    msg = (e.get("message") or "").strip()
+    if msg:
+        first = (e.get("stackTrace") or "").strip().splitlines()
+        loc = (" @ " + first[0].strip()) if first else ""
+        print(msg + loc)
+'
+}
+
 require_python
 
 # Initialize MCP session. Unity MCP가 안 떠 있으면 수동 검증 필요로 남기고 통과시킨다.
@@ -520,7 +577,9 @@ sleep 5
 # 읽기 자체의 실패(MCP 세션 미준비 등)는 best-effort다 — assert_tool_succeeded는
 # 내부에서 fail_gate(exit 0)를 호출해 여기서 그대로 쓰면 차단돼 버리므로 쓰지 않는다.
 # 실제로 콘솔에서 에러 로그가 발견됐을 때만 차단한다.
-console_result="$(invoke_unity_tool "read_console" '{"action":"get","types":["error"],"count":20,"format":"plain"}')" || console_result=""
+# format=detailed + stacktrace로 읽는다. plain은 스택을 버려서 에디터 내부 에러와
+# 프로젝트 코드 에러를 구분할 수 없다 (filter_project_errors 참조).
+console_result="$(invoke_unity_tool "read_console" '{"action":"get","types":["error"],"count":20,"format":"detailed","include_stacktrace":true}')" || console_result=""
 if [ -n "$console_result" ]; then
     console_status="$(printf '%s' "$console_result" | python3 -c '
 import json, sys
@@ -553,7 +612,7 @@ else:
     if [ "$console_status" = "read_failed" ]; then
         printf 'Unity console read failed (best-effort, not blocking): %s\n' "$(printf '%s' "$console_result" | tool_text)" >&2
     else
-        error_lines="$(printf '%s' "$console_result" | tool_text | filter_error_lines || true)"
+        error_lines="$(printf '%s' "$console_result" | filter_project_errors || true)"
         if [ -n "$error_lines" ]; then
             # play 진입은 됐으나 콘솔 에러 → 런타임/기능 단계 실패로 본다.
             fail_gate "✅ 통과" "❌ 실패" "❌ 실패" "Unity console errors detected:" "$error_lines"
