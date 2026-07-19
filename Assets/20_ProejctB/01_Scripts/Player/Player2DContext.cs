@@ -2,6 +2,7 @@ using O2un.Actors;
 using O2un.Combat;
 using O2un.DataStore;
 using O2un.DI;
+using O2un.Feedback;
 using O2un.Input;
 using O2un.Manager;
 using R3;
@@ -28,6 +29,8 @@ namespace O2un.ProjectB.Platformer
         [Inject] private IPlayerStatWriter _statWriter;
         [Inject] private IPassiveSkillQuery _passiveQuery;
         [Inject] private IActorQuery _actorQuery;
+        [Inject] private IPlayerSkillStatusWriter _skillStatusWriter;
+        [Inject] private IHitFeedbackPublisher _hitPublisher;
 
         private Player2DActor _actor;
         private PlayerHealthAdapter _health;
@@ -72,7 +75,19 @@ namespace O2un.ProjectB.Platformer
 
             _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs, rangedRefs, _pool, _statReader, passiveData, _passiveQuery, _actorQuery);
 
+            BindSkillStatus();
             InitHealth();
+        }
+
+        private void BindSkillStatus()
+        {
+            ReadOnlyReactiveProperty<float> cooldown = _actor.RangedCooldownNormalized;
+            if (null == _skillStatusWriter || null == cooldown)
+            {
+                return;
+            }
+
+            cooldown.Subscribe(_skillStatusWriter.SetRangedCooldownNormalized).AddTo(_disposables);
         }
 
         private void InitHealth()
@@ -86,7 +101,7 @@ namespace O2un.ProjectB.Platformer
 
             _playerWriter.SetCurrentHP(_playerReader.MaxHP.CurrentValue);
             _health = new PlayerHealthAdapter(_playerReader, _playerWriter);
-            _damageable.Bind(ActorType.Player, _health);
+            _damageable.Bind(ActorType.Player, _health, _hitPublisher);
 
             _lastMaxHealth = _playerReader.MaxHP.CurrentValue;
             _statWriter.SetBase(UpgradeStatType.MaxHealth, _lastMaxHealth);

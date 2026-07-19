@@ -22,6 +22,7 @@ namespace O2un.Manager
         public const string LOADING_SCENE = "Loading";
         public const string GAME_SCENE = "GameScene";
         public const string GAME_SELECT_SCENE = "GameSelect";
+        public const string GAME_2D_SCENE = "2D_GameScene";
     }
 
     public sealed class SceneManager : IDisposable, ISceneService, ILoadingSource, IAdditiveSceneLoader

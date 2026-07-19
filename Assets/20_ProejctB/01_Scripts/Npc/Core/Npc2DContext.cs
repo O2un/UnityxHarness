@@ -1,6 +1,7 @@
 using O2un.Actors;
 using O2un.Combat;
 using O2un.DI;
+using O2un.Feedback;
 using O2un.Sound;
 using R3;
 using UnityEngine;
@@ -25,15 +26,17 @@ namespace O2un.ProjectB.Platformer
         private IActorRegistry _registry;
         private ISoundSignalSource _soundSource;
         private IEnemyKillEvent _killEvent;
+        private IHitFeedbackPublisher _hitPublisher;
 
         public IEnemy2DBlackboard Blackboard => _actor?.Blackboard;
 
         [Inject]
-        public void Construct(IActorRegistry registry, ISoundSignalSource soundSource, IEnemyKillEvent killEvent)
+        public void Construct(IActorRegistry registry, ISoundSignalSource soundSource, IEnemyKillEvent killEvent, IHitFeedbackPublisher hitPublisher)
         {
             _registry = registry;
             _soundSource = soundSource;
             _killEvent = killEvent;
+            _hitPublisher = hitPublisher;
             Build();
         }
 
@@ -58,7 +61,7 @@ namespace O2un.ProjectB.Platformer
 
             _health = new EnemyHealth(_maxHp);
             _actor = new Npc2DActor(_view, _registry, _health, _sensor, _aiProfile, _attackView);
-            _damageable.Bind(ActorType.Enemy, _health);
+            _damageable.Bind(ActorType.Enemy, _health, _hitPublisher);
 
             if (null != _sensor)
             {

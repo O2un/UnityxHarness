@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.UpgradeCardSO
   _id: passive_critical_on_hit
   _displayName: "\uD06C\uB9AC\uD2F0\uCEEC"
+  _description: "\uC801\uC911\uD55C \uC21C\uAC04 \uAE09\uC18C\uB97C \uB178\uB9B0\uB2E4. \uC77C\uC815 \uD655\uB960\uB85C \uCE58\uBA85\uD0C0\uAC00 \uD130\uC9C4\uB2E4."
   _kind: 1
   _icon: {fileID: 21300000, guid: 52f97e6c174d95d47b3af968f59d0942, type: 3}
   _targetStat: 0

@@ -1,0 +1,186 @@
+.inventory-screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(12, 10, 9, 0.82);
+}
+
+.inventory-window {
+    width: 80%;
+    height: 80%;
+    min-width: 720px;
+    min-height: 540px;
+    max-width: 1200px;
+    max-height: 900px;
+    padding: 10px;
+    flex-direction: row;
+}
+
+.inventory-panel {
+    height: 100%;
+    padding: 18px;
+    background-color: rgb(112, 107, 108);
+    border-width: 3px;
+    border-color: rgb(53, 48, 43);
+}
+
+.inventory-left-panel {
+    width: 49%;
+    margin-right: 2%;
+}
+
+.inventory-right-panel {
+    width: 49%;
+}
+
+.section-title {
+    height: 52px;
+    color: rgb(239, 221, 177);
+    font-size: 34px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    flex-shrink: 0;
+}
+
+.section-box {
+    padding: 24px 34px;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/PanelFrame01_Demo.Png");
+    -unity-slice-left: 68;
+    -unity-slice-right: 76;
+    -unity-slice-top: 105;
+    -unity-slice-bottom: 49;
+    -unity-slice-scale: 0.55;
+}
+
+.status-panel {
+    height: 34%;
+    min-height: 170px;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-row {
+    height: 25%;
+    min-height: 28px;
+    flex-direction: row;
+    align-items: center;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(215, 193, 149, 0.25);
+}
+
+.status-row-last {
+    border-bottom-width: 0;
+}
+
+.status-label {
+    flex-grow: 1;
+    color: rgb(211, 201, 185);
+    font-size: 18px;
+}
+
+.status-value {
+    color: rgb(255, 238, 195);
+    font-size: 18px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-right;
+}
+
+.skill-title {
+    margin-top: 10px;
+}
+
+.skill-description-panel {
+    flex-grow: 1;
+    min-height: 200px;
+}
+
+.skill-summary {
+    height: 92px;
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.selected-skill-icon {
+    width: 82px;
+    height: 82px;
+    margin-right: 16px;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ItemFrama01_Brown.Png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.skill-heading {
+    flex-grow: 1;
+}
+
+.skill-name {
+    color: rgb(255, 238, 195);
+    font-size: 22px;
+    -unity-font-style: bold;
+}
+
+.skill-level {
+    margin-top: 6px;
+    color: rgb(190, 175, 150);
+    font-size: 16px;
+}
+
+.skill-description {
+    margin-top: 16px;
+    color: rgb(211, 201, 185);
+    font-size: 17px;
+    white-space: normal;
+}
+
+.acquired-items-title {
+    padding-left: 8px;
+}
+
+.item-card-grid {
+    flex-grow: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: space-between;
+    justify-content: space-between;
+}
+
+.item-card {
+    width: 47.5%;
+    height: 31%;
+    min-height: 130px;
+    padding: 14px;
+    align-items: center;
+    justify-content: center;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ItemFrama02_Demo_n.Png");
+    -unity-background-scale-mode: stretch-to-fill;
+}
+
+.item-card--selected {
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ItemFrama02_Demo_f.Png");
+}
+
+.item-icon {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 1;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.item-name {
+    margin-top: 4px;
+    color: rgb(255, 238, 195);
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+.item-level {
+    margin-top: 2px;
+    color: rgb(190, 175, 150);
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}

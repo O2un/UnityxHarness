@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using O2un.Actors;
 using O2un.DataStore;
 using O2un.DI;
+using O2un.Feedback;
 using O2un.Manager;
 using UnityEngine;
 using VContainer;
@@ -14,6 +15,8 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private StageDataSO _stageData;
         [SerializeField] private UpgradeCardPoolSO _upgradeCardPool;
+        [SerializeField] private HitFeedbackDataSO _hitFeedbackData;
+        [SerializeField] private CinemachineImpulseEmitter _impulseEmitter;
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
 
@@ -25,6 +28,7 @@ namespace O2un.ProjectB.Platformer
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
             // 룸을 넘어 스탯이 유지되어야 하므로 RoomSceneScope가 아닌 여기에 등록한다
             builder.Register<PlayerStatModule>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PlayerSkillStatusStore>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
             // 슬롯 구독이 시작되려면 즉시 생성돼야 하므로 지연 생성되는 Register 대신 EntryPoint로 올린다
@@ -47,6 +51,33 @@ namespace O2un.ProjectB.Platformer
 
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();
             builder.Register<RoomSignalChannel>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            // 발행자는 Npc2DContext.Construct가 필수로 요구하므로 SO 유무와 무관하게 등록해야 적 생성이 막히지 않는다.
+            builder.Register<HitFeedbackChannel>(Lifetime.Singleton)
+                    .As<IHitFeedbackSignal>()
+                    .As<IHitFeedbackPublisher>()
+                    .As<IDisposable>();
+
+            if (null == _hitFeedbackData)
+            {
+                Debug.LogError($"[ProjectBSceneScope] '{name}' _hitFeedbackData가 비어 있습니다. 타격 피드백이 등록되지 않습니다.");
+            }
+            else
+            {
+                // 소비처가 HitStopManager·CameraShakeManager 둘이 되어 파라미터 주입에서 타입 등록으로 승격했다.
+                builder.RegisterInstance(_hitFeedbackData);
+                builder.RegisterEntryPoint<HitStopManager>();
+
+                if (null == _impulseEmitter)
+                {
+                    Debug.LogError($"[ProjectBSceneScope] '{name}' _impulseEmitter가 비어 있습니다. 카메라 셰이크가 등록되지 않습니다.");
+                }
+                else
+                {
+                    builder.RegisterInstance<IImpulseEmitter>(_impulseEmitter);
+                    builder.RegisterEntryPoint<CameraShakeManager>();
+                }
+            }
 
             builder.RegisterComponentInHierarchy<ScreenFaderView>().As<IScreenFader>();
             builder.RegisterComponentInHierarchy<Player2DPlacer>().As<IPlayerPlacer>();

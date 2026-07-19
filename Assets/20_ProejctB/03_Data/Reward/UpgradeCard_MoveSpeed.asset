@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.UpgradeCardSO
   _id: upgrade_move_speed
   _displayName: "\uC774\uB3D9 \uAC15\uD654"
+  _description: "\uBC1C\uB180\uB9BC\uC774 \uAC00\uBCBC\uC6CC\uC9C4\uB2E4. \uC774\uB3D9 \uC18D\uB3C4\uAC00 \uBE68\uB77C\uC9C4\uB2E4."
   _kind: 0
   _icon: {fileID: 21300000, guid: 26b69da2ffa7ecb4a8c184df40c1b311, type: 3}
   _targetStat: 2

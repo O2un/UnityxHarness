@@ -21,6 +21,7 @@ namespace O2un.ProjectB.Platformer
         float ModifierValue { get; }
         PassiveSkillType PassiveSkill { get; }
         string DisplayName { get; }
+        string Description { get; }
         Sprite Icon { get; }
     }
 }

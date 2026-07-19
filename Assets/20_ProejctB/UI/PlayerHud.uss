@@ -1,0 +1,115 @@
+.player-hud {
+    position: absolute;
+    left: 32px;
+    bottom: 32px;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+.portrait {
+    width: 180px;
+    height: 180px;
+    margin-right: 20px;
+}
+
+.portrait-image {
+    position: absolute;
+    left: 25px;
+    top: 25px;
+    right: 25px;
+    bottom: 25px;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Demo/Demo_Image/Image_Userpicture_L_Sample1.Png");
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.portrait-frame {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ProfileFrame_199_Border.Png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.hud-content {
+    width: 500px;
+}
+
+.skill-slots {
+    height: 154px;
+    padding-left: 30px;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.skill-slot {
+    width: 150px;
+    height: 150px;
+    margin-right: 82px;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ItemFrama01_Brown.Png");
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.skill-slot-last {
+    margin-right: 0;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Frame/ItemFrama01_Sliver.Png");
+}
+
+.skill-icon {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    right: 14px;
+    bottom: 14px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+#skill-icon-1 {
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Icon_ItemIcons/ItemIcon_128/Icon_ItemIcon_Sword_A.Png");
+}
+
+#skill-icon-2 {
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Icon_ItemIcons/ItemIcon_128/Icon_ItemIcon_Shield_A.Png");
+}
+
+.skill-cooldown {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    top: 14px;
+    height: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+}
+
+.health-bar {
+    width: 500px;
+    height: 112px;
+    padding: 18px 28px;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Slider/Slider_Icon01_Bg_Demo.png");
+    -unity-slice-left: 26;
+    -unity-slice-right: 25;
+    -unity-slice-scale: 2.4;
+    overflow: hidden;
+}
+
+.health-fill {
+    width: 100%;
+    height: 100%;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Slider/Slider_Icon01_Fill_Red.Png");
+    -unity-slice-left: 1;
+    -unity-slice-right: 1;
+    -unity-slice-scale: 3.4;
+}
+
+.health-border {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url("project://database/Assets/99_3rd/Layer Lab/GUI-TheStone/ResourcesData/Sprites/Components/Slider/Slider_Border01_Border_Demo.png");
+    -unity-slice-left: 46;
+    -unity-slice-right: 49;
+    -unity-slice-scale: 2.3;
+}

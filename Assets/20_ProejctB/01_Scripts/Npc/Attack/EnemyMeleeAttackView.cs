@@ -39,6 +39,8 @@ namespace O2un.ProjectB.Platformer
                 0f,
                 float.MaxValue));
 
+            _hitbox.OnHit.Subscribe(e => e.Target.ApplyDamage(e.Damage)).AddTo(_disposables);
+
             if (null == _bridge)
             {
                 return;

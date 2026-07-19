@@ -41,6 +41,9 @@ namespace O2un.ProjectB.Platformer
 
         public override ActorType Type => ActorType.Player;
 
+        // 원거리 스킬 미할당으로 시작할 수 있으므로 null을 반환할 수 있다
+        public ReadOnlyReactiveProperty<float> RangedCooldownNormalized => _rangedSkill?.CooldownNormalized;
+
         public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry, MeleeComboRefs meleeRefs, RangedSkillRefs rangedRefs, IPoolService pool, IPlayerStatReader stat, PassiveSkillData passiveData, IPassiveSkillQuery passiveQuery, IActorQuery actorQuery)
             : base(view, registry)
         {
