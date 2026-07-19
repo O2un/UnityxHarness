@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace O2un.ProjectB.Platformer
 {
     public enum UpgradeCardKind
@@ -19,5 +21,6 @@ namespace O2un.ProjectB.Platformer
         float ModifierValue { get; }
         PassiveSkillType PassiveSkill { get; }
         string DisplayName { get; }
+        Sprite Icon { get; }
     }
 }

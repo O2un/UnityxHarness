@@ -11,6 +11,7 @@ namespace O2un.ProjectB.Platformer
     public sealed class RewardCardView : MonoBehaviour, IPoolable
     {
         [SerializeField] private SpriteRenderer _renderer;
+        [SerializeField] private SpriteRenderer _iconRenderer;
         [SerializeField] private GameObject _promptRoot;
         [SerializeField] private GameObject _slotsFullRoot;
         [SerializeField] private LayerMask _playerLayers;
@@ -52,6 +53,8 @@ namespace O2un.ProjectB.Platformer
                 _renderer.color = tint;
             }
 
+            // 아이콘은 카드 종류 틴트를 받지 않는다. 원본 색을 유지해야 아이콘끼리 구분된다.
+            ApplyIcon(card.Icon);
             ApplyPromptVisibility();
             ShowSlotsFullNotice(false);
         }
@@ -80,6 +83,7 @@ namespace O2un.ProjectB.Platformer
         {
             _card = null;
             _playerInRange = false;
+            ApplyIcon(null);
             ApplyPromptVisibility();
             ShowSlotsFullNotice(false);
         }
@@ -120,6 +124,17 @@ namespace O2un.ProjectB.Platformer
         private bool IsPlayer(Collider2D other)
         {
             return 0 != (_playerLayers.value & (1 << other.gameObject.layer));
+        }
+
+        private void ApplyIcon(Sprite icon)
+        {
+            if (null == _iconRenderer)
+            {
+                return;
+            }
+
+            _iconRenderer.sprite = icon;
+            _iconRenderer.enabled = null != icon;
         }
 
         private void ApplyPromptVisibility()

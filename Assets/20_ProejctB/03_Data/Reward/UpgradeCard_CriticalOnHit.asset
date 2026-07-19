@@ -15,6 +15,7 @@ MonoBehaviour:
   _id: passive_critical_on_hit
   _displayName: "\uD06C\uB9AC\uD2F0\uCEEC"
   _kind: 1
+  _icon: {fileID: 21300000, guid: 52f97e6c174d95d47b3af968f59d0942, type: 3}
   _targetStat: 0
   _modifierValue: 0
   _passiveSkill: 0

@@ -9,6 +9,7 @@ namespace O2un.ProjectB.Platformer
         [SerializeField] private string _id;
         [SerializeField] private string _displayName;
         [SerializeField] private UpgradeCardKind _kind;
+        [SerializeField] private Sprite _icon;
 
         [Header("StatModifier")]
         [SerializeField] private UpgradeStatType _targetStat;
@@ -27,5 +28,6 @@ namespace O2un.ProjectB.Platformer
         public float ModifierValue => _modifierValue;
         public PassiveSkillType PassiveSkill => _passiveSkill;
         public string DisplayName => _displayName;
+        public Sprite Icon => _icon;
     }
 }

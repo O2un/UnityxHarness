@@ -15,6 +15,7 @@ MonoBehaviour:
   _id: upgrade_attack_damage
   _displayName: "\uACF5\uACA9 \uAC15\uD654"
   _kind: 0
+  _icon: {fileID: 21300000, guid: a9d7594b374375d418b61d63c8030c0e, type: 3}
   _targetStat: 0
   _modifierValue: 5
   _passiveSkill: 0

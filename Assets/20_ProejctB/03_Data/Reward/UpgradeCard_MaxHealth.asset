@@ -15,6 +15,7 @@ MonoBehaviour:
   _id: upgrade_max_health
   _displayName: "\uC0DD\uC874 \uAC15\uD654"
   _kind: 0
+  _icon: {fileID: 21300000, guid: 25dd3a93ef6a6224798da496bd5b80e0, type: 3}
   _targetStat: 1
   _modifierValue: 20
   _passiveSkill: 0

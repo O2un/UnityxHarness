@@ -19,6 +19,6 @@ MonoBehaviour:
   _missileLifetime: 3
   _missileTurnRate: 360
   _missileCooldown: 0.3
-  _missilePrefab: {fileID: 3122558786829321866, guid: eb7ff263a3fe442c0a0d6c4e6e53d38c, type: 3}
+  _missilePrefab: {fileID: 3122558786829321866, guid: 528f0d42e1c8440709c9bc813457842a, type: 3}
   _missilePoolKey: passive_homing_missile
   _missileMuzzleOffset: {x: 0.5, y: 0.5}
