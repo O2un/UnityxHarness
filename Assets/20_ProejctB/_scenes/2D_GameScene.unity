@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1968caa68b3e4c4592514a71c6a47a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.RoomSpawnTestTrigger
-  _transitionKey: 116
 --- !u!4 &224834824
 Transform:
   m_ObjectHideFlags: 0
@@ -156,6 +155,54 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 224834822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &865976978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 865976980}
+  - component: {fileID: 865976979}
+  m_Layer: 0
+  m_Name: RewardCardSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &865976979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865976978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb8bb22b4b91475dbe0c22d29c2dadd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.RewardCardSpawner
+  _cardPrefab: {fileID: 245445038651093560, guid: 161dd8042f2f7450aaf4fcd765af7aa4, type: 3}
+  _spreadX: 3
+  _statTint: {r: 0.35, g: 0.7, b: 1, a: 1}
+  _passiveTint: {r: 1, g: 0.75, b: 0.3, a: 1}
+--- !u!4 &865976980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865976978}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -368,9 +415,11 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _stageData: {fileID: 11400000, guid: 51562e41e40ab48429c54511d6349e40, type: 2}
+  _upgradeCardPool: {fileID: 11400000, guid: 5a2672c14e60547acba3cf6a5234613c, type: 2}
   _sceneInitializables:
   - {fileID: 3893861602031837311}
   - {fileID: 224834822}
+  - {fileID: 865976978}
 --- !u!4 &1282180033
 Transform:
   m_ObjectHideFlags: 0
@@ -776,6 +825,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7798004111854544132, guid: 45dbf1ef8234748e0a986759d161e911, type: 3}
+      propertyPath: _passiveData
+      value: 
+      objectReference: {fileID: 11400000, guid: 14dc8edfb8b9746c7a92206d1e6cdac7, type: 2}
+    - target: {fileID: 7798004111854544132, guid: 45dbf1ef8234748e0a986759d161e911, type: 3}
       propertyPath: _meleeRefs._data
       value: 
       objectReference: {fileID: 11400000, guid: abded944f81104fc08894feb8b021d6c, type: 2}
@@ -824,3 +877,4 @@ SceneRoots:
   - {fileID: 1475145179}
   - {fileID: 224834824}
   - {fileID: 1977949436}
+  - {fileID: 865976980}

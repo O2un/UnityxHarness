@@ -24,9 +24,16 @@ namespace O2un.ProjectB.Platformer
         private readonly MeleeAnimationEventBridge _bridge;
         private readonly HitboxModule[] _stageHitboxes;
 
+        private readonly IPlayerStatReader _stat;
+
         private readonly RangedSkillModule _rangedSkill;
         private readonly RangedSkillData _rangedData;
         private readonly IPoolService _pool;
+
+        private readonly PassiveSkillModule _passive;
+        private readonly PassiveSkillData _passiveData;
+        private readonly IActorQuery _actorQuery;
+        private readonly ITargetStrategy _missileTargeting = new NearestEnemyStrategy();
 
         private readonly CompositeDisposable _disposables = new();
 
@@ -34,13 +41,24 @@ namespace O2un.ProjectB.Platformer
 
         public override ActorType Type => ActorType.Player;
 
-        public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry, MeleeComboRefs meleeRefs, RangedSkillRefs rangedRefs, IPoolService pool)
+        public Player2DActor(MovementData data, IInputReader input, PlayerView view, IActorRegistry registry, MeleeComboRefs meleeRefs, RangedSkillRefs rangedRefs, IPoolService pool, IPlayerStatReader stat, PassiveSkillData passiveData, IPassiveSkillQuery passiveQuery, IActorQuery actorQuery)
             : base(view, registry)
         {
+            _actorQuery = actorQuery;
+
+            if (null != passiveData && null != passiveQuery)
+            {
+                _passiveData = passiveData;
+                _passive = new PassiveSkillModule(passiveData, passiveQuery);
+            }
+
             _mover = new PlayerMover(data);
             _groundMask = data.GroundMask;
             _groundCastSize = data.GroundCastSize;
             _groundCastDistance = data.GroundCastDistance;
+
+            _stat = stat;
+            _stat.MoveSpeed.Subscribe(_mover.SetMaxMoveSpeed).AddTo(_disposables);
 
             if (null != meleeRefs)
             {
@@ -92,6 +110,7 @@ namespace O2un.ProjectB.Platformer
             _mover.SetMoveInput(_moveX);
             _combo?.Tick(deltaTime);
             _rangedSkill?.Tick(deltaTime);
+            _passive?.Tick(deltaTime);
         }
 
         public void FixedTick(float fixedDeltaTime)
@@ -114,19 +133,95 @@ namespace O2un.ProjectB.Platformer
             var hitboxes = new HitboxModule[comboData.StageCount];
             for (int i = 0; i < hitboxes.Length; i++)
             {
+                int stageDamage = comboData.GetStage(i + 1).Damage;
+
                 var config = new HitboxConfig(
-                    comboData.GetStage(i + 1).Damage,
+                    stageDamage,
                     ActorType.Enemy,
                     HitPolicy.OncePerTarget,
                     0f,
                     MELEE_HITBOX_LIFETIME);
 
                 var hitbox = new HitboxModule(config);
-                hitbox.OnHit.Subscribe(e => e.Target.ApplyDamage(e.Damage)).AddTo(_disposables);
+                // HitboxConfig가 readonly struct라 생성 시 피해량이 굳는다. 강화 반영을 위해 적중 시점에 다시 해석한다
+                hitbox.OnHit.Subscribe(e => OnMeleeHit(e, stageDamage)).AddTo(_disposables);
                 hitboxes[i] = hitbox;
             }
 
             return hitboxes;
+        }
+
+        private void OnMeleeHit(DamageEvent e, int stageDamage)
+        {
+            e.Target.ApplyDamage(ResolveMeleeDamage(stageDamage));
+            TryFireHomingMissile();
+        }
+
+        // 스테이지 base + AttackBonus → 크리티컬 배수 → 최소 1 순서로 계산한다.
+        private int ResolveMeleeDamage(int stageDamage)
+        {
+            int damage = stageDamage + _stat.AttackBonus.CurrentValue;
+
+            if (null == _passive)
+            {
+                return Mathf.Max(1, damage);
+            }
+
+            return _passive.ResolveMeleeDamage(damage).Damage;
+        }
+
+        private void TryFireHomingMissile()
+        {
+            if (null == _passive || false == _passive.CanFireMissile)
+            {
+                return;
+            }
+
+            if (null == _pool || null == _passiveData.MissilePrefab)
+            {
+                Debug.LogWarning("[Player2DActor] 유도 미사일 프리팹 또는 IPoolService가 없어 발사를 건너뜁니다.");
+                return;
+            }
+
+            Vector2 direction = View.FacingDirection;
+            Transform target = ResolveMissileTarget();
+
+            if (null != target)
+            {
+                Vector2 toTarget = (Vector2)(target.position - View.transform.position);
+                if (toTarget.sqrMagnitude > Mathf.Epsilon)
+                {
+                    direction = toTarget.normalized;
+                }
+            }
+
+            Projectile2DView missile = SpawnProjectile(
+                _passiveData.MissilePrefab,
+                _passiveData.MissilePoolKey,
+                _passiveData.MissileDamage,
+                _passiveData.MissileSpeed,
+                _passiveData.MissileLifetime,
+                _passiveData.MissileMuzzleOffset,
+                direction);
+
+            if (null == missile)
+            {
+                return;
+            }
+
+            missile.SetHoming(target, _passiveData.MissileTurnRate);
+            _passive.NotifyMissileFired();
+        }
+
+        private Transform ResolveMissileTarget()
+        {
+            if (null == _actorQuery)
+            {
+                return null;
+            }
+
+            IActor nearest = _missileTargeting.Select(_actorQuery, View.transform.position);
+            return null != nearest ? nearest.Transform : null;
         }
 
         private void OnAttackTriggered(int stage)
@@ -169,34 +264,45 @@ namespace O2un.ProjectB.Platformer
                 return;
             }
 
-            string poolKey = _rangedData.PoolKey;
+            SpawnProjectile(
+                _rangedData.ProjectilePrefab,
+                _rangedData.PoolKey,
+                _rangedData.Damage,
+                _rangedData.ProjectileSpeed,
+                _rangedData.Lifetime,
+                _rangedData.MuzzleOffset,
+                View.FacingDirection);
+        }
+
+        private Projectile2DView SpawnProjectile(Projectile2DView prefab, string poolKey, int damage, float speed, float lifetime, Vector2 muzzleOffset, Vector2 direction)
+        {
             if (false == _pool.IsRegistered(poolKey))
             {
-                _pool.Register(poolKey, _rangedData.ProjectilePrefab);
+                _pool.Register(poolKey, prefab);
             }
 
             IPoolHandle<Projectile2DView> handle = _pool.GetHandle<Projectile2DView>(poolKey);
             if (null == handle)
             {
-                return;
+                return null;
             }
 
             Projectile2DView projectile = handle.Get();
 
             var config = new HitboxConfig(
-                _rangedData.Damage,
+                damage,
                 ActorType.Enemy,
                 HitPolicy.OncePerTarget,
                 0f,
-                _rangedData.Lifetime);
+                lifetime);
 
             var hitbox = new HitboxModule(config);
 
             Vector2 facing = View.FacingDirection;
-            Vector2 offset = _rangedData.MuzzleOffset;
-            Vector3 origin = View.transform.position + new Vector3(facing.x < 0f ? -offset.x : offset.x, offset.y, 0f);
+            Vector3 origin = View.transform.position + new Vector3(facing.x < 0f ? -muzzleOffset.x : muzzleOffset.x, muzzleOffset.y, 0f);
 
-            projectile.Configure(hitbox, facing, _rangedData.ProjectileSpeed, origin, true);
+            projectile.Configure(hitbox, direction, speed, origin, true);
+            return projectile;
         }
 
         private void CancelAttackIfActive()

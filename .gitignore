@@ -104,6 +104,9 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# UI Toolkit generated schema cache
+/UIElementsSchema/
 .claude/hooks/viewer/node_modules/
 .claude/hooks/.viewer-state/
 /artifacts/

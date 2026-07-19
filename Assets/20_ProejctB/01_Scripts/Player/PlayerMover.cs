@@ -4,7 +4,8 @@ namespace O2un.ProjectB.Platformer
 {
     public sealed class PlayerMover
     {
-        private readonly float _maxMoveSpeed;
+        private float _maxMoveSpeed;
+
         private readonly float _jumpVelocity;
         private readonly float _coyoteTime;
         private readonly float _jumpBufferTime;
@@ -31,6 +32,11 @@ namespace O2un.ProjectB.Platformer
             _acceleration = data.Acceleration;
             _deceleration = data.Deceleration;
             _jumpCutFactor = data.JumpCutFactor;
+        }
+
+        public void SetMaxMoveSpeed(float maxMoveSpeed)
+        {
+            _maxMoveSpeed = Mathf.Max(0f, maxMoveSpeed);
         }
 
         public void SetMoveInput(float moveX)
