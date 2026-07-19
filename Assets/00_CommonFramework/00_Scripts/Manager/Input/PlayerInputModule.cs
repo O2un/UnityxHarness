@@ -12,15 +12,18 @@ namespace O2un.Input
         private readonly Subject<Unit> _jumpReleased = new();
         private readonly Subject<Unit> _attack = new();
         private readonly Subject<Unit> _skill = new();
+        private readonly Subject<Unit> _inventory = new();
 
         public ReadOnlyReactiveProperty<Vector2> Move => _move;
         public Observable<Unit> Jump => _jump;
         public Observable<Unit> JumpReleased => _jumpReleased;
         public Observable<Unit> Attack => _attack;
         public Observable<Unit> Skill => _skill;
+        public Observable<Unit> Inventory => _inventory;
 
         public void Dispose()
         {
+            _inventory.Dispose();
             _skill.Dispose();
             _attack.Dispose();
             _jumpReleased.Dispose();
@@ -51,6 +54,14 @@ namespace O2un.Input
         public void OnMove(InputAction.CallbackContext context)
         {
             _move.Value = context.ReadValue<Vector2>();
+        }
+
+        public void OnInventory(InputAction.CallbackContext context)
+        {
+            if(context.performed)
+            {
+                _inventory.OnNext(Unit.Default);
+            }
         }
 
         public void OnSkiiS(InputAction.CallbackContext context)

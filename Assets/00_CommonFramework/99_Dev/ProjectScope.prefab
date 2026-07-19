@@ -48,3 +48,4 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  _uiInputActions: {fileID: -944628639613478452, guid: 09d35dc0013064d17a01590b751901c2, type: 3}

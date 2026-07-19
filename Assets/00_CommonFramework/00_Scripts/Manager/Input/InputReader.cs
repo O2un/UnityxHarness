@@ -10,5 +10,6 @@ namespace O2un.Input
         Observable<Unit> IsJumpReleased {get;}
         Observable<Unit> IsAttackPressed {get;}
         Observable<Unit> IsSkillPressed {get;}
+        Observable<Unit> IsInventoryPressed {get;}
     }
 }
