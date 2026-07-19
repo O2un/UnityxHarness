@@ -16,6 +16,7 @@ namespace O2un.ProjectB.Platformer
         [SerializeField] private StageDataSO _stageData;
         [SerializeField] private UpgradeCardPoolSO _upgradeCardPool;
         [SerializeField] private HitFeedbackDataSO _hitFeedbackData;
+        [SerializeField] private CinemachineImpulseEmitter _impulseEmitter;
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
 
@@ -59,13 +60,23 @@ namespace O2un.ProjectB.Platformer
 
             if (null == _hitFeedbackData)
             {
-                Debug.LogError($"[ProjectBSceneScope] '{name}' _hitFeedbackData가 비어 있습니다. 히트스톱이 등록되지 않습니다.");
+                Debug.LogError($"[ProjectBSceneScope] '{name}' _hitFeedbackData가 비어 있습니다. 타격 피드백이 등록되지 않습니다.");
             }
             else
             {
-                // HitFeedbackDataSO 소비처가 HitStopManager 하나뿐이라 전역 등록 대신 파라미터로 넘긴다.
-                builder.RegisterEntryPoint<HitStopManager>()
-                        .WithParameter(_hitFeedbackData);
+                // 소비처가 HitStopManager·CameraShakeManager 둘이 되어 파라미터 주입에서 타입 등록으로 승격했다.
+                builder.RegisterInstance(_hitFeedbackData);
+                builder.RegisterEntryPoint<HitStopManager>();
+
+                if (null == _impulseEmitter)
+                {
+                    Debug.LogError($"[ProjectBSceneScope] '{name}' _impulseEmitter가 비어 있습니다. 카메라 셰이크가 등록되지 않습니다.");
+                }
+                else
+                {
+                    builder.RegisterInstance<IImpulseEmitter>(_impulseEmitter);
+                    builder.RegisterEntryPoint<CameraShakeManager>();
+                }
             }
 
             builder.RegisterComponentInHierarchy<ScreenFaderView>().As<IScreenFader>();
