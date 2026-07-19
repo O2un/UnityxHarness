@@ -13,6 +13,7 @@ namespace O2un.ProjectB.Platformer
     public class ProjectBSceneScope : LifetimeScope
     {
         [SerializeField] private StageDataSO _stageData;
+        [SerializeField] private UpgradeCardPoolSO _upgradeCardPool;
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
 
@@ -22,6 +23,27 @@ namespace O2un.ProjectB.Platformer
 
             builder.Register<PoolManager>(Lifetime.Singleton).As<IPoolService>();
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
+            // 룸을 넘어 스탯이 유지되어야 하므로 RoomSceneScope가 아닌 여기에 등록한다
+            builder.Register<PlayerStatModule>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
+            // 슬롯 구독이 시작되려면 즉시 생성돼야 하므로 지연 생성되는 Register 대신 EntryPoint로 올린다
+            builder.RegisterEntryPoint<UpgradeStatAggregator>().As<IPassiveSkillQuery>();
+
+            if (null == _upgradeCardPool)
+            {
+                Debug.LogError($"[ProjectBSceneScope] '{name}' _upgradeCardPool이 비어 있습니다. 강화 카드 획득이 등록되지 않습니다.");
+            }
+            else
+            {
+                // UpgradeCardPoolSO 소비처가 UpgradeCardAcquisition 하나뿐이라 전역 등록 대신 파라미터로 넘긴다.
+                builder.Register<UpgradeCardAcquisition>(Lifetime.Singleton)
+                        .WithParameter(_upgradeCardPool)
+                        .AsSelf()
+                        .As<IDisposable>();
+            }
+
+            builder.RegisterEntryPoint<RoomRewardModule>().AsSelf();
 
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();
             builder.Register<RoomSignalChannel>(Lifetime.Singleton).AsImplementedInterfaces();

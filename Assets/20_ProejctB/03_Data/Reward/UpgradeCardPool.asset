@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a9be24a8b93441b8ba4df1d7e8f6c2c, type: 3}
+  m_Name: UpgradeCardPool
+  m_EditorClassIdentifier: Assembly-CSharp::O2un.ProjectB.Platformer.UpgradeCardPoolSO
+  _cards:
+  - {fileID: 11400000, guid: 030f5321e94314efba6720ad262a21c8, type: 2}
+  - {fileID: 11400000, guid: 6597c11864294487ea53a84641aeca1f, type: 2}
+  - {fileID: 11400000, guid: 9059eb9b330844aa290f8a6091a98df9, type: 2}
+  - {fileID: 11400000, guid: cf8d08d38e8c14662a24210ee1bf4c1e, type: 2}
+  - {fileID: 11400000, guid: 47156b42255cd4ac4805e437b5c9deca, type: 2}

@@ -301,6 +301,37 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &114232056
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 114232057}
+  m_Layer: 0
+  m_Name: RewardSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &114232057
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114232056}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 30.78, y: -2.51, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &121562495
 GameObject:
   m_ObjectHideFlags: 0
@@ -27574,6 +27605,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _waveData: {fileID: 11400000, guid: f34fc5657277345fcaa6107866b307e6, type: 2}
   _playerSpawnPoint: {fileID: 732226669}
+  _rewardSpawnPoint: {fileID: 114232057}
   _doors:
   - {fileID: 1464288041}
   _sceneInitializables: []
@@ -27760,7 +27792,7 @@ Transform:
   m_GameObject: {fileID: 1464288040}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18, y: 0.49999237, z: 0}
+  m_LocalPosition: {x: 30.78, y: -2.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -29685,3 +29717,4 @@ SceneRoots:
   - {fileID: 1442049999}
   - {fileID: 732226669}
   - {fileID: 1464288043}
+  - {fileID: 114232057}

@@ -13,6 +13,7 @@ namespace O2un.DataStore
     public interface IPlayerDataWriter
     {
         void VaryHP(int hp);
+        void VaryMaxHP(int delta);
         void SetCurrentHP(int hp);
     }
 
@@ -32,6 +33,15 @@ namespace O2un.DataStore
         public void VaryHP(int hp)
         {
             _hp.Value = Math.Clamp(_hp.Value + hp, 0, MaxHP.CurrentValue);
+        }
+
+        public void VaryMaxHP(int delta)
+        {
+            int newMaxHP = Math.Max(1, _maxHP.Value + delta);
+            int appliedDelta = newMaxHP - _maxHP.Value;
+
+            _maxHP.Value = newMaxHP;
+            _hp.Value = Math.Clamp(_hp.Value + appliedDelta, 0, newMaxHP);
         }
 
         public void Dispose()

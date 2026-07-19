@@ -12,6 +12,7 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private WaveDataSO _waveData;
         [SerializeField] private Transform _playerSpawnPoint;
+        [SerializeField] private Transform _rewardSpawnPoint;
         [SerializeField] private List<RoomDoorView> _doors = new();
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
@@ -20,6 +21,9 @@ namespace O2un.ProjectB.Platformer
 
         public Vector3 PlayerSpawnPosition =>
                 null != _playerSpawnPoint ? _playerSpawnPoint.position : Vector3.zero;
+
+        public Vector3 RewardSpawnPosition =>
+                null != _rewardSpawnPoint ? _rewardSpawnPoint.position : Vector3.zero;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -48,6 +52,8 @@ namespace O2un.ProjectB.Platformer
                 resolver.Resolve<IRoomSignalPublisher>().PublishRoomReady(PlayerSpawnPosition);
             }
 
+            PublishRewardSpawnPoint(resolver);
+
             BindDoors(resolver);
 
             for (int i = 0; i < _sceneInitializables.Count; i++)
@@ -66,6 +72,18 @@ namespace O2un.ProjectB.Platformer
                     initializable.Init();
                 }
             }
+        }
+
+        // 지점이 없어도 룸 진행은 계속되어야 하므로 보상 스폰만 건너뛰게 알린다.
+        private void PublishRewardSpawnPoint(IObjectResolver resolver)
+        {
+            bool hasPoint = null != _rewardSpawnPoint;
+            if (false == hasPoint)
+            {
+                Debug.LogError($"[RoomSceneScope] '{name}' _rewardSpawnPoint가 비어 있습니다. 이 룸은 보상 카드를 스폰하지 않습니다.");
+            }
+
+            resolver.Resolve<IRoomSignalPublisher>().PublishRewardSpawnPoint(RewardSpawnPosition, hasPoint);
         }
 
         // 문은 진행 가능 여부를 판단하지 않는다. 여기서 신호를 그대로 중계하고,

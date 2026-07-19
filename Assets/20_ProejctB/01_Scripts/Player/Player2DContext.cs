@@ -4,6 +4,7 @@ using O2un.DataStore;
 using O2un.DI;
 using O2un.Input;
 using O2un.Manager;
+using R3;
 using UnityEngine;
 using VContainer;
 
@@ -16,23 +17,34 @@ namespace O2un.ProjectB.Platformer
         [SerializeField] private MeleeComboRefs _meleeRefs;
         [SerializeField] private RangedSkillRefs _rangedRefs;
         [SerializeField] private Damageable2DView _damageable;
+        [SerializeField] private PassiveSkillData _passiveData;
 
         [Inject] private IInputReader _input;
         [Inject] private IActorRegistry _registry;
         [Inject] private IPoolService _pool;
         [Inject] private IPlayerDataReader _playerReader;
         [Inject] private IPlayerDataWriter _playerWriter;
+        [Inject] private IPlayerStatReader _statReader;
+        [Inject] private IPlayerStatWriter _statWriter;
+        [Inject] private IPassiveSkillQuery _passiveQuery;
+        [Inject] private IActorQuery _actorQuery;
 
         private Player2DActor _actor;
         private PlayerHealthAdapter _health;
 
+        private readonly CompositeDisposable _disposables = new();
+
+        private int _lastMaxHealth;
+
         public void Init()
         {
-            if (null == _input || null == _data || null == _view || null == _registry)
+            if (null == _input || null == _data || null == _view || null == _registry || null == _statReader || null == _statWriter)
             {
-                Debug.LogError($"[Player2DContext] '{name}' 의존성 주입 실패 — input={_input != null}, data={_data != null}, view={_view != null}, registry={_registry != null}");
+                Debug.LogError($"[Player2DContext] '{name}' 의존성 주입 실패 — input={_input != null}, data={_data != null}, view={_view != null}, registry={_registry != null}, stat={_statReader != null && _statWriter != null}");
                 return;
             }
+
+            _statWriter.SetBase(UpgradeStatType.MoveSpeed, _data.MaxMoveSpeed);
 
             MeleeComboRefs meleeRefs = _meleeRefs;
             if (null == meleeRefs || false == meleeRefs.IsValid)
@@ -50,7 +62,15 @@ namespace O2un.ProjectB.Platformer
                 rangedRefs = null;
             }
 
-            _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs, rangedRefs, _pool);
+            PassiveSkillData passiveData = _passiveData;
+            if (null == passiveData || null == _passiveQuery)
+            {
+                // 패시브 데이터·해금 조회 미할당 시 패시브만 비활성하고 이동·공격은 유지
+                Debug.LogWarning($"[Player2DContext] '{name}' PassiveSkillData/IPassiveSkillQuery 미할당 — 패시브 스킬 비활성으로 시작");
+                passiveData = null;
+            }
+
+            _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs, rangedRefs, _pool, _statReader, passiveData, _passiveQuery, _actorQuery);
 
             InitHealth();
         }
@@ -67,10 +87,28 @@ namespace O2un.ProjectB.Platformer
             _playerWriter.SetCurrentHP(_playerReader.MaxHP.CurrentValue);
             _health = new PlayerHealthAdapter(_playerReader, _playerWriter);
             _damageable.Bind(ActorType.Player, _health);
+
+            _lastMaxHealth = _playerReader.MaxHP.CurrentValue;
+            _statWriter.SetBase(UpgradeStatType.MaxHealth, _lastMaxHealth);
+            _statReader.MaxHealth.Subscribe(ApplyMaxHealth).AddTo(_disposables);
+        }
+
+        private void ApplyMaxHealth(int maxHealth)
+        {
+            int delta = maxHealth - _lastMaxHealth;
+            _lastMaxHealth = maxHealth;
+
+            if (0 == delta)
+            {
+                return;
+            }
+
+            _playerWriter.VaryMaxHP(delta);
         }
 
         private void OnDestroy()
         {
+            _disposables.Dispose();
             _actor?.Dispose();
             _health?.Dispose();
         }
