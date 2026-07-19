@@ -25,6 +25,7 @@ namespace O2un.ProjectB.Platformer
             builder.Register<PlayerDataStore>(Lifetime.Singleton).AsImplementedInterfaces();
             // 룸을 넘어 스탯이 유지되어야 하므로 RoomSceneScope가 아닌 여기에 등록한다
             builder.Register<PlayerStatModule>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<PlayerSkillStatusStore>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<InventoryManager>(Lifetime.Singleton).AsImplementedInterfaces();
             // 슬롯 구독이 시작되려면 즉시 생성돼야 하므로 지연 생성되는 Register 대신 EntryPoint로 올린다

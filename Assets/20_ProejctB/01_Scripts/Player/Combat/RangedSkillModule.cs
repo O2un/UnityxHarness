@@ -18,6 +18,9 @@ namespace O2un.ProjectB.Platformer
         private readonly Subject<Unit> _onActivated = new();
         public Observable<Unit> OnActivated => _onActivated;
 
+        private readonly ReactiveProperty<float> _cooldownNormalized = new();
+        public ReadOnlyReactiveProperty<float> CooldownNormalized => _cooldownNormalized;
+
         public RangedSkillModule(float cooldown, float maxCastTime)
         {
             _cooldown = cooldown;
@@ -39,6 +42,7 @@ namespace O2un.ProjectB.Platformer
             _cooldownTimer = _cooldown;
             _castTimer = _maxCastTime;
             _isCasting = true;
+            PublishCooldown();
             _onActivated.OnNext(Unit.Default);
             return true;
         }
@@ -58,6 +62,8 @@ namespace O2un.ProjectB.Platformer
                 {
                     _cooldownTimer = 0f;
                 }
+
+                PublishCooldown();
             }
 
             if (true == _isCasting && 0f < _castTimer)
@@ -71,9 +77,15 @@ namespace O2un.ProjectB.Platformer
             }
         }
 
+        private void PublishCooldown()
+        {
+            _cooldownNormalized.Value = 0f < _cooldown ? _cooldownTimer / _cooldown : 0f;
+        }
+
         public void Dispose()
         {
             _onActivated.Dispose();
+            _cooldownNormalized.Dispose();
         }
     }
 }

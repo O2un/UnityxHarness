@@ -1,0 +1,24 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="PlayerHud.uss" />
+    <ui:VisualElement name="player-hud" class="player-hud" picking-mode="Ignore">
+        <ui:VisualElement name="portrait" class="portrait" picking-mode="Ignore">
+            <ui:VisualElement name="portrait-image" class="portrait-image" picking-mode="Ignore" />
+            <ui:VisualElement class="portrait-frame" picking-mode="Ignore" />
+        </ui:VisualElement>
+        <ui:VisualElement class="hud-content" picking-mode="Ignore">
+            <ui:VisualElement name="skill-slots" class="skill-slots" picking-mode="Ignore">
+                <ui:VisualElement name="skill-slot-1" class="skill-slot" picking-mode="Ignore">
+                    <ui:VisualElement name="skill-icon-1" class="skill-icon" picking-mode="Ignore" />
+                    <ui:VisualElement name="skill-cooldown-1" class="skill-cooldown" picking-mode="Ignore" />
+                </ui:VisualElement>
+                <ui:VisualElement name="skill-slot-2" class="skill-slot skill-slot-last" picking-mode="Ignore">
+                    <ui:VisualElement name="skill-icon-2" class="skill-icon" picking-mode="Ignore" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="health-bar" class="health-bar" picking-mode="Ignore">
+                <ui:VisualElement name="health-fill" class="health-fill" picking-mode="Ignore" />
+                <ui:VisualElement class="health-border" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

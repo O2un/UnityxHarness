@@ -28,6 +28,7 @@ namespace O2un.ProjectB.Platformer
         [Inject] private IPlayerStatWriter _statWriter;
         [Inject] private IPassiveSkillQuery _passiveQuery;
         [Inject] private IActorQuery _actorQuery;
+        [Inject] private IPlayerSkillStatusWriter _skillStatusWriter;
 
         private Player2DActor _actor;
         private PlayerHealthAdapter _health;
@@ -72,7 +73,19 @@ namespace O2un.ProjectB.Platformer
 
             _actor = new Player2DActor(_data, _input, _view, _registry, meleeRefs, rangedRefs, _pool, _statReader, passiveData, _passiveQuery, _actorQuery);
 
+            BindSkillStatus();
             InitHealth();
+        }
+
+        private void BindSkillStatus()
+        {
+            ReadOnlyReactiveProperty<float> cooldown = _actor.RangedCooldownNormalized;
+            if (null == _skillStatusWriter || null == cooldown)
+            {
+                return;
+            }
+
+            cooldown.Subscribe(_skillStatusWriter.SetRangedCooldownNormalized).AddTo(_disposables);
         }
 
         private void InitHealth()
