@@ -18,7 +18,8 @@ namespace O2un.UI
 
             if (null != _projectBButton)
             {
-                _projectBButton.interactable = vm.IsProjectBEnabled;
+                _projectBButton.interactable = true;
+                _projectBButton.OnClickAsObservable().Subscribe(_ => vm.OnProjectBClicked()).AddTo(this);
             }
         }
     }

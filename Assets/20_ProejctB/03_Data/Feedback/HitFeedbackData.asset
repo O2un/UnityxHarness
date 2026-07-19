@@ -11,10 +11,11 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2f2e7f22222154ce6a7e3f2381db9311, type: 3}
   m_Name: HitFeedbackData
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   _playerHitProfile:
     _hitStopDuration: 0.09
     _hitStopTimeScale: 0.05
+    _shakeForce: 0.1
     _damageToIntensity:
       serializedVersion: 2
       m_Curve:
@@ -42,6 +43,7 @@ MonoBehaviour:
   _enemyHitProfile:
     _hitStopDuration: 0.06
     _hitStopTimeScale: 0.05
+    _shakeForce: 0.05
     _damageToIntensity:
       serializedVersion: 2
       m_Curve:

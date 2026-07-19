@@ -1,16 +1,30 @@
 using System;
+using R3;
 
 namespace O2un.UI
 {
-    public sealed class GameSelectVM
+    public sealed class GameSelectVM : IDisposable
     {
-        public bool IsProjectBEnabled => false;
+        private readonly Subject<Unit> _projectASelected = new();
+        private readonly Subject<Unit> _projectBSelected = new();
 
-        public event Action ProjectASelected;
+        public Observable<Unit> ProjectASelected => _projectASelected;
+        public Observable<Unit> ProjectBSelected => _projectBSelected;
 
         public void OnProjectAClicked()
         {
-            ProjectASelected?.Invoke();
+            _projectASelected.OnNext(Unit.Default);
+        }
+
+        public void OnProjectBClicked()
+        {
+            _projectBSelected.OnNext(Unit.Default);
+        }
+
+        public void Dispose()
+        {
+            _projectASelected.Dispose();
+            _projectBSelected.Dispose();
         }
     }
 }
