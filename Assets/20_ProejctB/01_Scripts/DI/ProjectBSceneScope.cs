@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using O2un.Actors;
 using O2un.DataStore;
 using O2un.DI;
+using O2un.Feedback;
 using O2un.Manager;
 using UnityEngine;
 using VContainer;
@@ -14,6 +15,7 @@ namespace O2un.ProjectB.Platformer
     {
         [SerializeField] private StageDataSO _stageData;
         [SerializeField] private UpgradeCardPoolSO _upgradeCardPool;
+        [SerializeField] private HitFeedbackDataSO _hitFeedbackData;
 
         [SerializeField] private List<GameObject> _sceneInitializables = new();
 
@@ -48,6 +50,23 @@ namespace O2un.ProjectB.Platformer
 
             builder.Register<EnemyKillEvent>(Lifetime.Singleton).As<IEnemyKillEvent>();
             builder.Register<RoomSignalChannel>(Lifetime.Singleton).AsImplementedInterfaces();
+
+            // 발행자는 Npc2DContext.Construct가 필수로 요구하므로 SO 유무와 무관하게 등록해야 적 생성이 막히지 않는다.
+            builder.Register<HitFeedbackChannel>(Lifetime.Singleton)
+                    .As<IHitFeedbackSignal>()
+                    .As<IHitFeedbackPublisher>()
+                    .As<IDisposable>();
+
+            if (null == _hitFeedbackData)
+            {
+                Debug.LogError($"[ProjectBSceneScope] '{name}' _hitFeedbackData가 비어 있습니다. 히트스톱이 등록되지 않습니다.");
+            }
+            else
+            {
+                // HitFeedbackDataSO 소비처가 HitStopManager 하나뿐이라 전역 등록 대신 파라미터로 넘긴다.
+                builder.RegisterEntryPoint<HitStopManager>()
+                        .WithParameter(_hitFeedbackData);
+            }
 
             builder.RegisterComponentInHierarchy<ScreenFaderView>().As<IScreenFader>();
             builder.RegisterComponentInHierarchy<Player2DPlacer>().As<IPlayerPlacer>();

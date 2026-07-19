@@ -487,6 +487,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   _stageData: {fileID: 11400000, guid: 51562e41e40ab48429c54511d6349e40, type: 2}
   _upgradeCardPool: {fileID: 11400000, guid: 5a2672c14e60547acba3cf6a5234613c, type: 2}
+  _hitFeedbackData: {fileID: 11400000, guid: 5126b3d43be4a48489f2fba0d70bbade, type: 2}
   _sceneInitializables:
   - {fileID: 3893861602031837311}
   - {fileID: 224834822}
