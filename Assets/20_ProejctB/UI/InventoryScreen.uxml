@@ -1,0 +1,70 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="InventoryScreen.uss" />
+    <ui:VisualElement name="inventory-screen" class="inventory-screen">
+        <ui:VisualElement name="inventory-window" class="inventory-window">
+            <ui:VisualElement name="inventory-left-panel" class="inventory-panel inventory-left-panel">
+                <ui:Label text="STATUS" class="section-title" />
+                <ui:VisualElement name="status-panel" class="section-box status-panel">
+                    <ui:VisualElement class="status-row">
+                        <ui:Label text="Health" class="status-label" />
+                        <ui:Label name="health-value" text="100 / 100" class="status-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="status-row">
+                        <ui:Label text="Attack" class="status-label" />
+                        <ui:Label name="attack-value" text="24" class="status-value" />
+                    </ui:VisualElement>
+                    <ui:VisualElement class="status-row status-row-last">
+                        <ui:Label text="Move Speed" class="status-label" />
+                        <ui:Label name="move-speed-value" text="5.0" class="status-value" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label text="SKILL" class="section-title skill-title" />
+                <ui:VisualElement name="skill-description-panel" class="section-box skill-description-panel">
+                    <ui:VisualElement class="skill-summary">
+                        <ui:VisualElement name="selected-skill-icon" class="selected-skill-icon" />
+                        <ui:VisualElement class="skill-heading">
+                            <ui:Label name="selected-skill-name" text="Selected Skill" class="skill-name" />
+                            <ui:Label name="selected-skill-level" text="Level 1" class="skill-level" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label name="selected-skill-description" text="Select a skill to view its description." class="skill-description" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="inventory-right-panel" class="inventory-panel inventory-right-panel">
+                <ui:Label text="ACQUIRED ITEMS" class="section-title acquired-items-title" />
+                <ui:VisualElement name="acquired-item-cards" class="item-card-grid">
+                    <ui:VisualElement name="item-card-1" class="item-card">
+                        <ui:VisualElement name="item-icon-1" class="item-icon" />
+                        <ui:Label name="item-name-1" text="Item" class="item-name" />
+                        <ui:Label name="item-level-1" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="item-card-2" class="item-card">
+                        <ui:VisualElement name="item-icon-2" class="item-icon" />
+                        <ui:Label name="item-name-2" text="Item" class="item-name" />
+                        <ui:Label name="item-level-2" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="item-card-3" class="item-card">
+                        <ui:VisualElement name="item-icon-3" class="item-icon" />
+                        <ui:Label name="item-name-3" text="Item" class="item-name" />
+                        <ui:Label name="item-level-3" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="item-card-4" class="item-card">
+                        <ui:VisualElement name="item-icon-4" class="item-icon" />
+                        <ui:Label name="item-name-4" text="Item" class="item-name" />
+                        <ui:Label name="item-level-4" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="item-card-5" class="item-card">
+                        <ui:VisualElement name="item-icon-5" class="item-icon" />
+                        <ui:Label name="item-name-5" text="Item" class="item-name" />
+                        <ui:Label name="item-level-5" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="item-card-6" class="item-card">
+                        <ui:VisualElement name="item-icon-6" class="item-icon" />
+                        <ui:Label name="item-name-6" text="Item" class="item-name" />
+                        <ui:Label name="item-level-6" text="Lv. 1" class="item-level" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
