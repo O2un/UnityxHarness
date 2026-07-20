@@ -40,9 +40,11 @@ Assets/
 │       ├── Actor/             Player · Enemy · ActorManager
 │       ├── AI/                공용 AI 인프라
 │       ├── Combat/            Health · Hitbox · Skill
+│       ├── Feedback/          CameraShake · HitStop
+│       ├── Sound/             SignalChannel
 │       ├── DI/                LifetimeScope · Bootstrap
 │       ├── Manager/           GameManager · Input · Camera · Scene · Score · Option
-│       │                      Asset · DataProvider · Pool · Inventory
+│       │                      Asset · DataProvider · Pool · Inventory · Audio
 │       ├── UI/                GameSelect · Hud · Loading
 │       └── Data/              PlayerData · OptionsData
 ├── 10_ProjectA/               3D 탑다운 서바이버 (플레이 가능 MVP)
@@ -53,7 +55,13 @@ Assets/
 │       ├── Manager/           EnemySpawner(Wave) · GameManager(상태·킬카운트)
 │       ├── Progression/       Experience · LevelUpSelection
 │       └── UI/GameFlow/       Start · HUD · Victory · Defeat 패널
-└── 20_ProjectB/               2D 횡스크롤 액션 (Part 4B에서 구현)
+└── 20_ProjectB/               2D 횡스크롤 액션 (플레이 가능 MVP)
+    └── 01_Scripts/
+        ├── Player/            2D 이동·점프 · 근접 3단 콤보 · 원거리/패시브 스킬 · 스탯
+        ├── Npc/               플랫폼 적 FSM(State/Condition SO) · 2D 감지 · 근접 공격
+        ├── Room/              additive 룸 진행 루프 · 문 상호작용 · 화면 페이드
+        ├── Reward/            아이템 강화 카드 시스템
+        └── UI/                PlayerHud · Inventory 화면
 ```
 
 씬: `Bootstrap` → `GameSelect`(진입점) → `Loading` → `GameScene`
@@ -89,7 +97,8 @@ Input · Observer(R3) · Camera · UI(MVVM) · Save · UniTask · 씬 로딩 · 
 4단계 검증 게이트(①컴파일 ②Play 콘솔에러 ③기능테스트 ④사용자 확인)를 Stop hook이 매 종료 시 자동 판정하고, Eval Viewer로 결과를 실시간 관측.
 
 ### 🔨 STEP 5 — 실전 게임 프로젝트
-**ProjectA (3D 뱀서류) — 플레이 가능 MVP 완성**
+
+**ProjectA (3D 탑다운 서바이버) — 플레이 가능 MVP**
 
 | 시스템 | 상태 |
 |---|---|
@@ -102,7 +111,18 @@ Input · Observer(R3) · Camera · UI(MVVM) · Save · UniTask · 씬 로딩 · 
 | 게임 흐름 — Start / HUD / Victory / Defeat · 재시작 | ✅ |
 | 게임 선택 씬 (진입점) | ✅ |
 
-**ProjectB (2D 횡스크롤 액션)** — ⬜ 예정
+**ProjectB (2D 횡스크롤 액션) — 플레이 가능 MVP**
+
+| 시스템 | 상태 |
+|---|---|
+| 플레이어 이동·점프 (2D) | ✅ |
+| 근접 3단 콤보 (애니메이션 이벤트 히트박스) | ✅ |
+| 원거리 · 패시브 스킬 | ✅ |
+| 적 AI — 플랫폼 FSM (State/Condition SO) | ✅ |
+| 적 2D 감지 · 근접 공격 | ✅ |
+| additive 룸 진행 루프 · 문 상호작용 | ✅ |
+| 아이템 강화 카드 시스템 | ✅ |
+| HUD (체력·스킬 쿨다운) · 인벤토리 화면 | ✅ |
 
 ---
 
