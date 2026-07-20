@@ -1,0 +1,13 @@
+{
+    "name": "O2un.CommonFramework.Editor",
+    "references": ["O2un.CommonFramework","MCPForUnity.Editor"],
+    "includePlatforms": ["Editor"],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
